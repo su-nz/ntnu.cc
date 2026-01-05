@@ -139,18 +139,30 @@ export async function clearFailedAttempts(kv, ip) {
  */
 export async function updateStats(kv, id, country) {
   const key = `stats:${id}`;
+  const today = new Date().toISOString().split('T')[0];
   
   try {
     const data = await kv.get(key, { type: 'json' }) || {
       clicks: 0,
-      countries: {},
+      clicksByDate: {},
+      clicksByCountry: {},
       lastAccess: null,
     };
     
     data.clicks += 1;
     data.lastAccess = new Date().toISOString();
     
+    // 更新每日點擊統計
+    if (!data.clicksByDate) data.clicksByDate = {};
+    data.clicksByDate[today] = (data.clicksByDate[today] || 0) + 1;
+    
+    // 更新國家統計
     if (country) {
+      if (!data.clicksByCountry) data.clicksByCountry = {};
+      data.clicksByCountry[country] = (data.clicksByCountry[country] || 0) + 1;
+      
+      // 相容舊欄位
+      if (!data.countries) data.countries = {};
       data.countries[country] = (data.countries[country] || 0) + 1;
     }
     
