@@ -1,0 +1,22 @@
+{
+  "name": "ntnu-cc",
+  "version": "1.0.0",
+  "description": "師大短網址服務 - 基於 Cloudflare Pages Functions",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler pages dev ./public --kv=LINKS_KV --binding ADMIN_API_KEY=dev-key-change-me",
+    "deploy": "wrangler pages deploy ./public",
+    "preview": "wrangler pages dev ./public --kv=LINKS_KV"
+  },
+  "keywords": [
+    "url-shortener",
+    "cloudflare-pages",
+    "cloudflare-workers",
+    "ntnu"
+  ],
+  "author": "NTNU",
+  "license": "MIT",
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}

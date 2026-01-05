@@ -1,0 +1,22 @@
+# 本地開發環境變數範本
+# 複製此檔案為 .dev.vars 並填入實際值
+# .dev.vars 已加入 .gitignore，請勿提交至版本控制
+
+# 管理員 API Key（至少 32 字元，建議使用 openssl rand -base64 48 生成）
+ADMIN_API_KEY=your-super-secret-api-key-at-least-32-chars
+
+# Cloudflare Turnstile 設定
+TURNSTILE_SITE_KEY=your-turnstile-site-key
+TURNSTILE_SECRET=your-turnstile-secret-key
+
+# Discord Webhook URL
+DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/xxx/yyy
+
+# IP 白名單（CIDR 格式，多個以逗號分隔）
+ALLOWED_CIDRS=140.122.0.0/16
+
+# 網域黑名單（多個以逗號分隔，支援 wildcard）
+BLOCKED_DOMAINS=*.malware.com,phishing.net
+
+# IPv6 支援
+ALLOW_IPV6=false
