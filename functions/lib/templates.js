@@ -187,6 +187,117 @@ export function baseTemplate({ title, content, styles = '', scripts = '' }) {
 }
 
 /**
+ * 跳轉預覽頁面（顯示目標網址，自動跳轉）
+ * @param {Object} options 
+ * @returns {string}
+ */
+export function redirectPreviewPage({ id, targetUrl }) {
+  const styles = `
+    .preview-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 80vh;
+    }
+    
+    .preview-card {
+      max-width: 500px;
+      text-align: center;
+    }
+    
+    .target-url-box {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      word-break: break-all;
+    }
+    
+    .target-url-box a {
+      color: var(--accent);
+      font-size: 0.95rem;
+    }
+    
+    .countdown {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
+    }
+    
+    .countdown strong {
+      color: var(--accent);
+      font-size: 1.2rem;
+    }
+    
+    .btn-group {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+    }
+    
+    .btn-secondary:hover {
+      border-color: var(--accent);
+      color: var(--text-primary);
+    }
+  `;
+  
+  const content = `
+    <div class="container preview-container">
+      <div class="card preview-card">
+        <h1>🔗 ntnu.cc</h1>
+        <p>短網址 <strong>${escapeHtml(id)}</strong> 即將帶您前往：</p>
+        
+        <div class="target-url-box">
+          <a href="${escapeHtml(targetUrl)}" id="targetLink">${escapeHtml(targetUrl)}</a>
+        </div>
+        
+        <p class="countdown">
+          <strong id="countdown">3</strong> 秒後自動跳轉
+        </p>
+        
+        <div class="btn-group">
+          <a href="${escapeHtml(targetUrl)}" class="btn" id="goBtn">立即前往</a>
+          <a href="/" class="btn btn-secondary">取消</a>
+        </div>
+        
+        <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 1.5rem;">
+          本服務僅供師大校園網路使用
+        </p>
+      </div>
+    </div>
+  `;
+  
+  const scripts = `
+    <script>
+      let seconds = 3;
+      const countdownEl = document.getElementById('countdown');
+      const targetUrl = document.getElementById('targetLink').href;
+      
+      const timer = setInterval(() => {
+        seconds--;
+        countdownEl.textContent = seconds;
+        
+        if (seconds <= 0) {
+          clearInterval(timer);
+          window.location.href = targetUrl;
+        }
+      }, 1000);
+    </script>
+  `;
+  
+  return baseTemplate({ title: `前往 ${id}`, content, styles, scripts });
+}
+
+/**
  * CAPTCHA 驗證頁面
  * @param {Object} options 
  * @returns {string}

@@ -4,11 +4,11 @@
  */
 
 import { createHtmlResponse, createErrorResponse, isIpAllowed } from './lib/utils.js';
-import { validateId, verifyTurnstile } from './lib/validation.js';
+import { validateId } from './lib/validation.js';
 import { checkRateLimit, updateStats } from './lib/security.js';
 import { notifyAccessDenied } from './lib/discord.js';
 import { 
-  captchaPage, 
+  redirectPreviewPage,
   ipRestrictedPage, 
   notFoundPage, 
   rateLimitedPage 
@@ -54,18 +54,16 @@ export async function onRequest(context) {
     return createHtmlResponse(ipRestrictedPage(), 200);
   }
   
-  // 根據請求方法處理
+  // 只處理 GET 請求（不再需要 POST 驗證）
   if (request.method === 'GET') {
     return handleGet(context, id, ip, country);
-  } else if (request.method === 'POST') {
-    return handlePost(context, id, ip, country);
   }
   
   return createErrorResponse('Method not allowed', 'METHOD_NOT_ALLOWED', 405);
 }
 
 /**
- * 處理 GET 請求 - 顯示 CAPTCHA 頁面
+ * 處理 GET 請求 - 顯示跳轉預覽頁面
  */
 async function handleGet(context, id, ip, country) {
   const { env } = context;
@@ -89,71 +87,9 @@ async function handleGet(context, id, ip, country) {
     return createHtmlResponse(notFoundPage(id), 404);
   }
   
-  // 顯示 CAPTCHA 頁面
-  const turnstileSiteKey = env.TURNSTILE_SITE_KEY || '';
-  
-  if (!turnstileSiteKey) {
-    // 如果未設定 Turnstile，直接跳轉（不建議）
-    await updateStats(env.LINKS_KV, id, country);
-    return Response.redirect(targetUrl, 302);
-  }
-  
-  return createHtmlResponse(captchaPage({ id, turnstileSiteKey }));
-}
-
-/**
- * 處理 POST 請求 - 驗證 CAPTCHA 後跳轉
- */
-async function handlePost(context, id, ip, country) {
-  const { request, env } = context;
-  
-  // 速率限制檢查
-  const rateLimit = await checkRateLimit(env.LINKS_KV, ip, 'captcha', 20, 60);
-  if (!rateLimit.allowed) {
-    const retryAfter = rateLimit.resetAt - Date.now();
-    return createHtmlResponse(rateLimitedPage(retryAfter), 429);
-  }
-  
-  // 解析表單資料
-  let formData;
-  try {
-    formData = await request.formData();
-  } catch {
-    return createErrorResponse('Invalid form data', 'INVALID_REQUEST', 400);
-  }
-  
-  // 取得 Turnstile Token
-  const turnstileToken = formData.get('cf-turnstile-response');
-  const turnstileSecret = env.TURNSTILE_SECRET;
-  
-  // 驗證 Turnstile
-  if (turnstileSecret) {
-    const verification = await verifyTurnstile(turnstileToken, turnstileSecret, ip);
-    if (!verification.success) {
-      // 重新顯示 CAPTCHA 頁面
-      return createHtmlResponse(captchaPage({ 
-        id, 
-        turnstileSiteKey: env.TURNSTILE_SITE_KEY,
-        error: '驗證失敗，請重試',
-      }));
-    }
-  }
-  
-  // 檢查短碼是否存在
-  const targetUrl = await env.LINKS_KV.get(`link:${id}`);
-  if (!targetUrl) {
-    return createHtmlResponse(notFoundPage(id), 404);
-  }
-  
-  // 檢查是否被停用
-  const disabled = await env.LINKS_KV.get(`disabled:${id}`);
-  if (disabled) {
-    return createHtmlResponse(notFoundPage(id), 404);
-  }
-  
-  // 更新統計
+  // 更新統計資料
   await updateStats(env.LINKS_KV, id, country);
   
-  // 執行 302 跳轉
-  return Response.redirect(targetUrl, 302);
+  // 顯示跳轉預覽頁面（不需要 CAPTCHA）
+  return createHtmlResponse(redirectPreviewPage({ id, targetUrl }));
 }
