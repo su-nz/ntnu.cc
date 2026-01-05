@@ -5,8 +5,19 @@
 import { getSecurityHeaders } from './lib/utils.js';
 import { notifySystemError } from './lib/discord.js';
 
+// 靜態檔案副檔名，不需要中間件處理
+const STATIC_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico', '.webp', '.css', '.js', '.woff', '.woff2', '.ttf', '.eot', '.map'];
+
 export async function onRequest(context) {
   const { request, next, env } = context;
+  const url = new URL(request.url);
+  const pathname = url.pathname;
+  
+  // 跳過靜態檔案，讓 Cloudflare Pages 直接處理
+  const isStaticFile = STATIC_EXTENSIONS.some(ext => pathname.toLowerCase().endsWith(ext));
+  if (isStaticFile) {
+    return next();
+  }
   
   try {
     // 執行後續處理
