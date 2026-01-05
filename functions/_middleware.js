@@ -6,7 +6,7 @@ import { getSecurityHeaders } from './lib/utils.js';
 import { notifySystemError } from './lib/discord.js';
 
 // 靜態檔案副檔名，不需要中間件處理
-const STATIC_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico', '.webp', '.css', '.js', '.woff', '.woff2', '.ttf', '.eot', '.map'];
+const STATIC_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico', '.webp', '.css', '.js', '.woff', '.woff2', '.ttf', '.eot', '.map', '.xml', '.txt', '.json'];
 
 export async function onRequest(context) {
   const { request, next, env } = context;
