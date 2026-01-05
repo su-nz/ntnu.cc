@@ -271,7 +271,7 @@ export function redirectPreviewPage({ id, targetUrl }) {
         </div>
         
         <p class="countdown">
-          <strong id="countdown">3</strong> <span data-i18n="seconds">秒後自動跳轉</span>
+          <strong id="countdown">6</strong> <span data-i18n="seconds">秒後自動跳轉</span>
         </p>
         
         <div class="btn-group">
@@ -327,7 +327,7 @@ export function redirectPreviewPage({ id, targetUrl }) {
       applyLang(currentLang);
       
       // 倒數計時
-      let seconds = 3;
+      let seconds = 6;
       const countdownEl = document.getElementById('countdown');
       const targetUrl = document.getElementById('targetLink').href;
       
