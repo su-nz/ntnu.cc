@@ -16,19 +16,27 @@ export function baseTemplate({ title, content, styles = '', scripts = '' }) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${escapeHtml(title)} - ntnu.cc</title>
+  <link rel="icon" type="image/png" href="/NTNU_Red.png">
   <style>
     :root {
-      --bg-primary: #1a1a2e;
-      --bg-secondary: #16213e;
-      --bg-tertiary: #0f3460;
-      --text-primary: #eaeaea;
-      --text-secondary: #a0a0a0;
-      --accent: #e94560;
-      --accent-hover: #ff6b6b;
-      --success: #2ecc71;
-      --warning: #e67e22;
-      --error: #e74c3c;
-      --border: #333;
+      --primary: #9B2335;
+      --primary-dark: #7A1C2A;
+      --primary-light: #C94C5C;
+      --bg-gradient: linear-gradient(135deg, #9B2335 0%, #B83A4B 50%, #C94C5C 100%);
+      --bg-white: #ffffff;
+      --bg-light: #fff9f9;
+      --text-primary: #2d2d2d;
+      --text-secondary: #555555;
+      --text-muted: #777777;
+      --accent: #9B2335;
+      --accent-hover: #C94C5C;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --error: #ef4444;
+      --border: #e5e7eb;
+      --shadow-sm: 0 1px 2px rgba(155, 35, 53, 0.08);
+      --shadow-md: 0 4px 6px -1px rgba(155, 35, 53, 0.12);
+      --shadow-lg: 0 10px 15px -3px rgba(155, 35, 53, 0.12);
     }
     
     * {
@@ -39,7 +47,7 @@ export function baseTemplate({ title, content, styles = '', scripts = '' }) {
     
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-      background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+      background: var(--bg-light);
       color: var(--text-primary);
       min-height: 100vh;
       display: flex;
@@ -54,11 +62,11 @@ export function baseTemplate({ title, content, styles = '', scripts = '' }) {
     }
     
     .card {
-      background: var(--bg-secondary);
+      background: var(--bg-white);
       border: 1px solid var(--border);
-      border-radius: 12px;
+      border-radius: 16px;
       padding: 2rem;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      box-shadow: var(--shadow-lg);
     }
     
     h1, h2, h3 {
@@ -89,28 +97,39 @@ export function baseTemplate({ title, content, styles = '', scripts = '' }) {
     .btn {
       display: inline-block;
       padding: 0.75rem 1.5rem;
-      background: var(--accent);
+      background: var(--bg-gradient);
       color: white;
       border: none;
       border-radius: 8px;
       font-size: 1rem;
+      font-weight: 500;
       cursor: pointer;
-      transition: background 0.2s, transform 0.1s;
+      transition: all 0.2s;
+      text-decoration: none;
     }
     
     .btn:hover {
-      background: var(--accent-hover);
-      transform: translateY(-1px);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      color: white;
     }
     
     .btn:disabled {
-      background: var(--text-secondary);
+      background: var(--text-muted);
       cursor: not-allowed;
       transform: none;
     }
     
     .btn-secondary {
-      background: var(--bg-tertiary);
+      background: var(--bg-white);
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+    
+    .btn-secondary:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: var(--bg-white);
     }
     
     .btn-success {
@@ -124,8 +143,8 @@ export function baseTemplate({ title, content, styles = '', scripts = '' }) {
     input, textarea, select {
       width: 100%;
       padding: 0.75rem;
-      background: var(--bg-primary);
-      border: 1px solid var(--border);
+      background: var(--bg-white);
+      border: 2px solid var(--border);
       border-radius: 8px;
       color: var(--text-primary);
       font-size: 1rem;
@@ -134,13 +153,14 @@ export function baseTemplate({ title, content, styles = '', scripts = '' }) {
     
     input:focus, textarea:focus, select:focus {
       outline: none;
-      border-color: var(--accent);
+      border-color: var(--primary);
     }
     
     label {
       display: block;
       margin-bottom: 0.5rem;
       color: var(--text-secondary);
+      font-weight: 500;
     }
     
     .alert {
@@ -150,25 +170,25 @@ export function baseTemplate({ title, content, styles = '', scripts = '' }) {
     }
     
     .alert-success {
-      background: rgba(46, 204, 113, 0.2);
+      background: rgba(16, 185, 129, 0.1);
       border: 1px solid var(--success);
       color: var(--success);
     }
     
     .alert-error {
-      background: rgba(231, 76, 60, 0.2);
+      background: rgba(239, 68, 68, 0.1);
       border: 1px solid var(--error);
       color: var(--error);
     }
     
     .alert-warning {
-      background: rgba(230, 126, 34, 0.2);
+      background: rgba(245, 158, 11, 0.1);
       border: 1px solid var(--warning);
       color: var(--warning);
     }
     
     .text-center { text-align: center; }
-    .text-muted { color: var(--text-secondary); }
+    .text-muted { color: var(--text-muted); }
     .mt-1 { margin-top: 0.5rem; }
     .mt-2 { margin-top: 1rem; }
     .mt-3 { margin-top: 1.5rem; }
@@ -193,42 +213,76 @@ export function baseTemplate({ title, content, styles = '', scripts = '' }) {
  */
 export function redirectPreviewPage({ id, targetUrl }) {
   const styles = `
+    body {
+      background: var(--bg-gradient);
+    }
+    
     .preview-container {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 80vh;
+      min-height: 100vh;
+      padding: 1rem;
     }
     
     .preview-card {
       max-width: 500px;
       text-align: center;
+      background: var(--bg-white);
+      border-radius: 16px;
+      padding: 2.5rem;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+    
+    .preview-card h1 {
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .preview-card h1 img {
+      width: 36px;
+      height: 36px;
+    }
+    
+    .preview-card > p {
+      color: var(--text-secondary);
+      margin-bottom: 0;
+    }
+    
+    .preview-card > p strong {
+      color: var(--primary);
     }
     
     .target-url-box {
-      background: var(--bg-tertiary);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1rem;
+      background: var(--bg-light);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
       margin: 1.5rem 0;
       word-break: break-all;
     }
     
     .target-url-box a {
-      color: var(--accent);
+      color: var(--primary);
       font-size: 0.95rem;
+      font-weight: 500;
     }
     
     .countdown {
-      font-size: 0.9rem;
+      font-size: 1rem;
       color: var(--text-secondary);
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
     }
     
     .countdown strong {
-      color: var(--accent);
-      font-size: 1.2rem;
+      color: var(--primary);
+      font-size: 1.5rem;
+      font-weight: 700;
     }
     
     .btn-group {
@@ -238,32 +292,70 @@ export function redirectPreviewPage({ id, targetUrl }) {
       flex-wrap: wrap;
     }
     
+    .btn-group .btn {
+      min-width: 120px;
+    }
+    
     .btn-secondary {
-      background: transparent;
-      border: 1px solid var(--border);
+      background: var(--bg-white);
       color: var(--text-secondary);
+      border: 2px solid var(--border);
     }
     
     .btn-secondary:hover {
-      border-color: var(--accent);
-      color: var(--text-primary);
+      border-color: var(--primary);
+      color: var(--primary);
+      background: var(--bg-white);
+      transform: translateY(-2px);
+    }
+    
+    .notice {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 1.5rem;
+      margin-bottom: 0;
     }
     
     .lang-switch {
-      position: absolute;
+      position: fixed;
       top: 1rem;
       right: 1rem;
-      padding: 0.4rem 0.75rem;
-      font-size: 0.8rem;
+      padding: 0.5rem 1rem;
+      font-size: 0.85rem;
       cursor: pointer;
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+    
+    .lang-switch:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+    
+    @media (max-width: 600px) {
+      .preview-card {
+        padding: 1.5rem;
+      }
+      
+      .btn-group {
+        flex-direction: column;
+      }
+      
+      .btn-group .btn {
+        width: 100%;
+      }
     }
   `;
   
   const content = `
-    <button class="btn btn-secondary lang-switch" onclick="toggleLang()" id="langBtn">EN</button>
-    <div class="container preview-container">
-      <div class="card preview-card">
-        <h1>🔗 ntnu.cc</h1>
+    <button class="lang-switch" onclick="toggleLang()" id="langBtn">EN</button>
+    <div class="preview-container">
+      <div class="preview-card">
+        <h1><img src="/NTNU_Red.png" alt=""> ntnu.cc</h1>
         <p><span data-i18n="desc">短網址</span> <strong>${escapeHtml(id)}</strong> <span data-i18n="redirectTo">即將帶您前往：</span></p>
         
         <div class="target-url-box">
@@ -279,7 +371,7 @@ export function redirectPreviewPage({ id, targetUrl }) {
           <a href="/" class="btn btn-secondary" data-i18n="cancel">取消</a>
         </div>
         
-        <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 1.5rem;" data-i18n="notice">
+        <p class="notice" data-i18n="notice">
           本服務僅供師大校園網路使用
         </p>
       </div>
