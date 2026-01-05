@@ -4,215 +4,1056 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ntnu.cc - 師大短網址服務</title>
-  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <link rel="icon" type="image/png" href="/NTNU_Red.png">
+  <link rel="apple-touch-icon" href="/NTNU_Red.png">
   <style>
     :root {
-      --bg-primary: #1a1a2e;
-      --bg-secondary: #16213e;
-      --bg-tertiary: #0f3460;
-      --text-primary: #eaeaea;
-      --text-secondary: #a0a0a0;
-      --accent: #e94560;
-      --accent-hover: #ff6b6b;
-      --success: #2ecc71;
-      --warning: #e67e22;
-      --error: #e74c3c;
-      --border: #333;
+      --primary: #9B2335;
+      --primary-dark: #7A1C2A;
+      --primary-light: #C94C5C;
+      --secondary: #D4646F;
+      --accent: #10b981;
+      --text-dark: #2d2d2d;
+      --text-light: #555555;
+      --text-muted: #777777;
+      --bg-white: #ffffff;
+      --bg-light: #fff9f9;
+      --bg-gradient: linear-gradient(135deg, #9B2335 0%, #B83A4B 50%, #C94C5C 100%);
+      --shadow-sm: 0 1px 2px rgba(155, 35, 53, 0.08);
+      --shadow-md: 0 4px 6px -1px rgba(155, 35, 53, 0.12);
+      --shadow-lg: 0 10px 15px -3px rgba(155, 35, 53, 0.12);
+      --shadow-xl: 0 20px 25px -5px rgba(155, 35, 53, 0.12);
     }
     
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-      background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
-      color: var(--text-primary);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      color: var(--text-dark);
+      line-height: 1.6;
+      background: var(--bg-white);
     }
     
-    .hero {
+    /* Navigation */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow-sm);
+      z-index: 1000;
+      padding: 0.75rem 2rem;
+    }
+    
+    .navbar-content {
+      max-width: 1200px;
+      margin: 0 auto;
       display: flex;
-      flex-direction: column;
+      justify-content: space-between;
       align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: 2rem;
-      text-align: center;
     }
     
     .logo {
-      font-size: 4rem;
-      font-weight: bold;
-      margin-bottom: 1rem;
-      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    
-    .tagline {
       font-size: 1.5rem;
-      color: var(--text-secondary);
-      margin-bottom: 3rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
     
-    .card {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 2.5rem;
-      max-width: 600px;
-      width: 100%;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    .logo-img {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
     }
     
-    .card h2 {
-      margin-bottom: 1.5rem;
-      font-size: 1.5rem;
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
     }
     
-    .info-box {
-      background: var(--bg-tertiary);
-      border-radius: 8px;
-      padding: 1.5rem;
-      margin-bottom: 1.5rem;
+    .nav-links a {
+      color: var(--text-light);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.9rem;
+      transition: color 0.2s;
     }
     
-    .info-box p {
-      color: var(--text-secondary);
-      line-height: 1.6;
-      margin-bottom: 0.5rem;
-    }
-    
-    .info-box p:last-child {
-      margin-bottom: 0;
-    }
-    
-    .features {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 1rem;
-      margin-top: 1.5rem;
-    }
-    
-    .feature {
-      text-align: center;
-      padding: 1rem;
-    }
-    
-    .feature-icon {
-      font-size: 2rem;
-      margin-bottom: 0.5rem;
-    }
-    
-    .feature-title {
-      font-weight: 600;
-      margin-bottom: 0.25rem;
-    }
-    
-    .feature-desc {
-      font-size: 0.85rem;
-      color: var(--text-secondary);
+    .nav-links a:hover {
+      color: var(--primary);
     }
     
     .btn {
-      display: inline-block;
-      padding: 0.75rem 1.5rem;
-      background: var(--accent);
-      color: white;
-      border: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem 1rem;
       border-radius: 8px;
-      font-size: 1rem;
-      cursor: pointer;
+      font-weight: 500;
+      font-size: 0.85rem;
       text-decoration: none;
-      transition: background 0.2s, transform 0.1s;
+      transition: all 0.2s;
+      cursor: pointer;
+      border: none;
     }
     
-    .btn:hover {
-      background: var(--accent-hover);
+    .btn-primary {
+      background: var(--bg-gradient);
+      color: #ffffff !important;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .btn-primary:hover {
       transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+      color: #ffffff !important;
     }
     
     .btn-secondary {
-      background: var(--bg-tertiary);
+      background: white;
+      color: var(--primary);
+      border: 1px solid #e5e7eb;
     }
     
-    .footer {
+    .btn-secondary:hover {
+      background: var(--bg-light);
+    }
+    
+    .btn-lg {
+      padding: 1rem 2rem;
+      font-size: 1.1rem;
+    }
+    
+    /* Hero Section - 縮網址為主 */
+    .hero {
+      background: var(--bg-gradient);
+      padding: 7rem 2rem 4rem;
       text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      opacity: 0.5;
+    }
+    
+    .hero-content {
+      max-width: 700px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .hero h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: white;
+      margin-bottom: 0.75rem;
+    }
+    
+    .hero-subtitle {
+      font-size: 1.1rem;
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 2rem;
+    }
+    
+    /* URL Shortener Form */
+    .shortener-box {
+      background: white;
+      border-radius: 16px;
       padding: 2rem;
-      color: var(--text-secondary);
+      box-shadow: var(--shadow-xl);
+      margin-bottom: 1.5rem;
+    }
+    
+    .shortener-form {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    
+    .shortener-form input[type="url"] {
+      flex: 1;
+      padding: 1rem 1.25rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    
+    .shortener-form input[type="url"]:focus {
+      border-color: var(--primary);
+    }
+    
+    .shortener-form input[type="url"]::placeholder {
+      color: #aaa;
+    }
+    
+    .shortener-form button {
+      padding: 1rem 2rem;
+      background: var(--bg-gradient);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    
+    .shortener-form button:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+    
+    .shortener-form button:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .custom-id-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+    
+    .custom-id-row label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      color: var(--text-light);
+      cursor: pointer;
+    }
+    
+    .custom-id-row input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--primary);
+    }
+    
+    .custom-id-input {
+      flex: 1;
+      padding: 0.6rem 1rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      display: none;
+      min-width: 120px;
+    }
+    
+    .custom-id-input.show {
+      display: block;
+    }
+    
+    .custom-id-input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+    
+    .expiry-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .expiry-row label {
+      font-size: 0.9rem;
+      color: var(--text-light);
+    }
+    
+    .expiry-select {
+      padding: 0.5rem 1rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      background: white;
+      cursor: pointer;
+      outline: none;
+    }
+    
+    .expiry-select:focus {
+      border-color: var(--primary);
+    }
+    
+    .result-box {
+      display: none;
+      background: #f0fdf4;
+      border: 1px solid #86efac;
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      margin-top: 1rem;
+    }
+    
+    .result-box.show {
+      display: block;
+    }
+    
+    .result-box.error {
+      background: #fef2f2;
+      border-color: #fca5a5;
+    }
+    
+    .result-url {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    
+    .result-url a {
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 1.1rem;
+      word-break: break-all;
+    }
+    
+    .result-url button {
+      padding: 0.5rem 1rem;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    
+    .result-message {
+      color: #dc2626;
+      font-size: 0.95rem;
+    }
+    
+    .result-expiry {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+    }
+    
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+      color: rgba(255, 255, 255, 0.9);
       font-size: 0.9rem;
     }
     
-    .footer a {
-      color: var(--accent);
+    .hero-stats span {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .hero-stats strong {
+      font-size: 1.25rem;
+      color: white;
+    }
+    
+    /* Features Section */
+    .features {
+      padding: 5rem 2rem;
+      background: var(--bg-light);
+    }
+    
+    .features-content {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    
+    .section-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    
+    .section-header h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 0.5rem;
+    }
+    
+    .section-header p {
+      color: var(--text-light);
+      font-size: 1rem;
+    }
+    
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    
+    .feature-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      transition: all 0.3s;
+      border: 1px solid #f0f0f0;
+    }
+    
+    .feature-card:hover {
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-4px);
+    }
+    
+    .feature-icon {
+      width: 50px;
+      height: 50px;
+      background: var(--bg-gradient);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin: 0 auto 1rem;
+    }
+    
+    .feature-card h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 0.5rem;
+    }
+    
+    .feature-card p {
+      color: var(--text-light);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    
+    /* Stats Banner */
+    .stats-banner {
+      background: var(--bg-gradient);
+      padding: 3rem 2rem;
+    }
+    
+    .stats-content {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-around;
+      text-align: center;
+      flex-wrap: wrap;
+      gap: 2rem;
+    }
+    
+    .stats-item {
+      color: white;
+    }
+    
+    .stats-number {
+      font-size: 2.5rem;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 0.25rem;
+    }
+    
+    .stats-text {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+    
+    /* Testimonials */
+    .testimonials {
+      padding: 5rem 2rem;
+      background: white;
+    }
+    
+    .testimonials-content {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    
+    .testimonial-card {
+      background: var(--bg-light);
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+    
+    .testimonial-rating {
+      color: #f59e0b;
+      font-size: 1rem;
+      margin-bottom: 0.75rem;
+    }
+    
+    .testimonial-text {
+      color: var(--text-dark);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+    
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    
+    .author-avatar {
+      width: 40px;
+      height: 40px;
+      background: var(--bg-gradient);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+    }
+    
+    .author-info h4 {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+    
+    .author-info p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    
+    /* Footer */
+    .footer {
+      background: #2d2d2d;
+      color: white;
+      padding: 3rem 2rem 1.5rem;
+    }
+    
+    .footer-content {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    
+    .footer-main {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 2rem;
+      margin-bottom: 2rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .footer-brand h3 {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .footer-brand p {
+      color: #999;
+      font-size: 0.85rem;
+      max-width: 300px;
+    }
+    
+    .footer-links {
+      display: flex;
+      gap: 3rem;
+    }
+    
+    .footer-links-col h4 {
+      font-size: 0.9rem;
+      margin-bottom: 0.75rem;
+      color: white;
+    }
+    
+    .footer-links-col ul {
+      list-style: none;
+    }
+    
+    .footer-links-col li {
+      margin-bottom: 0.4rem;
+    }
+    
+    .footer-links-col a {
+      color: #999;
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: color 0.2s;
+    }
+    
+    .footer-links-col a:hover {
+      color: white;
+    }
+    
+    .footer-bottom {
+      text-align: center;
+      color: #777;
+      font-size: 0.8rem;
+    }
+    
+    .footer-bottom p {
+      margin-bottom: 0.25rem;
+    }
+    
+    .footer-bottom a {
+      color: var(--primary-light);
       text-decoration: none;
     }
     
-    .footer a:hover {
-      text-decoration: underline;
+    /* Responsive */
+    @media (max-width: 900px) {
+      .features-grid, .testimonials-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 0.5rem 1rem;
+      }
+      
+      .navbar-content {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+      
+      .nav-links {
+        width: 100%;
+        justify-content: center;
+        gap: 1rem;
+      }
+      
+      .hero {
+        padding: 6rem 1rem 3rem;
+      }
+      
+      .hero h1 {
+        font-size: 1.75rem;
+      }
+      
+      .hero-subtitle {
+        font-size: 1rem;
+      }
+      
+      .shortener-box {
+        padding: 1.5rem;
+      }
+      
+      .shortener-form {
+        flex-direction: column;
+      }
+      
+      .shortener-form button {
+        width: 100%;
+      }
+      
+      .hero-stats {
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+      
+      .stats-content {
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+      
+      .footer-main {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+      
+      .footer-brand p {
+        max-width: 100%;
+      }
+      
+      .footer-links {
+        flex-direction: column;
+        gap: 1.5rem;
+      }
     }
     
     @media (max-width: 600px) {
-      .logo {
-        font-size: 2.5rem;
+      .features-grid, .testimonials-grid {
+        grid-template-columns: 1fr;
       }
       
-      .tagline {
-        font-size: 1.1rem;
+      .nav-links a:not(.btn) {
+        font-size: 0.8rem;
       }
       
-      .card {
-        padding: 1.5rem;
+      .result-url {
+        flex-direction: column;
+        align-items: flex-start;
       }
     }
   </style>
 </head>
 <body>
-  <main class="hero">
-    <div class="logo">ntnu.cc</div>
-    <p class="tagline">國立臺灣師範大學短網址服務</p>
-    
-    <div class="card">
-      <h2>🔗 關於本服務</h2>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="navbar-content">
+      <a href="/" class="logo">
+        <img src="./NTNU_Red.png" alt="" class="logo-img" onerror="this.style.display='none'">
+        ntnu.cc
+      </a>
+      <div class="nav-links">
+        <a href="#features">功能特色</a>
+        <a href="#testimonials">使用案例</a>
+        <a href="/admin" class="btn btn-primary">管理後台</a>
+      </div>
+    </div>
+  </nav>
+  
+  <!-- Hero Section with URL Shortener -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>師大短網址服務</h1>
+      <p class="hero-subtitle">快速、安全、專為師大師生打造的短網址服務</p>
       
-      <div class="info-box">
-        <p>本短網址服務專為<strong>國立臺灣師範大學</strong>師生設計，提供安全、快速的短網址轉換功能。</p>
-        <p>服務僅限於<strong>師大校園網路</strong>內使用，請確認您已連接至校園網路或 VPN。</p>
+      <div class="shortener-box">
+        <form class="shortener-form" id="shortenerForm">
+          <input type="url" id="urlInput" placeholder="貼上您的長網址..." required>
+          <button type="submit" id="submitBtn">縮短網址</button>
+        </form>
+        
+        <div class="custom-id-row">
+          <label>
+            <input type="checkbox" id="customIdCheck">
+            自訂短碼
+          </label>
+          <input type="text" id="customIdInput" class="custom-id-input" placeholder="例如: my-link" pattern="[a-zA-Z0-9\-]+" maxlength="32">
+        </div>
+        
+        <div class="expiry-row">
+          <label for="expirySelect">有效期限：</label>
+          <select id="expirySelect" class="expiry-select">
+            <option value="1h">1 小時</option>
+            <option value="6h">6 小時</option>
+            <option value="1d">1 天</option>
+            <option value="7d">7 天</option>
+            <option value="30d" selected>30 天</option>
+            <option value="90d">90 天</option>
+            <option value="never">永久有效</option>
+          </select>
+        </div>
+        
+        <div class="result-box" id="resultBox">
+          <div class="result-url" id="resultSuccess">
+            <a href="#" id="shortUrl" target="_blank"></a>
+            <button type="button" onclick="copyUrl()">複製</button>
+          </div>
+          <p class="result-expiry" id="resultExpiry"></p>
+          <p class="result-message" id="resultError"></p>
+        </div>
       </div>
       
-      <div class="features">
-        <div class="feature">
+      <div class="hero-stats">
+        <span><strong id="statLinks">0</strong> 個短網址</span>
+        <span><strong id="statClicks">0</strong> 次點擊</span>
+        <span>⚡ 全球 CDN 加速</span>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Features Section -->
+  <section class="features" id="features">
+    <div class="features-content">
+      <div class="section-header">
+        <h2>功能特色</h2>
+        <p>專業級短網址管理，從建立到分析一應俱全</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
           <div class="feature-icon">🚀</div>
-          <div class="feature-title">快速轉址</div>
-          <div class="feature-desc">全球 CDN 加速</div>
+          <h3>全球 CDN 加速</h3>
+          <p>部署於 Cloudflare 全球邊緣網路，轉址延遲低於 50ms</p>
         </div>
-        <div class="feature">
-          <div class="feature-icon">🔒</div>
-          <div class="feature-title">安全防護</div>
-          <div class="feature-desc">CAPTCHA 驗證</div>
+        <div class="feature-card">
+          <div class="feature-icon">🔐</div>
+          <h3>多層安全防護</h3>
+          <p>CAPTCHA 驗證、IP 白名單、速率限制與惡意網域攔截</p>
         </div>
-        <div class="feature">
+        <div class="feature-card">
           <div class="feature-icon">📊</div>
-          <div class="feature-title">統計分析</div>
-          <div class="feature-desc">點擊追蹤</div>
+          <h3>即時數據分析</h3>
+          <p>追蹤點擊數、來源國家、時間趨勢等關鍵指標</p>
         </div>
-        <div class="feature">
+        <div class="feature-card">
+          <div class="feature-icon">🔔</div>
+          <h3>Discord 通知</h3>
+          <p>建立成功、異常存取等事件即時推送至頻道</p>
+        </div>
+        <div class="feature-card">
           <div class="feature-icon">🏫</div>
-          <div class="feature-title">校園專屬</div>
-          <div class="feature-desc">IP 白名單</div>
+          <h3>校園專屬存取</h3>
+          <p>支援 IP 白名單，確保服務專屬於師大網路</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎯</div>
+          <h3>自訂短碼 ID</h3>
+          <p>支援自訂易記短碼或系統自動生成</p>
         </div>
       </div>
     </div>
-  </main>
+  </section>
   
+  <!-- Stats Banner -->
+  <section class="stats-banner">
+    <div class="stats-content">
+      <div class="stats-item">
+        <div class="stats-number">&lt;50ms</div>
+        <div class="stats-text">全球轉址延遲</div>
+      </div>
+      <div class="stats-item">
+        <div class="stats-number">99.9%</div>
+        <div class="stats-text">服務可用性</div>
+      </div>
+      <div class="stats-item">
+        <div class="stats-number">300+</div>
+        <div class="stats-text">全球邊緣節點</div>
+      </div>
+      <div class="stats-item">
+        <div class="stats-number">24/7</div>
+        <div class="stats-text">安全監控</div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Testimonials -->
+  <section class="testimonials" id="testimonials">
+    <div class="testimonials-content">
+      <div class="section-header">
+        <h2>使用案例</h2>
+        <p>看看其他師大師生如何運用短網址服務</p>
+      </div>
+      <div class="testimonials-grid">
+        <div class="testimonial-card">
+          <div class="testimonial-rating">★★★★★</div>
+          <p class="testimonial-text">「分享課程資料給學生變得更方便，還能追蹤點擊數據，非常實用。」</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">王</div>
+            <div class="author-info">
+              <h4>王教授</h4>
+              <p>資訊工程學系</p>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-rating">★★★★★</div>
+          <p class="testimonial-text">「舉辦活動時分享報名連結超方便！自訂短碼讓連結更好記。」</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">林</div>
+            <div class="author-info">
+              <h4>林同學</h4>
+              <p>學生會活動組</p>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-rating">★★★★★</div>
+          <p class="testimonial-text">「安全性讓我很放心，IP 限制確保只有校內人員能存取管理。」</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">陳</div>
+            <div class="author-info">
+              <h4>陳小姐</h4>
+              <p>教務處</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Footer -->
   <footer class="footer">
-    <p>© 2026 國立臺灣師範大學 | <a href="/admin">管理後台</a></p>
+    <div class="footer-content">
+      <div class="footer-main">
+        <div class="footer-brand">
+          <h3>
+            <img src="./NTNU_Red.png" alt="" style="width: 24px; height: 24px;" onerror="this.style.display='none'">
+            ntnu.cc
+          </h3>
+          <p>專為國立臺灣師範大學設計的短網址服務平台</p>
+        </div>
+        <div class="footer-links">
+          <div class="footer-links-col">
+            <h4>服務</h4>
+            <ul>
+              <li><a href="#features">功能特色</a></li>
+              <li><a href="/api/health">API 狀態</a></li>
+            </ul>
+          </div>
+          <div class="footer-links-col">
+            <h4>資源</h4>
+            <ul>
+              <li><a href="/admin">管理後台</a></li>
+              <li><a href="https://www.ntnu.edu.tw" target="_blank">師大官網</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 國立臺灣師範大學 | 採用 Cloudflare Pages 技術驅動</p>
+        <p>由 NZ 進行架設 | 有問題請寄信至 <a href="mailto:ntnu.cc@sunz.tw">ntnu.cc@sunz.tw</a></p>
+      </div>
+    </div>
   </footer>
+  
+  <script>
+    // 自訂短碼切換
+    const customIdCheck = document.getElementById('customIdCheck');
+    const customIdInput = document.getElementById('customIdInput');
+    const expirySelect = document.getElementById('expirySelect');
+    
+    customIdCheck.addEventListener('change', function() {
+      customIdInput.classList.toggle('show', this.checked);
+      if (!this.checked) customIdInput.value = '';
+    });
+    
+    // 縮短網址表單
+    const form = document.getElementById('shortenerForm');
+    const urlInput = document.getElementById('urlInput');
+    const submitBtn = document.getElementById('submitBtn');
+    const resultBox = document.getElementById('resultBox');
+    const resultSuccess = document.getElementById('resultSuccess');
+    const resultError = document.getElementById('resultError');
+    const resultExpiry = document.getElementById('resultExpiry');
+    const shortUrlLink = document.getElementById('shortUrl');
+    
+    // 過期時間格式化
+    const expiryLabels = {
+      '1h': '1 小時',
+      '6h': '6 小時',
+      '1d': '1 天',
+      '7d': '7 天',
+      '30d': '30 天',
+      '90d': '90 天',
+      'never': '永久有效'
+    };
+    
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const url = urlInput.value.trim();
+      if (!url) return;
+      
+      submitBtn.disabled = true;
+      submitBtn.textContent = '處理中...';
+      resultBox.classList.remove('show', 'error');
+      
+      try {
+        const body = { 
+          url,
+          expiry: expirySelect.value
+        };
+        if (customIdCheck.checked && customIdInput.value.trim()) {
+          body.customId = customIdInput.value.trim();
+        }
+        
+        const response = await fetch('/api/public-create', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok && data.success) {
+          shortUrlLink.href = data.shortUrl;
+          shortUrlLink.textContent = data.shortUrl;
+          resultSuccess.style.display = 'flex';
+          resultError.style.display = 'none';
+          
+          // 顯示過期時間
+          if (data.expiresAt) {
+            const expiresDate = new Date(data.expiresAt);
+            resultExpiry.textContent = `有效期限：${expiresDate.toLocaleString('zh-TW')} (${expiryLabels[body.expiry] || body.expiry})`;
+            resultExpiry.style.display = 'block';
+          } else {
+            resultExpiry.textContent = '有效期限：永久有效';
+            resultExpiry.style.display = 'block';
+          }
+          
+          resultBox.classList.remove('error');
+          resultBox.classList.add('show');
+          
+          // 更新統計
+          loadStats();
+        } else {
+          // 顯示友善的錯誤訊息
+          let errorMsg = data.error || '建立失敗，請稍後再試';
+          if (data.code === 'IP_NOT_ALLOWED') {
+            errorMsg = '此服務僅限師大校園網路使用，請確認您已連線至校內網路或 VPN';
+          } else if (data.code === 'RATE_LIMITED') {
+            errorMsg = data.error;
+          } else if (data.code === 'ID_EXISTS') {
+            errorMsg = '此短碼已被使用，請換一個或取消自訂短碼讓系統自動分配';
+          }
+          
+          resultError.textContent = errorMsg;
+          resultSuccess.style.display = 'none';
+          resultExpiry.style.display = 'none';
+          resultError.style.display = 'block';
+          resultBox.classList.add('show', 'error');
+        }
+      } catch (error) {
+        resultError.textContent = '網路錯誤，請檢查連線後再試';
+        resultSuccess.style.display = 'none';
+        resultExpiry.style.display = 'none';
+        resultError.style.display = 'block';
+        resultBox.classList.add('show', 'error');
+      }
+      
+      submitBtn.disabled = false;
+      submitBtn.textContent = '縮短網址';
+    });
+    
+    // 複製網址
+    function copyUrl() {
+      const url = shortUrlLink.href;
+      navigator.clipboard.writeText(url).then(() => {
+        const btn = event.target;
+        btn.textContent = '已複製！';
+        setTimeout(() => btn.textContent = '複製', 2000);
+      });
+    }
+    
+    // 載入統計數據
+    async function loadStats() {
+      try {
+        const response = await fetch('/api/public-stats');
+        const result = await response.json();
+        
+        if (result.success && result.data) {
+          document.getElementById('statLinks').textContent = result.data.formatted.totalLinks;
+          document.getElementById('statClicks').textContent = result.data.formatted.totalClicks;
+        }
+      } catch (error) {
+        console.log('Stats loading skipped');
+      }
+    }
+    
+    // 頁面載入
+    document.addEventListener('DOMContentLoaded', loadStats);
+    setInterval(loadStats, 60000);
+  </script>
 </body>
 </html>

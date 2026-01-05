@@ -3,13 +3,14 @@
  */
 
 /**
- * 產生隨機短碼 ID (6位英數字)
+ * 產生隨機短碼 ID
+ * @param {number} length - 短碼長度，預設 6
  * @returns {string}
  */
-export function generateRandomId() {
+export function generateRandomId(length = 6) {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let result = '';
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < length; i++) {
     result += chars.charAt(Math.floor(Math.random() * chars.length));
   }
   return result;
