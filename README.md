@@ -207,7 +207,3 @@ ALLOWED_CIDRS=140.122.0.0/16,2001:288:5400::/48
 1. 前往 Turnstile
 2. 新增 Site，輸入域名 `ntnu.cc`
 3. 取得 Site Key 和 Secret Key
-
-## License
-
-MIT License
