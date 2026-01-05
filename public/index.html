@@ -89,6 +89,13 @@
       color: var(--primary);
     }
     
+    .lang-toggle {
+      padding: 0.4rem 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      min-width: 40px;
+    }
+
     .btn {
       display: inline-flex;
       align-items: center;
@@ -745,8 +752,9 @@
         ntnu.cc
       </a>
       <div class="nav-links">
-        <a href="#features">功能特色</a>
-        <a href="#testimonials">使用案例</a>
+        <a href="#features" data-i18n="nav.features">功能特色</a>
+        <a href="#testimonials" data-i18n="nav.cases">使用案例</a>
+        <button class="btn btn-secondary lang-toggle" id="langToggle" onclick="toggleLanguage()">EN</button>
       </div>
     </div>
   </nav>
@@ -754,37 +762,37 @@
   <!-- Hero Section with URL Shortener -->
   <section class="hero">
     <div class="hero-content">
-      <h1>師大短網址服務</h1>
-      <p class="hero-subtitle">快速、安全、專為師大師生打造的短網址服務</p>
+      <h1 data-i18n="hero.title">師大短網址服務</h1>
+      <p class="hero-subtitle" data-i18n="hero.subtitle">快速、安全、專為師大師生打造的短網址服務</p>
       
       <div class="shortener-box">
         <form id="shortenerForm">
           <div class="form-row">
             <div class="form-group">
-              <label for="customIdInput">自訂短碼（可留空自動）</label>
-              <input type="text" id="customIdInput" placeholder="例如：活動報名-2026 或 course-info" pattern="[a-zA-Z0-9\-_]+" maxlength="32">
-              <p class="form-hint">留空會自動產生隨機短碼</p>
+              <label for="customIdInput" data-i18n="form.customId">自訂短碼（可留空自動）</label>
+              <input type="text" id="customIdInput" data-i18n-placeholder="form.customIdPlaceholder" placeholder="例如：活動報名-2026 或 course-info" pattern="[a-zA-Z0-9\-_]+" maxlength="32">
+              <p class="form-hint" data-i18n="form.customIdHint">留空會自動產生隨機短碼</p>
             </div>
             <div class="form-group">
-              <label for="expirySelect">有效期限</label>
+              <label for="expirySelect" data-i18n="form.expiry">有效期限</label>
               <select id="expirySelect">
-                <option value="1h">1 小時</option>
-                <option value="6h">6 小時</option>
-                <option value="1d">1 天</option>
-                <option value="7d">7 天</option>
-                <option value="30d">30 天</option>
-                <option value="90d">90 天</option>
-                <option value="never" selected>永久（不失效）</option>
+                <option value="1h" data-i18n="form.expiry1h">1 小時</option>
+                <option value="6h" data-i18n="form.expiry6h">6 小時</option>
+                <option value="1d" data-i18n="form.expiry1d">1 天</option>
+                <option value="7d" data-i18n="form.expiry7d">7 天</option>
+                <option value="30d" data-i18n="form.expiry30d">30 天</option>
+                <option value="90d" data-i18n="form.expiry90d">90 天</option>
+                <option value="never" selected data-i18n="form.expiryNever">永久（不失效）</option>
               </select>
-              <p class="form-hint">到期後短碼會自動失效，無法再導向。</p>
+              <p class="form-hint" data-i18n="form.expiryHint">到期後短碼會自動失效，無法再導向。</p>
             </div>
           </div>
           
           <div class="form-row">
             <div class="form-group form-group-full">
-              <label for="urlInput">長網址（http/https）</label>
-              <input type="url" id="urlInput" placeholder="https://example.com/very/long/link" required>
-              <p class="form-hint">請輸入以 http/https 開頭的網址</p>
+              <label for="urlInput" data-i18n="form.url">長網址（http/https）</label>
+              <input type="url" id="urlInput" data-i18n-placeholder="form.urlPlaceholder" placeholder="https://example.com/very/long/link" required>
+              <p class="form-hint" data-i18n="form.urlHint">請輸入以 http/https 開頭的網址</p>
             </div>
           </div>
           
@@ -794,16 +802,16 @@
           </div>
           
           <div class="btn-row">
-            <button type="submit" class="btn-submit" id="submitBtn">建立短網址</button>
-            <button type="button" class="btn-random" id="randomBtn">隨機短碼</button>
+            <button type="submit" class="btn-submit" id="submitBtn" data-i18n="form.submit">建立短網址</button>
+            <button type="button" class="btn-random" id="randomBtn" data-i18n="form.random">隨機短碼</button>
           </div>
         </form>
         
         <div class="result-box" id="resultBox">
-          <p class="result-title">您的短網址已建立：</p>
+          <p class="result-title" data-i18n="result.title">您的短網址已建立：</p>
           <div class="result-url-display" id="resultSuccess">
             <a href="#" id="shortUrl" target="_blank"></a>
-            <button type="button" class="btn-copy" id="copyBtn">複製</button>
+            <button type="button" class="btn-copy" id="copyBtn" data-i18n="result.copy">複製</button>
           </div>
           <p class="result-expiry" id="resultExpiry"></p>
           <p class="result-message" id="resultError"></p>
@@ -811,8 +819,8 @@
       </div>
       
       <div class="hero-stats">
-        <span><strong id="statLinks">0</strong> 個短網址</span>
-        <span><strong id="statClicks">0</strong> 次點擊</span>
+        <span><strong id="statLinks">0</strong> <span data-i18n="stats.links">個短網址</span></span>
+        <span><strong id="statClicks">0</strong> <span data-i18n="stats.clicks">次點擊</span></span>
       </div>
     </div>
   </section>
@@ -821,39 +829,39 @@
   <section class="features" id="features">
     <div class="features-content">
       <div class="section-header">
-        <h2>功能特色</h2>
-        <p>專業級短網址管理，從建立到分析一應俱全</p>
+        <h2 data-i18n="features.title">功能特色</h2>
+        <p data-i18n="features.subtitle">專業級短網址管理，從建立到分析一應俱全</p>
       </div>
       <div class="features-grid">
         <div class="feature-card">
           <div class="feature-icon">🚀</div>
-          <h3>全球 CDN 加速</h3>
-          <p>部署於 Cloudflare 全球邊緣網路，轉址延遲低於 50ms</p>
+          <h3 data-i18n="features.cdn.title">全球 CDN 加速</h3>
+          <p data-i18n="features.cdn.desc">部署於 Cloudflare 全球邊緣網路，轉址延遲低於 50ms</p>
         </div>
         <div class="feature-card">
           <div class="feature-icon">🔐</div>
-          <h3>多層安全防護</h3>
-          <p>CAPTCHA 驗證、IP 白名單、速率限制與惡意網域攔截</p>
+          <h3 data-i18n="features.security.title">多層安全防護</h3>
+          <p data-i18n="features.security.desc">CAPTCHA 驗證、IP 白名單、速率限制與惡意網域攔截</p>
         </div>
         <div class="feature-card">
           <div class="feature-icon">📊</div>
-          <h3>即時數據分析</h3>
-          <p>追蹤點擊數、來源國家、時間趨勢等關鍵指標</p>
+          <h3 data-i18n="features.analytics.title">即時數據分析</h3>
+          <p data-i18n="features.analytics.desc">追蹤點擊數、來源國家、時間趨勢等關鍵指標</p>
         </div>
         <div class="feature-card">
           <div class="feature-icon">🔔</div>
-          <h3>Discord 通知</h3>
-          <p>建立成功、異常存取等事件即時推送至頻道</p>
+          <h3 data-i18n="features.discord.title">Discord 通知</h3>
+          <p data-i18n="features.discord.desc">建立成功、異常存取等事件即時推送至頻道</p>
         </div>
         <div class="feature-card">
           <div class="feature-icon">🏫</div>
-          <h3>校園專屬存取</h3>
-          <p>支援 IP 白名單，確保服務專屬於師大網路</p>
+          <h3 data-i18n="features.campus.title">校園專屬存取</h3>
+          <p data-i18n="features.campus.desc">支援 IP 白名單，確保服務專屬於師大網路</p>
         </div>
         <div class="feature-card">
           <div class="feature-icon">🎯</div>
-          <h3>自訂短碼 ID</h3>
-          <p>支援自訂易記短碼或系統自動生成</p>
+          <h3 data-i18n="features.custom.title">自訂短碼 ID</h3>
+          <p data-i18n="features.custom.desc">支援自訂易記短碼或系統自動生成</p>
         </div>
       </div>
     </div>
@@ -864,19 +872,19 @@
     <div class="stats-content">
       <div class="stats-item">
         <div class="stats-number">&lt;50ms</div>
-        <div class="stats-text">全球轉址延遲</div>
+        <div class="stats-text" data-i18n="statsBanner.latency">全球轉址延遲</div>
       </div>
       <div class="stats-item">
         <div class="stats-number">99.9%</div>
-        <div class="stats-text">服務可用性</div>
+        <div class="stats-text" data-i18n="statsBanner.uptime">服務可用性</div>
       </div>
       <div class="stats-item">
         <div class="stats-number">300+</div>
-        <div class="stats-text">全球邊緣節點</div>
+        <div class="stats-text" data-i18n="statsBanner.nodes">全球邊緣節點</div>
       </div>
       <div class="stats-item">
         <div class="stats-number">24/7</div>
-        <div class="stats-text">安全監控</div>
+        <div class="stats-text" data-i18n="statsBanner.monitoring">安全監控</div>
       </div>
     </div>
   </section>
@@ -885,40 +893,40 @@
   <section class="testimonials" id="testimonials">
     <div class="testimonials-content">
       <div class="section-header">
-        <h2>使用案例</h2>
-        <p>看看其他師大師生如何運用短網址服務</p>
+        <h2 data-i18n="testimonials.title">使用案例</h2>
+        <p data-i18n="testimonials.subtitle">看看其他師大師生如何運用短網址服務</p>
       </div>
       <div class="testimonials-grid">
         <div class="testimonial-card">
           <div class="testimonial-rating">★★★★★</div>
-          <p class="testimonial-text">「分享課程資料給學生變得更方便，非常實用。」</p>
+          <p class="testimonial-text" data-i18n="testimonials.t1.text">「分享課程資料給學生變得更方便，非常實用。」</p>
           <div class="testimonial-author">
             <div class="author-avatar">王</div>
             <div class="author-info">
-              <h4>梅友人</h4>
-              <p>資訊工程學系</p>
+              <h4 data-i18n="testimonials.t1.name">梅友人</h4>
+              <p data-i18n="testimonials.t1.dept">資訊工程學系</p>
             </div>
           </div>
         </div>
         <div class="testimonial-card">
           <div class="testimonial-rating">★★★★★</div>
-          <p class="testimonial-text">「舉辦活動時分享報名連結超方便！自訂短碼讓連結更好記。」</p>
+          <p class="testimonial-text" data-i18n="testimonials.t2.text">「舉辦活動時分享報名連結超方便！自訂短碼讓連結更好記。」</p>
           <div class="testimonial-author">
             <div class="author-avatar">林</div>
             <div class="author-info">
-              <h4>蘇哈哈</h4>
-              <p>某社團</p>
+              <h4 data-i18n="testimonials.t2.name">蘇哈哈</h4>
+              <p data-i18n="testimonials.t2.dept">某社團</p>
             </div>
           </div>
         </div>
         <div class="testimonial-card">
           <div class="testimonial-rating">★★★★★</div>
-          <p class="testimonial-text">「安全性讓我很放心，IP 限制確保只有校內人員能存取管理。」</p>
+          <p class="testimonial-text" data-i18n="testimonials.t3.text">「安全性讓我很放心，IP 限制確保只有校內人員能存取管理。」</p>
           <div class="testimonial-author">
             <div class="author-avatar">陳</div>
             <div class="author-info">
-              <h4>小花</h4>
-              <p>師大分部</p>
+              <h4 data-i18n="testimonials.t3.name">小花</h4>
+              <p data-i18n="testimonials.t3.dept">師大分部</p>
             </div>
           </div>
         </div>
@@ -935,26 +943,26 @@
             <img src="/NTNU_Red.png" alt="" class="footer-logo">
             ntnu.cc
           </h3>
-          <p>專為國立臺灣師範大學設計的短網址服務平台</p>
+          <p data-i18n="footer.desc">專為國立臺灣師範大學設計的短網址服務平台</p>
         </div>
         <div class="footer-links">
           <div class="footer-links-col">
-            <h4>服務</h4>
+            <h4 data-i18n="footer.services">服務</h4>
             <ul>
-              <li><a href="#features">功能特色</a></li>
+              <li><a href="#features" data-i18n="nav.features">功能特色</a></li>
             </ul>
           </div>
           <div class="footer-links-col">
-            <h4>資源</h4>
+            <h4 data-i18n="footer.resources">資源</h4>
             <ul>
-              <li><a href="https://www.ntnu.edu.tw" target="_blank">師大官網</a></li>
+              <li><a href="https://www.ntnu.edu.tw" target="_blank" data-i18n="footer.ntnuSite">師大官網</a></li>
             </ul>
           </div>
         </div>
       </div>
       <div class="footer-bottom">
-        <p>© 2026 國立臺灣師範大學 | 採用 Cloudflare Pages 技術驅動</p>
-        <p>由 NZ 進行架設 | 有問題請寄信至 <a href="mailto:ntnu.cc@sunz.tw">ntnu.cc@sunz.tw</a></p>
+        <p data-i18n="footer.copyright">© 2026 國立臺灣師範大學 | 採用 Cloudflare Pages 技術驅動</p>
+        <p><span data-i18n="footer.builtBy">由 NZ 進行架設</span> | <span data-i18n="footer.contact">有問題請寄信至</span> <a href="mailto:ntnu.cc@sunz.tw">ntnu.cc@sunz.tw</a></p>
       </div>
     </div>
   </footer>
@@ -963,6 +971,221 @@
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
   
   <script>
+    // ============ i18n 多語系系統 ============
+    const i18n = {
+      'zh-TW': {
+        nav: {
+          features: '功能特色',
+          cases: '使用案例'
+        },
+        hero: {
+          title: '師大短網址服務',
+          subtitle: '快速、安全、專為師大師生打造的短網址服務'
+        },
+        form: {
+          customId: '自訂短碼（可留空自動）',
+          customIdPlaceholder: '例如：活動報名-2026 或 course-info',
+          customIdHint: '留空會自動產生隨機短碼',
+          expiry: '有效期限',
+          expiry1h: '1 小時',
+          expiry6h: '6 小時',
+          expiry1d: '1 天',
+          expiry7d: '7 天',
+          expiry30d: '30 天',
+          expiry90d: '90 天',
+          expiryNever: '永久（不失效）',
+          expiryHint: '到期後短碼會自動失效，無法再導向。',
+          url: '長網址（http/https）',
+          urlPlaceholder: 'https://example.com/very/long/link',
+          urlHint: '請輸入以 http/https 開頭的網址',
+          submit: '建立短網址',
+          submitting: '建立中...',
+          random: '隨機短碼'
+        },
+        result: {
+          title: '您的短網址已建立：',
+          copy: '複製',
+          copied: '已複製！',
+          expiryLabel: '有效期限：',
+          expiryForever: '永久有效'
+        },
+        stats: {
+          links: '個短網址',
+          clicks: '次點擊'
+        },
+        features: {
+          title: '功能特色',
+          subtitle: '專業級短網址管理，從建立到分析一應俱全',
+          cdn: { title: '全球 CDN 加速', desc: '部署於 Cloudflare 全球邊緣網路，轉址延遲低於 50ms' },
+          security: { title: '多層安全防護', desc: 'CAPTCHA 驗證、IP 白名單、速率限制與惡意網域攔截' },
+          analytics: { title: '即時數據分析', desc: '追蹤點擊數、來源國家、時間趨勢等關鍵指標' },
+          discord: { title: 'Discord 通知', desc: '建立成功、異常存取等事件即時推送至頻道' },
+          campus: { title: '校園專屬存取', desc: '支援 IP 白名單，確保服務專屬於師大網路' },
+          custom: { title: '自訂短碼 ID', desc: '支援自訂易記短碼或系統自動生成' }
+        },
+        statsBanner: {
+          latency: '全球轉址延遲',
+          uptime: '服務可用性',
+          nodes: '全球邊緣節點',
+          monitoring: '安全監控'
+        },
+        testimonials: {
+          title: '使用案例',
+          subtitle: '看看其他師大師生如何運用短網址服務',
+          t1: { text: '「分享課程資料給學生變得更方便，非常實用。」', name: '梅友人', dept: '資訊工程學系' },
+          t2: { text: '「舉辦活動時分享報名連結超方便！自訂短碼讓連結更好記。」', name: '蘇哈哈', dept: '某社團' },
+          t3: { text: '「安全性讓我很放心，IP 限制確保只有校內人員能存取管理。」', name: '小花', dept: '師大分部' }
+        },
+        footer: {
+          desc: '專為國立臺灣師範大學設計的短網址服務平台',
+          services: '服務',
+          resources: '資源',
+          ntnuSite: '師大官網',
+          copyright: '© 2026 國立臺灣師範大學 | 採用 Cloudflare Pages 技術驅動',
+          builtBy: '由 NZ 進行架設',
+          contact: '有問題請寄信至'
+        },
+        errors: {
+          captchaRequired: '請完成人機驗證',
+          ipNotAllowed: '此服務僅限師大校園網路使用，請確認您已連線至校內網路或 VPN',
+          idExists: '此短碼已被使用，請換一個或點擊「隨機短碼」自動生成',
+          networkError: '網路錯誤，請檢查連線後再試',
+          genericError: '建立失敗，請稍後再試'
+        }
+      },
+      'en': {
+        nav: {
+          features: 'Features',
+          cases: 'Use Cases'
+        },
+        hero: {
+          title: 'NTNU URL Shortener',
+          subtitle: 'Fast, secure, and designed for NTNU faculty and students'
+        },
+        form: {
+          customId: 'Custom Short Code (optional)',
+          customIdPlaceholder: 'e.g., event-2026 or course-info',
+          customIdHint: 'Leave empty to auto-generate a random code',
+          expiry: 'Expiration',
+          expiry1h: '1 Hour',
+          expiry6h: '6 Hours',
+          expiry1d: '1 Day',
+          expiry7d: '7 Days',
+          expiry30d: '30 Days',
+          expiry90d: '90 Days',
+          expiryNever: 'Never (Permanent)',
+          expiryHint: 'Link will expire and stop redirecting after the set time.',
+          url: 'Long URL (http/https)',
+          urlPlaceholder: 'https://example.com/very/long/link',
+          urlHint: 'Enter a URL starting with http or https',
+          submit: 'Create Short URL',
+          submitting: 'Creating...',
+          random: 'Random Code'
+        },
+        result: {
+          title: 'Your short URL is ready:',
+          copy: 'Copy',
+          copied: 'Copied!',
+          expiryLabel: 'Expires: ',
+          expiryForever: 'Never expires'
+        },
+        stats: {
+          links: 'short URLs',
+          clicks: 'clicks'
+        },
+        features: {
+          title: 'Features',
+          subtitle: 'Professional URL management from creation to analytics',
+          cdn: { title: 'Global CDN', desc: 'Deployed on Cloudflare edge network with <50ms redirect latency' },
+          security: { title: 'Multi-layer Security', desc: 'CAPTCHA, IP whitelist, rate limiting, and malicious domain blocking' },
+          analytics: { title: 'Real-time Analytics', desc: 'Track clicks, source countries, time trends, and more' },
+          discord: { title: 'Discord Notifications', desc: 'Instant notifications for link creation and suspicious access' },
+          campus: { title: 'Campus Exclusive', desc: 'IP whitelist ensures service is exclusive to NTNU network' },
+          custom: { title: 'Custom Short Codes', desc: 'Create memorable custom codes or auto-generate' }
+        },
+        statsBanner: {
+          latency: 'Global Redirect Latency',
+          uptime: 'Service Uptime',
+          nodes: 'Edge Nodes Worldwide',
+          monitoring: 'Security Monitoring'
+        },
+        testimonials: {
+          title: 'Use Cases',
+          subtitle: 'See how NTNU members use our URL shortener',
+          t1: { text: '"Sharing course materials with students is so much easier now!"', name: 'Someone', dept: 'Computer Science Dept.' },
+          t2: { text: '"Perfect for event registration links! Custom codes make them memorable."', name: 'Another One', dept: 'Student Club' },
+          t3: { text: '"The security features give me peace of mind. IP restrictions work great."', name: 'Third Person', dept: 'NTNU Branch' }
+        },
+        footer: {
+          desc: 'URL shortening service designed for National Taiwan Normal University',
+          services: 'Services',
+          resources: 'Resources',
+          ntnuSite: 'NTNU Website',
+          copyright: '© 2026 National Taiwan Normal University | Powered by Cloudflare Pages',
+          builtBy: 'Built by NZ',
+          contact: 'Questions? Email'
+        },
+        errors: {
+          captchaRequired: 'Please complete the verification',
+          ipNotAllowed: 'This service is only available on NTNU campus network. Please connect to campus network or VPN.',
+          idExists: 'This short code is already taken. Try another or click "Random Code"',
+          networkError: 'Network error. Please check your connection.',
+          genericError: 'Failed to create. Please try again later.'
+        }
+      }
+    };
+    
+    let currentLang = localStorage.getItem('lang') || 'zh-TW';
+    
+    function getNestedValue(obj, path) {
+      return path.split('.').reduce((acc, part) => acc && acc[part], obj);
+    }
+    
+    function applyLanguage(lang) {
+      currentLang = lang;
+      localStorage.setItem('lang', lang);
+      document.documentElement.lang = lang === 'zh-TW' ? 'zh-TW' : 'en';
+      
+      // 更新切換按鈕文字
+      const langToggle = document.getElementById('langToggle');
+      langToggle.textContent = lang === 'zh-TW' ? 'EN' : '中';
+      
+      // 更新所有 data-i18n 元素
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        const text = getNestedValue(i18n[lang], key);
+        if (text) el.textContent = text;
+      });
+      
+      // 更新 placeholder
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        const text = getNestedValue(i18n[lang], key);
+        if (text) el.placeholder = text;
+      });
+      
+      // 更新 select options
+      document.querySelectorAll('select option[data-i18n]').forEach(opt => {
+        const key = opt.getAttribute('data-i18n');
+        const text = getNestedValue(i18n[lang], key);
+        if (text) opt.textContent = text;
+      });
+      
+      // 更新頁面標題
+      document.title = lang === 'zh-TW' ? 'ntnu.cc - 師大短網址服務' : 'ntnu.cc - NTNU URL Shortener';
+    }
+    
+    function toggleLanguage() {
+      const newLang = currentLang === 'zh-TW' ? 'en' : 'zh-TW';
+      applyLanguage(newLang);
+    }
+    
+    // 取得 i18n 文字
+    function t(key) {
+      return getNestedValue(i18n[currentLang], key) || key;
+    }
+    
+    // ============ 主要功能 ============
     // DOM 元素
     const form = document.getElementById('shortenerForm');
     const urlInput = document.getElementById('urlInput');
@@ -1040,21 +1263,10 @@
     copyBtn.addEventListener('click', function() {
       const url = shortUrlLink.href;
       navigator.clipboard.writeText(url).then(() => {
-        copyBtn.textContent = '已複製！';
-        setTimeout(() => copyBtn.textContent = '複製', 2000);
+        copyBtn.textContent = t('result.copied');
+        setTimeout(() => copyBtn.textContent = t('result.copy'), 2000);
       });
     });
-    
-    // 過期時間格式化
-    const expiryLabels = {
-      '1h': '1 小時',
-      '6h': '6 小時',
-      '1d': '1 天',
-      '7d': '7 天',
-      '30d': '30 天',
-      '90d': '90 天',
-      'never': '永久有效'
-    };
     
     form.addEventListener('submit', async function(e) {
       e.preventDefault();
@@ -1064,7 +1276,7 @@
       
       // 檢查 Turnstile（如果已啟用）
       if (turnstileEnabled && !turnstileToken) {
-        resultError.textContent = '請完成人機驗證';
+        resultError.textContent = t('errors.captchaRequired');
         resultSuccess.style.display = 'none';
         resultExpiry.style.display = 'none';
         resultError.style.display = 'block';
@@ -1073,7 +1285,7 @@
       }
       
       submitBtn.disabled = true;
-      submitBtn.textContent = '建立中...';
+      submitBtn.textContent = t('form.submitting');
       resultBox.classList.remove('show', 'error');
       
       try {
@@ -1109,10 +1321,11 @@
           // 顯示過期時間
           if (data.expiresAt) {
             const expiresDate = new Date(data.expiresAt);
-            resultExpiry.textContent = `有效期限：${expiresDate.toLocaleString('zh-TW')} (${expiryLabels[expirySelect.value] || expirySelect.value})`;
+            const locale = currentLang === 'zh-TW' ? 'zh-TW' : 'en-US';
+            resultExpiry.textContent = t('result.expiryLabel') + expiresDate.toLocaleString(locale);
             resultExpiry.style.display = 'block';
           } else {
-            resultExpiry.textContent = '有效期限：永久有效';
+            resultExpiry.textContent = t('result.expiryLabel') + t('result.expiryForever');
             resultExpiry.style.display = 'block';
           }
           
@@ -1132,13 +1345,13 @@
           loadStats();
         } else {
           // 顯示友善的錯誤訊息
-          let errorMsg = data.error || '建立失敗，請稍後再試';
+          let errorMsg = data.error || t('errors.genericError');
           if (data.code === 'IP_NOT_ALLOWED') {
-            errorMsg = '此服務僅限師大校園網路使用，請確認您已連線至校內網路或 VPN';
+            errorMsg = t('errors.ipNotAllowed');
           } else if (data.code === 'RATE_LIMITED') {
             errorMsg = data.error;
           } else if (data.code === 'ID_EXISTS') {
-            errorMsg = '此短碼已被使用，請換一個或點擊「隨機短碼」自動生成';
+            errorMsg = t('errors.idExists');
           }
           
           resultError.textContent = errorMsg;
@@ -1148,7 +1361,7 @@
           resultBox.classList.add('show', 'error');
         }
       } catch (error) {
-        resultError.textContent = '網路錯誤，請檢查連線後再試';
+        resultError.textContent = t('errors.networkError');
         resultSuccess.style.display = 'none';
         resultExpiry.style.display = 'none';
         resultError.style.display = 'block';
@@ -1156,7 +1369,7 @@
       }
       
       submitBtn.disabled = false;
-      submitBtn.textContent = '建立短網址';
+      submitBtn.textContent = t('form.submit');
     });
     
     // 數字動畫效果
@@ -1219,6 +1432,7 @@
     
     // 頁面載入
     document.addEventListener('DOMContentLoaded', () => {
+      applyLanguage(currentLang);
       loadConfig();
       loadStats();
     });

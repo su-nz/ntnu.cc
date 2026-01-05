@@ -248,28 +248,38 @@ export function redirectPreviewPage({ id, targetUrl }) {
       border-color: var(--accent);
       color: var(--text-primary);
     }
+    
+    .lang-switch {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      padding: 0.4rem 0.75rem;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
   `;
   
   const content = `
+    <button class="btn btn-secondary lang-switch" onclick="toggleLang()" id="langBtn">EN</button>
     <div class="container preview-container">
       <div class="card preview-card">
         <h1>🔗 ntnu.cc</h1>
-        <p>短網址 <strong>${escapeHtml(id)}</strong> 即將帶您前往：</p>
+        <p><span data-i18n="desc">短網址</span> <strong>${escapeHtml(id)}</strong> <span data-i18n="redirectTo">即將帶您前往：</span></p>
         
         <div class="target-url-box">
           <a href="${escapeHtml(targetUrl)}" id="targetLink">${escapeHtml(targetUrl)}</a>
         </div>
         
         <p class="countdown">
-          <strong id="countdown">3</strong> 秒後自動跳轉
+          <strong id="countdown">3</strong> <span data-i18n="seconds">秒後自動跳轉</span>
         </p>
         
         <div class="btn-group">
-          <a href="${escapeHtml(targetUrl)}" class="btn" id="goBtn">立即前往</a>
-          <a href="/" class="btn btn-secondary">取消</a>
+          <a href="${escapeHtml(targetUrl)}" class="btn" id="goBtn" data-i18n="go">立即前往</a>
+          <a href="/" class="btn btn-secondary" data-i18n="cancel">取消</a>
         </div>
         
-        <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 1.5rem;">
+        <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 1.5rem;" data-i18n="notice">
           本服務僅供師大校園網路使用
         </p>
       </div>
@@ -278,6 +288,45 @@ export function redirectPreviewPage({ id, targetUrl }) {
   
   const scripts = `
     <script>
+      const i18n = {
+        'zh-TW': {
+          desc: '短網址',
+          redirectTo: '即將帶您前往：',
+          seconds: '秒後自動跳轉',
+          go: '立即前往',
+          cancel: '取消',
+          notice: '本服務僅供師大校園網路使用'
+        },
+        'en': {
+          desc: 'Short URL',
+          redirectTo: 'is redirecting you to:',
+          seconds: 'seconds until redirect',
+          go: 'Go Now',
+          cancel: 'Cancel',
+          notice: 'This service is for NTNU campus network only'
+        }
+      };
+      
+      let currentLang = localStorage.getItem('lang') || (navigator.language.startsWith('zh') ? 'zh-TW' : 'en');
+      
+      function applyLang(lang) {
+        currentLang = lang;
+        localStorage.setItem('lang', lang);
+        document.getElementById('langBtn').textContent = lang === 'zh-TW' ? 'EN' : '中';
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+          const key = el.getAttribute('data-i18n');
+          if (i18n[lang][key]) el.textContent = i18n[lang][key];
+        });
+      }
+      
+      function toggleLang() {
+        applyLang(currentLang === 'zh-TW' ? 'en' : 'zh-TW');
+      }
+      
+      // 初始化語言
+      applyLang(currentLang);
+      
+      // 倒數計時
       let seconds = 3;
       const countdownEl = document.getElementById('countdown');
       const targetUrl = document.getElementById('targetLink').href;
