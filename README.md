@@ -1,5 +1,7 @@
 # ntnu.cc - 師大短網址服務
 
+![ntnu.cc](public/image.png)
+
 基於 Cloudflare Pages Functions 與 KV 的安全短網址服務，專為國立臺灣師範大學設計。
 
 ## 功能特色
