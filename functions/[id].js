@@ -39,9 +39,10 @@ export async function onRequest(context) {
   
   // IP 白名單檢查
   const allowedCidrs = env.ALLOWED_CIDRS || '';
+  const isDev = env.DEV_MODE === 'true';
   
-  // 如果設定了 IP 限制，則檢查
-  if (allowedCidrs && !isIpAllowed(ip, allowedCidrs)) {
+  // 如果設定了 IP 限制且非開發模式，則檢查
+  if (!isDev && allowedCidrs && !isIpAllowed(ip, allowedCidrs)) {
     // 記錄存取被拒
     await notifyAccessDenied(env.DISCORD_WEBHOOK_URL, {
       reason: 'IP not in allowed CIDR range',
