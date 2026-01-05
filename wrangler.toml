@@ -2,18 +2,18 @@ name = "ntnu-cc"
 compatibility_date = "2024-01-01"
 pages_build_output_dir = "./public"
 
-# KV Namespace 綁定（需先在 Cloudflare Dashboard 建立）
-# [[kv_namespaces]]
-# binding = "LINKS_KV"
-# id = "your-kv-namespace-id"
-
-# 環境變數說明（實際值請在 Cloudflare Dashboard 設定）
-# [vars]
-# ALLOWED_CIDRS = "140.122.0.0/16"
-# BLOCKED_DOMAINS = ""
-# TURNSTILE_SITE_KEY = ""
-
-# 加密環境變數（需在 Dashboard 設定，勿放入程式碼）
-# ADMIN_API_KEY = ""
-# TURNSTILE_SECRET = ""
-# DISCORD_WEBHOOK_URL = ""
+# ============================================
+# 所有綁定和環境變數請在 Cloudflare Dashboard 設定
+# Settings → Bindings → 新增 KV Namespace
+# Settings → Variables and Secrets → 新增環境變數
+# ============================================
+# 
+# 需要設定的 KV 綁定：
+#   變數名稱: LINKS_KV
+#   
+# 需要設定的環境變數：
+#   ADMIN_API_KEY (Secret) - 管理員 API 金鑰
+#   ALLOWED_CIDRS - IP 白名單，例如 140.122.0.0/16
+#   TURNSTILE_SITE_KEY - Turnstile Site Key
+#   TURNSTILE_SECRET (Secret) - Turnstile Secret
+#   DISCORD_WEBHOOK_URL (Secret) - Discord Webhook
