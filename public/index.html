@@ -370,6 +370,18 @@
     .hero-stats strong {
       font-size: 1.25rem;
       color: white;
+      font-variant-numeric: tabular-nums;
+      transition: transform 0.2s ease;
+    }
+    
+    .hero-stats strong.counting {
+      animation: countPulse 0.3s ease;
+    }
+    
+    @keyframes countPulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.15); color: #ffd700; }
+      100% { transform: scale(1); }
     }
     
     /* Features Section */
@@ -776,9 +788,9 @@
             </div>
           </div>
           
-          <!-- Cloudflare Turnstile -->
-          <div class="turnstile-wrapper">
-            <div class="cf-turnstile" data-sitekey="YOUR_TURNSTILE_SITE_KEY" data-callback="onTurnstileSuccess" data-theme="light"></div>
+          <!-- Cloudflare Turnstile（由環境變數 TURNSTILE_SITE_KEY 控制） -->
+          <div class="turnstile-wrapper" id="turnstileWrapper" style="display: none;">
+            <div id="turnstileContainer"></div>
           </div>
           
           <div class="btn-row">
@@ -801,7 +813,6 @@
       <div class="hero-stats">
         <span><strong id="statLinks">0</strong> 個短網址</span>
         <span><strong id="statClicks">0</strong> 次點擊</span>
-        <span>⚡ 全球 CDN 加速</span>
       </div>
     </div>
   </section>
@@ -948,8 +959,8 @@
     </div>
   </footer>
   
-  <!-- Cloudflare Turnstile -->
-  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <!-- Cloudflare Turnstile（動態載入） -->
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
   
   <script>
     // DOM 元素
@@ -966,11 +977,48 @@
     const resultExpiry = document.getElementById('resultExpiry');
     const shortUrlLink = document.getElementById('shortUrl');
     
-    // Turnstile token
+    // Turnstile
     let turnstileToken = null;
+    let turnstileWidgetId = null;
+    let turnstileEnabled = false;
     
     function onTurnstileSuccess(token) {
       turnstileToken = token;
+    }
+    
+    // 載入配置並初始化 Turnstile
+    async function loadConfig() {
+      try {
+        const response = await fetch('/api/config');
+        const result = await response.json();
+        
+        if (result.success && result.config.turnstileSiteKey) {
+          turnstileEnabled = true;
+          document.getElementById('turnstileWrapper').style.display = 'flex';
+          
+          // 等待 Turnstile script 載入完成
+          if (typeof turnstile !== 'undefined') {
+            renderTurnstile(result.config.turnstileSiteKey);
+          } else {
+            // 等待 script 載入
+            window.addEventListener('load', () => {
+              if (typeof turnstile !== 'undefined') {
+                renderTurnstile(result.config.turnstileSiteKey);
+              }
+            });
+          }
+        }
+      } catch (error) {
+        console.log('Config loading skipped');
+      }
+    }
+    
+    function renderTurnstile(siteKey) {
+      turnstileWidgetId = turnstile.render('#turnstileContainer', {
+        sitekey: siteKey,
+        callback: onTurnstileSuccess,
+        theme: 'light',
+      });
     }
     
     // 產生隨機短碼
@@ -1014,8 +1062,8 @@
       const url = urlInput.value.trim();
       if (!url) return;
       
-      // 檢查 Turnstile（如果已載入）
-      if (typeof turnstile !== 'undefined' && !turnstileToken) {
+      // 檢查 Turnstile（如果已啟用）
+      if (turnstileEnabled && !turnstileToken) {
         resultError.textContent = '請完成人機驗證';
         resultSuccess.style.display = 'none';
         resultExpiry.style.display = 'none';
@@ -1075,8 +1123,8 @@
           customIdInput.value = '';
           
           // 重設 Turnstile
-          if (typeof turnstile !== 'undefined') {
-            turnstile.reset();
+          if (turnstileEnabled && typeof turnstile !== 'undefined' && turnstileWidgetId !== null) {
+            turnstile.reset(turnstileWidgetId);
             turnstileToken = null;
           }
           
@@ -1111,15 +1159,58 @@
       submitBtn.textContent = '建立短網址';
     });
     
+    // 數字動畫效果
+    function animateNumber(element, start, end, duration = 1000) {
+      const startTime = performance.now();
+      const diff = end - start;
+      
+      function update(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        // easeOutExpo 緩動函數
+        const easeProgress = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+        const current = Math.floor(start + diff * easeProgress);
+        
+        element.textContent = current.toLocaleString('zh-TW');
+        
+        if (progress < 1) {
+          requestAnimationFrame(update);
+        } else {
+          element.classList.add('counting');
+          setTimeout(() => element.classList.remove('counting'), 300);
+        }
+      }
+      
+      requestAnimationFrame(update);
+    }
+    
     // 載入統計數據
+    let lastLinks = 0;
+    let lastClicks = 0;
+    
     async function loadStats() {
       try {
         const response = await fetch('/api/public-stats');
         const result = await response.json();
         
         if (result.success && result.data) {
-          document.getElementById('statLinks').textContent = result.data.formatted.totalLinks;
-          document.getElementById('statClicks').textContent = result.data.formatted.totalClicks;
+          const newLinks = result.data.totalLinks || 0;
+          const newClicks = result.data.totalClicks || 0;
+          
+          const linksEl = document.getElementById('statLinks');
+          const clicksEl = document.getElementById('statClicks');
+          
+          // 只有數字有變化時才播放動畫
+          if (newLinks !== lastLinks) {
+            animateNumber(linksEl, lastLinks, newLinks, 800);
+            lastLinks = newLinks;
+          }
+          
+          if (newClicks !== lastClicks) {
+            animateNumber(clicksEl, lastClicks, newClicks, 800);
+            lastClicks = newClicks;
+          }
         }
       } catch (error) {
         console.log('Stats loading skipped');
@@ -1127,7 +1218,10 @@
     }
     
     // 頁面載入
-    document.addEventListener('DOMContentLoaded', loadStats);
+    document.addEventListener('DOMContentLoaded', () => {
+      loadConfig();
+      loadStats();
+    });
     setInterval(loadStats, 60000);
   </script>
 </body>

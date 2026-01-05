@@ -14,9 +14,17 @@ import {
   rateLimitedPage 
 } from './lib/templates.js';
 
+// 靜態檔案副檔名，不應該被此路由處理
+const STATIC_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico', '.webp', '.css', '.js', '.woff', '.woff2', '.ttf', '.eot', '.map', '.txt', '.xml', '.json'];
+
 export async function onRequest(context) {
-  const { request, env, params } = context;
+  const { request, env, params, next } = context;
   const id = params.id;
+  
+  // 跳過靜態檔案，讓 Cloudflare Pages 處理
+  if (STATIC_EXTENSIONS.some(ext => id.toLowerCase().endsWith(ext))) {
+    return next();
+  }
   
   // 驗證 ID 格式
   const idValidation = validateId(id);
