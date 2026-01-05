@@ -34,10 +34,36 @@
       background: var(--bg-white);
     }
     
+    /* Announcement Banner */
+    .announcement-banner {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      padding: 0.5rem 1rem;
+      z-index: 1001;
+      text-align: center;
+    }
+    
+    .announcement-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+    
+    .announcement-icon {
+      font-size: 1rem;
+    }
+    
     /* Navigation */
     .navbar {
       position: fixed;
-      top: 0;
+      top: 32px;
       left: 0;
       right: 0;
       background: rgba(255, 255, 255, 0.95);
@@ -220,7 +246,7 @@
     /* Hero Section - 縮網址為主 */
     .hero {
       background: var(--bg-gradient);
-      padding: 5rem 2rem 2rem;
+      padding: 6rem 2rem 2rem;
       text-align: center;
       position: relative;
       overflow: hidden;
@@ -853,6 +879,14 @@
   </style>
 </head>
 <body>
+  <!-- Announcement Banner -->
+  <div class="announcement-banner">
+    <div class="announcement-content">
+      <span class="announcement-icon">📢</span>
+      <span data-i18n="announcement.text">公告：現已開放所有使用者使用，若發生惡意行為將恢復師大 IP 限制</span>
+    </div>
+  </div>
+  
   <!-- Navigation -->
   <nav class="navbar">
     <div class="navbar-content">
@@ -1087,6 +1121,9 @@
     // ============ i18n 多語系系統 ============
     const i18n = {
       'zh-TW': {
+        announcement: {
+          text: '公告：現已開放所有使用者使用，若發生惡意行為將恢復師大 IP 限制'
+        },
         nav: {
           features: '功能特色',
           cases: '使用案例',
@@ -1177,6 +1214,9 @@
         }
       },
       'en': {
+        announcement: {
+          text: 'Notice: Now open to all users. IP restrictions will be restored if abuse occurs.'
+        },
         nav: {
           features: 'Features',
           cases: 'Use Cases',

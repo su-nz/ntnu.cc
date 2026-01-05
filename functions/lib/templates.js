@@ -370,10 +370,6 @@ export function redirectPreviewPage({ id, targetUrl }) {
           <a href="${escapeHtml(targetUrl)}" class="btn" id="goBtn" data-i18n="go">立即前往</a>
           <a href="/" class="btn btn-secondary" data-i18n="cancel">取消</a>
         </div>
-        
-        <p class="notice" data-i18n="notice">
-          本服務僅供師大校園網路使用
-        </p>
       </div>
     </div>
   `;
@@ -386,16 +382,14 @@ export function redirectPreviewPage({ id, targetUrl }) {
           redirectTo: '即將帶您前往：',
           seconds: '秒後自動跳轉',
           go: '立即前往',
-          cancel: '取消',
-          notice: '本服務僅供師大校園網路使用'
+          cancel: '取消'
         },
         'en': {
           desc: 'Short URL',
           redirectTo: 'is redirecting you to:',
           seconds: 'seconds until redirect',
           go: 'Go Now',
-          cancel: 'Cancel',
-          notice: 'This service is for NTNU campus network only'
+          cancel: 'Cancel'
         }
       };
       
