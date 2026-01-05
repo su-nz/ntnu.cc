@@ -3,7 +3,7 @@
  * 路由：GET/POST /{id}
  */
 
-import { createHtmlResponse, createErrorResponse, isIpAllowed } from './lib/utils.js';
+import { createHtmlResponse, createErrorResponse, isIpAllowed, getClientInfo } from './lib/utils.js';
 import { validateId } from './lib/validation.js';
 import { checkRateLimit, updateStats } from './lib/security.js';
 import { notifyAccessDenied } from './lib/discord.js';
@@ -33,8 +33,7 @@ export async function onRequest(context) {
   }
   
   // 取得使用者資訊
-  const ip = request.headers.get('cf-connecting-ip') || 'unknown';
-  const country = request.headers.get('cf-ipcountry') || 'Unknown';
+  const { ip, country } = getClientInfo(request);
   const userAgent = request.headers.get('user-agent') || '';
   
   // IP 白名單檢查

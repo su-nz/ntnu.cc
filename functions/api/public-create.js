@@ -4,7 +4,7 @@
  * 不需要 API Key，但限制師大 IP 才能使用
  */
 
-import { createResponse, createErrorResponse, generateRandomId, isIpAllowed } from '../lib/utils.js';
+import { createResponse, createErrorResponse, generateRandomId, isIpAllowed, getClientInfo } from '../lib/utils.js';
 import { validateUrl, validateId, isBlockedDomain } from '../lib/validation.js';
 import { checkRateLimit } from '../lib/security.js';
 import { notifyLinkCreated, notifyBlockedDomain } from '../lib/discord.js';
@@ -30,8 +30,7 @@ export async function onRequestPost(context) {
   const { request, env } = context;
   
   // 取得使用者資訊
-  const ip = request.headers.get('cf-connecting-ip') || 'unknown';
-  const country = request.headers.get('cf-ipcountry') || 'Unknown';
+  const { ip, country } = getClientInfo(request);
   const userAgent = request.headers.get('user-agent') || '';
   
   // IP 白名單檢查（師大 IP 或環境變數設定的 CIDR）

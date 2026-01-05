@@ -3,7 +3,7 @@
  * 路由：POST /api/create
  */
 
-import { createResponse, createErrorResponse, generateRandomId } from '../lib/utils.js';
+import { createResponse, createErrorResponse, generateRandomId, getClientInfo } from '../lib/utils.js';
 import { validateUrl, validateId, validateApiKey, isBlockedDomain } from '../lib/validation.js';
 import { checkRateLimit, checkIpLockout, recordFailedAttempt, clearFailedAttempts } from '../lib/security.js';
 import { notifyLinkCreated, notifyAccessDenied, notifyBlockedDomain } from '../lib/discord.js';
@@ -12,8 +12,7 @@ export async function onRequestPost(context) {
   const { request, env } = context;
   
   // 取得使用者資訊
-  const ip = request.headers.get('cf-connecting-ip') || 'unknown';
-  const country = request.headers.get('cf-ipcountry') || 'Unknown';
+  const { ip, country } = getClientInfo(request);
   const userAgent = request.headers.get('user-agent') || '';
   
   // 檢查 IP 鎖定

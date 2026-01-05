@@ -196,3 +196,41 @@ export function isIpAllowed(ip, allowedCidrs) {
   const cidrs = allowedCidrs.split(',').map(c => c.trim()).filter(Boolean);
   return cidrs.some(cidr => isIpInCidr(ip, cidr));
 }
+
+/**
+ * 取得客戶端資訊（IP 和國家）
+ * 優先使用 Cloudflare Headers，備選使用 request.cf 對象
+ * @param {Request} request 
+ * @returns {Object} { ip: string, country: string }
+ */
+export function getClientInfo(request) {
+  // 優先使用 CF-Connecting-IP header
+  let ip = request.headers.get('CF-Connecting-IP') || 
+           request.headers.get('cf-connecting-ip');
+  
+  // 優先使用 CF-IPCountry header
+  let country = request.headers.get('CF-IPCountry') || 
+                request.headers.get('cf-ipcountry');
+  
+  // 備選：使用 request.cf 對象（Cloudflare Workers 提供）
+  if (!ip && request.cf) {
+    ip = request.cf.ip || request.cf.connecting_ip;
+  }
+  
+  if (!country && request.cf) {
+    country = request.cf.country;
+  }
+  
+  // 最後的備選方案
+  if (!ip) {
+    ip = request.headers.get('X-Forwarded-For')?.split(',')[0]?.trim() || 
+         request.headers.get('X-Real-IP') || 
+         'Unknown';
+  }
+  
+  if (!country) {
+    country = 'Unknown';
+  }
+  
+  return { ip, country };
+}

@@ -3,7 +3,7 @@
  * 路由：GET/POST /admin
  */
 
-import { createHtmlResponse, createResponse, createErrorResponse, escapeHtml } from '../lib/utils.js';
+import { createHtmlResponse, createResponse, createErrorResponse, escapeHtml, getClientInfo } from '../lib/utils.js';
 import { validateApiKey } from '../lib/validation.js';
 import { checkIpLockout, recordFailedAttempt, clearFailedAttempts } from '../lib/security.js';
 import { notifyLoginFailed, notifyLinkDeleted } from '../lib/discord.js';
