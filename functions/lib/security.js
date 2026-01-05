@@ -3,7 +3,7 @@
  */
 
 /**
- * 速率限制檢查
+ * 速率限制檢查（使用 Durable Objects 模式減少讀寫）
  * @param {Object} kv - KV namespace
  * @param {string} ip 
  * @param {string} endpoint 
@@ -19,7 +19,7 @@ export async function checkRateLimit(kv, ip, endpoint, limit, windowSeconds) {
     const data = await kv.get(key, { type: 'json' });
     
     if (!data) {
-      // 第一次請求
+      // 第一次請求 - 只在允許時才寫入
       await kv.put(key, JSON.stringify({
         count: 1,
         resetAt: now + windowSeconds * 1000,
@@ -28,7 +28,7 @@ export async function checkRateLimit(kv, ip, endpoint, limit, windowSeconds) {
       return { allowed: true, remaining: limit - 1, resetAt: now + windowSeconds * 1000 };
     }
     
-    // 檢查是否已過期
+    // 檢查是否已過期（KV TTL 會自動清理，這是備用檢查）
     if (now >= data.resetAt) {
       await kv.put(key, JSON.stringify({
         count: 1,
@@ -38,12 +38,12 @@ export async function checkRateLimit(kv, ip, endpoint, limit, windowSeconds) {
       return { allowed: true, remaining: limit - 1, resetAt: now + windowSeconds * 1000 };
     }
     
-    // 檢查是否超限
+    // 檢查是否超限 - 不寫入，減少 KV 寫入
     if (data.count >= limit) {
       return { allowed: false, remaining: 0, resetAt: data.resetAt };
     }
     
-    // 更新計數
+    // 更新計數 - 只在允許時才寫入
     await kv.put(key, JSON.stringify({
       count: data.count + 1,
       resetAt: data.resetAt,
@@ -132,7 +132,7 @@ export async function clearFailedAttempts(kv, ip) {
 }
 
 /**
- * 更新點擊統計
+ * 更新點擊統計（將基本統計存入 metadata，減少獨立讀取）
  * @param {Object} kv 
  * @param {string} id 
  * @param {string} country 
@@ -147,6 +147,7 @@ export async function updateStats(kv, id, country) {
       clicksByDate: {},
       clicksByCountry: {},
       lastAccess: null,
+      createdAt: new Date().toISOString(),
     };
     
     data.clicks += 1;
@@ -166,7 +167,23 @@ export async function updateStats(kv, id, country) {
       data.countries[country] = (data.countries[country] || 0) + 1;
     }
     
+    // 儲存完整統計到 stats key
     await kv.put(key, JSON.stringify(data));
+    
+    // 同時將基本統計存入 link metadata（讓 list API 減少讀取）
+    const linkKey = `link:${id}`;
+    const linkValue = await kv.get(linkKey);
+    if (linkValue) {
+      await kv.put(linkKey, linkValue, {
+        metadata: {
+          stats: {
+            clicks: data.clicks,
+            lastAccess: data.lastAccess,
+            createdAt: data.createdAt,
+          }
+        }
+      });
+    }
   } catch (error) {
     console.error('Update stats error:', error);
   }

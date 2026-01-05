@@ -156,16 +156,30 @@ export async function onRequestPost(context) {
     }
   }
   
-  // 寫入 KV
+  // 寫入 KV（使用 metadata 儲存基本統計，減少後續讀取）
   try {
-    await env.LINKS_KV.put(`link:${finalId}`, urlValidation.url);
+    const createdAt = new Date().toISOString();
     
-    // 初始化統計
+    // 寫入 link，並在 metadata 中存儲基本統計資訊
+    await env.LINKS_KV.put(`link:${finalId}`, urlValidation.url, {
+      metadata: {
+        stats: {
+          clicks: 0,
+          lastAccess: null,
+          createdAt: createdAt,
+        },
+        disabled: false,
+      }
+    });
+    
+    // 寫入完整統計資料
     await env.LINKS_KV.put(`stats:${finalId}`, JSON.stringify({
       clicks: 0,
       countries: {},
+      clicksByDate: {},
+      clicksByCountry: {},
       lastAccess: null,
-      createdAt: new Date().toISOString(),
+      createdAt: createdAt,
       createdBy: ip,
     }));
   } catch (error) {

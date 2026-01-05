@@ -116,35 +116,35 @@ GET /api/health
 ```
 ntnu.cc/
 ├── functions/               # Cloudflare Pages Functions
-│   ├── [id].js             # 短碼轉址處理
-│   ├── _middleware.js      # 全域中間件
+│   ├── [id].js             # 短碼轉址處理，根據短碼進行 URL 轉址
+│   ├── _middleware.js      # 全域中間件，處理通用邏輯如驗證
 │   ├── api/
-│   │   ├── create.js       # 建立短網址 API
-│   │   ├── health.js       # 健康檢查
-│   │   ├── links.js        # 批量操作
-│   │   ├── list.js         # 列出短網址
+│   │   ├── create.js       # 建立短網址 API，處理短碼生成邏輯
+│   │   ├── health.js       # 健康檢查 API，確認服務狀態
+│   │   ├── links.js        # 批量操作 API，支持批量刪除或更新短碼
+│   │   ├── list.js         # 列出短網址 API，支持搜尋和分頁
 │   │   └── stats/
-│   │       └── [id].js     # 統計查詢
+│   │       └── [id].js     # 統計查詢 API，返回短碼的點擊統計
 │   ├── admin/
-│   │   ├── index.js        # 管理後台
-│   │   └── analytics.js    # 分析儀表板
+│   │   ├── index.js        # 管理後台，提供管理員介面
+│   │   └── analytics.js    # 分析儀表板，提供統計數據可視化
 │   └── lib/
-│       ├── utils.js        # 工具函數
-│       ├── validation.js   # 驗證模組
-│       ├── security.js     # 安全模組
-│       ├── discord.js      # Discord 通知
-│       └── templates.js    # HTML 模板
+│       ├── utils.js        # 工具函數，包含通用邏輯如編碼處理
+│       ├── validation.js   # 驗證模組，處理輸入驗證邏輯
+│       ├── security.js     # 安全模組，提供防護措施如速率限制
+│       ├── discord.js      # Discord 通知模組，整合 Webhook
+│       └── templates.js    # HTML 模板，生成動態頁面
 ├── public/                  # 靜態檔案
-│   ├── index.html          # 首頁
-│   ├── 404.html            # 404 頁面
-│   ├── robots.txt
-│   └── sitemap.xml
-├── package.json
-├── wrangler.toml
-├── .gitignore
-├── .dev.vars.example
-├── SPEC.md
-└── README.md
+│   ├── index.html          # 首頁，提供使用者介面
+│   ├── 404.html            # 404 頁面，處理未找到的短碼
+│   ├── robots.txt          # 搜尋引擎爬蟲設定
+│   └── sitemap.xml         # 網站地圖
+├── package.json             # 專案配置檔案，管理依賴和腳本
+├── wrangler.toml            # Wrangler 配置檔案，管理 Cloudflare Pages
+├── .gitignore               # Git 忽略檔案列表
+├── .dev.vars.example        # 開發環境變數範本
+├── SPEC.md                  # 專案規格文件
+└── README.md                # 專案說明文件
 ```
 
 ## 安全設定

@@ -67,7 +67,7 @@ export async function onRequest(context) {
  * 處理 GET 請求 - 顯示跳轉預覽頁面
  */
 async function handleGet(context, id, ip, country) {
-  const { env } = context;
+  const { env, request } = context;
   
   // 速率限制檢查
   const rateLimit = await checkRateLimit(env.LINKS_KV, ip, 'redirect', 60, 60);
@@ -76,20 +76,44 @@ async function handleGet(context, id, ip, country) {
     return createHtmlResponse(rateLimitedPage(retryAfter), 429);
   }
   
-  // 檢查短碼是否存在
-  const targetUrl = await env.LINKS_KV.get(`link:${id}`);
-  if (!targetUrl) {
+  // 嘗試從 Cache API 讀取（快取 5 分鐘）
+  const cacheKey = new URL(`https://cache.ntnu.cc/link/${id}`, request.url);
+  const cache = caches.default;
+  let cachedResponse = await cache.match(cacheKey);
+  
+  let targetUrl;
+  let disabled = false;
+  
+  if (cachedResponse) {
+    // 從快取讀取
+    const cachedData = await cachedResponse.json();
+    targetUrl = cachedData.targetUrl;
+    disabled = cachedData.disabled || false;
+  } else {
+    // 從 KV 讀取（使用 getWithMetadata 一次讀取）
+    const { value, metadata } = await env.LINKS_KV.getWithMetadata(`link:${id}`);
+    targetUrl = value;
+    disabled = metadata?.disabled || false;
+    
+    if (targetUrl) {
+      // 快取結果（5 分鐘）
+      const cacheData = { targetUrl, disabled };
+      const cacheResponse = new Response(JSON.stringify(cacheData), {
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'public, max-age=300', // 5 分鐘
+        },
+      });
+      context.waitUntil(cache.put(cacheKey, cacheResponse));
+    }
+  }
+  
+  if (!targetUrl || disabled) {
     return createHtmlResponse(notFoundPage(id), 404);
   }
   
-  // 檢查是否被停用
-  const disabled = await env.LINKS_KV.get(`disabled:${id}`);
-  if (disabled) {
-    return createHtmlResponse(notFoundPage(id), 404);
-  }
-  
-  // 更新統計資料
-  await updateStats(env.LINKS_KV, id, country);
+  // 更新統計資料（非同步，不阻塞回應）
+  context.waitUntil(updateStats(env.LINKS_KV, id, country));
   
   // 顯示跳轉預覽頁面（不需要 CAPTCHA）
   return createHtmlResponse(redirectPreviewPage({ id, targetUrl }));
