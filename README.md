@@ -1,8 +1,17 @@
-# ntnu.cc - 師大短網址服務
+<div align="center">
+
+# 🔗 ntnu.cc **師大短網址服務**
+
+[![Website](https://img.shields.io/website?url=https%3A%2F%2Fntnu.cc&style=for-the-badge&label=ntnu.cc)](https://ntnu.cc) [![Cloudflare](https://img.shields.io/badge/Powered%20by-Cloudflare-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)](https://pages.cloudflare.com/) [![License](https://img.shields.io/badge/License-GPL--3.0-blue?style=for-the-badge)](LICENSE)
+
+**🚀 基於 Cloudflare Pages Functions 與 KV 的安全短網址服務**
+
+**專為國立臺灣師範大學設計 🏫**
 
 ![ntnu.cc](public/image.png)
 
-基於 Cloudflare Pages Functions 與 KV 的安全短網址服務，專為國立臺灣師範大學設計。
+</div>
+
 
 ## 功能特色
 
