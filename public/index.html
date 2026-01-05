@@ -994,7 +994,10 @@
           <div class="form-row">
             <div class="form-group">
               <label for="customIdInput" data-i18n="form.customId">自訂短碼（可留空自動）</label>
-              <input type="text" id="customIdInput" data-i18n-placeholder="form.customIdPlaceholder" placeholder="例如：活動報名-2026 或 course-info" pattern="[a-zA-Z0-9\-_]+" maxlength="32">
+              <div style="display: flex; gap: 0.5rem; align-items: flex-start;">
+                <input type="text" id="customIdInput" data-i18n-placeholder="form.customIdPlaceholder" placeholder="例如：course-info" pattern="[a-zA-Z0-9\-_]+" maxlength="32" style="flex: 1;">
+                <button type="button" class="btn-random" id="randomBtn" data-i18n="form.random" style="white-space: nowrap; padding: 0.6rem 1rem;">隨機短碼</button>
+              </div>
               <p class="form-hint" data-i18n="form.customIdHint">留空會自動產生隨機短碼</p>
             </div>
             <div class="form-group">
@@ -1019,7 +1022,6 @@
           
           <div class="btn-row">
             <button type="submit" class="btn-submit" id="submitBtn" data-i18n="form.submit">建立短網址</button>
-            <button type="button" class="btn-random" id="randomBtn" data-i18n="form.random">隨機短碼</button>
           </div>
         </form>
         
@@ -1215,7 +1217,7 @@
         },
         form: {
           customId: '自訂短碼（可留空自動）',
-          customIdPlaceholder: '例如：活動報名-2026 或 course-info',
+          customIdPlaceholder: '例如：course-info',
           customIdHint: '留空會自動產生隨機短碼',
           expiry: '有效期限',
           expiry1h: '1 小時',
@@ -1308,7 +1310,7 @@
         },
         form: {
           customId: 'Custom Short Code (optional)',
-          customIdPlaceholder: 'e.g., event-2026 or course-info',
+          customIdPlaceholder: 'e.g., course-info',
           customIdHint: 'Leave empty to auto-generate a random code',
           expiry: 'Expiration',
           expiry1h: '1 Hour',
