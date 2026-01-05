@@ -174,33 +174,72 @@
       padding: 2rem;
       box-shadow: var(--shadow-xl);
       margin-bottom: 1.5rem;
+      text-align: left;
     }
     
-    .shortener-form {
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-group {
       display: flex;
-      gap: 0.75rem;
-      margin-bottom: 1rem;
+      flex-direction: column;
     }
     
-    .shortener-form input[type="url"] {
-      flex: 1;
-      padding: 1rem 1.25rem;
+    .form-group label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 0.5rem;
+    }
+    
+    .form-group input,
+    .form-group select {
+      padding: 0.875rem 1rem;
       border: 2px solid #e5e7eb;
       border-radius: 10px;
       font-size: 1rem;
       outline: none;
       transition: border-color 0.2s;
+      background: white;
     }
     
-    .shortener-form input[type="url"]:focus {
+    .form-group input:focus,
+    .form-group select:focus {
       border-color: var(--primary);
     }
     
-    .shortener-form input[type="url"]::placeholder {
+    .form-group input::placeholder {
       color: #aaa;
     }
     
-    .shortener-form button {
+    .form-hint {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.4rem;
+    }
+    
+    .form-group-full {
+      grid-column: 1 / -1;
+    }
+    
+    .turnstile-wrapper {
+      display: flex;
+      justify-content: center;
+      margin: 1.5rem 0;
+    }
+    
+    .btn-row {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+    
+    .btn-submit {
+      flex: 1;
       padding: 1rem 2rem;
       background: var(--bg-gradient);
       color: white;
@@ -210,86 +249,34 @@
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s;
-      white-space: nowrap;
     }
     
-    .shortener-form button:hover {
+    .btn-submit:hover {
       transform: translateY(-2px);
       box-shadow: var(--shadow-lg);
     }
     
-    .shortener-form button:disabled {
+    .btn-submit:disabled {
       opacity: 0.7;
       cursor: not-allowed;
       transform: none;
     }
     
-    .custom-id-row {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      margin-bottom: 1rem;
-      flex-wrap: wrap;
-    }
-    
-    .custom-id-row label {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.9rem;
-      color: var(--text-light);
-      cursor: pointer;
-    }
-    
-    .custom-id-row input[type="checkbox"] {
-      width: 18px;
-      height: 18px;
-      accent-color: var(--primary);
-    }
-    
-    .custom-id-input {
-      flex: 1;
-      padding: 0.6rem 1rem;
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      display: none;
-      min-width: 120px;
-    }
-    
-    .custom-id-input.show {
-      display: block;
-    }
-    
-    .custom-id-input:focus {
-      outline: none;
-      border-color: var(--primary);
-    }
-    
-    .expiry-row {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      margin-bottom: 0.5rem;
-    }
-    
-    .expiry-row label {
-      font-size: 0.9rem;
-      color: var(--text-light);
-    }
-    
-    .expiry-select {
-      padding: 0.5rem 1rem;
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
-      font-size: 0.9rem;
+    .btn-random {
+      padding: 1rem 1.5rem;
       background: white;
+      color: var(--text-dark);
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 500;
       cursor: pointer;
-      outline: none;
+      transition: all 0.2s;
     }
     
-    .expiry-select:focus {
+    .btn-random:hover {
       border-color: var(--primary);
+      color: var(--primary);
     }
     
     .result-box {
@@ -297,8 +284,9 @@
       background: #f0fdf4;
       border: 1px solid #86efac;
       border-radius: 10px;
-      padding: 1rem 1.25rem;
-      margin-top: 1rem;
+      padding: 1.25rem;
+      margin-top: 1.5rem;
+      text-align: center;
     }
     
     .result-box.show {
@@ -310,21 +298,36 @@
       border-color: #fca5a5;
     }
     
-    .result-url {
+    .result-title {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+    
+    .result-url-display {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center;
       gap: 1rem;
+      background: #e8f5e9;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
     }
     
-    .result-url a {
+    .result-url-display a {
       color: var(--primary);
-      font-weight: 600;
-      font-size: 1.1rem;
+      font-weight: 700;
+      font-size: 1.2rem;
       word-break: break-all;
+      text-decoration: none;
     }
     
-    .result-url button {
+    .result-url-display a:hover {
+      text-decoration: underline;
+    }
+    
+    .btn-copy {
       padding: 0.5rem 1rem;
       background: var(--primary);
       color: white;
@@ -333,6 +336,11 @@
       font-size: 0.85rem;
       cursor: pointer;
       white-space: nowrap;
+      transition: all 0.2s;
+    }
+    
+    .btn-copy:hover {
+      background: var(--primary-dark);
     }
     
     .result-message {
@@ -343,7 +351,6 @@
     .result-expiry {
       font-size: 0.85rem;
       color: var(--text-muted);
-      margin-top: 0.5rem;
     }
     
     .hero-stats {
@@ -662,11 +669,16 @@
         padding: 1.5rem;
       }
       
-      .shortener-form {
+      .form-row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+      
+      .btn-row {
         flex-direction: column;
       }
       
-      .shortener-form button {
+      .btn-random {
         width: 100%;
       }
       
@@ -705,9 +717,9 @@
         font-size: 0.8rem;
       }
       
-      .result-url {
+      .result-url-display {
         flex-direction: column;
-        align-items: flex-start;
+        gap: 0.75rem;
       }
     }
   </style>
@@ -735,36 +747,52 @@
       <p class="hero-subtitle">快速、安全、專為師大師生打造的短網址服務</p>
       
       <div class="shortener-box">
-        <form class="shortener-form" id="shortenerForm">
-          <input type="url" id="urlInput" placeholder="貼上您的長網址..." required>
-          <button type="submit" id="submitBtn">縮短網址</button>
+        <form id="shortenerForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="customIdInput">自訂短碼（可留空自動）</label>
+              <input type="text" id="customIdInput" placeholder="例如：活動報名-2026 或 course-info" pattern="[a-zA-Z0-9\-_]+" maxlength="32">
+              <p class="form-hint">留空會自動產生隨機短碼</p>
+            </div>
+            <div class="form-group">
+              <label for="expirySelect">有效期限</label>
+              <select id="expirySelect">
+                <option value="1h">1 小時</option>
+                <option value="6h">6 小時</option>
+                <option value="1d">1 天</option>
+                <option value="7d">7 天</option>
+                <option value="30d">30 天</option>
+                <option value="90d">90 天</option>
+                <option value="never" selected>永久（不失效）</option>
+              </select>
+              <p class="form-hint">到期後短碼會自動失效，無法再導向。</p>
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group form-group-full">
+              <label for="urlInput">長網址（http/https）</label>
+              <input type="url" id="urlInput" placeholder="https://example.com/very/long/link" required>
+              <p class="form-hint">請輸入以 http/https 開頭的網址</p>
+            </div>
+          </div>
+          
+          <!-- Cloudflare Turnstile -->
+          <div class="turnstile-wrapper">
+            <div class="cf-turnstile" data-sitekey="YOUR_TURNSTILE_SITE_KEY" data-callback="onTurnstileSuccess" data-theme="light"></div>
+          </div>
+          
+          <div class="btn-row">
+            <button type="submit" class="btn-submit" id="submitBtn">建立短網址</button>
+            <button type="button" class="btn-random" id="randomBtn">隨機短碼</button>
+          </div>
         </form>
         
-        <div class="custom-id-row">
-          <label>
-            <input type="checkbox" id="customIdCheck">
-            自訂短碼
-          </label>
-          <input type="text" id="customIdInput" class="custom-id-input" placeholder="例如: my-link" pattern="[a-zA-Z0-9\-]+" maxlength="32">
-        </div>
-        
-        <div class="expiry-row">
-          <label for="expirySelect">有效期限：</label>
-          <select id="expirySelect" class="expiry-select">
-            <option value="1h">1 小時</option>
-            <option value="6h">6 小時</option>
-            <option value="1d">1 天</option>
-            <option value="7d">7 天</option>
-            <option value="30d" selected>30 天</option>
-            <option value="90d">90 天</option>
-            <option value="never">永久有效</option>
-          </select>
-        </div>
-        
         <div class="result-box" id="resultBox">
-          <div class="result-url" id="resultSuccess">
+          <p class="result-title">您的短網址已建立：</p>
+          <div class="result-url-display" id="resultSuccess">
             <a href="#" id="shortUrl" target="_blank"></a>
-            <button type="button" onclick="copyUrl()">複製</button>
+            <button type="button" class="btn-copy" id="copyBtn">複製</button>
           </div>
           <p class="result-expiry" id="resultExpiry"></p>
           <p class="result-message" id="resultError"></p>
@@ -922,26 +950,54 @@
     </div>
   </footer>
   
+  <!-- Cloudflare Turnstile -->
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  
   <script>
-    // 自訂短碼切換
-    const customIdCheck = document.getElementById('customIdCheck');
-    const customIdInput = document.getElementById('customIdInput');
-    const expirySelect = document.getElementById('expirySelect');
-    
-    customIdCheck.addEventListener('change', function() {
-      customIdInput.classList.toggle('show', this.checked);
-      if (!this.checked) customIdInput.value = '';
-    });
-    
-    // 縮短網址表單
+    // DOM 元素
     const form = document.getElementById('shortenerForm');
     const urlInput = document.getElementById('urlInput');
+    const customIdInput = document.getElementById('customIdInput');
+    const expirySelect = document.getElementById('expirySelect');
     const submitBtn = document.getElementById('submitBtn');
+    const randomBtn = document.getElementById('randomBtn');
+    const copyBtn = document.getElementById('copyBtn');
     const resultBox = document.getElementById('resultBox');
     const resultSuccess = document.getElementById('resultSuccess');
     const resultError = document.getElementById('resultError');
     const resultExpiry = document.getElementById('resultExpiry');
     const shortUrlLink = document.getElementById('shortUrl');
+    
+    // Turnstile token
+    let turnstileToken = null;
+    
+    function onTurnstileSuccess(token) {
+      turnstileToken = token;
+    }
+    
+    // 產生隨機短碼
+    function generateRandomId(length = 6) {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      let result = '';
+      for (let i = 0; i < length; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return result;
+    }
+    
+    // 隨機短碼按鈕
+    randomBtn.addEventListener('click', function() {
+      customIdInput.value = generateRandomId(6);
+    });
+    
+    // 複製網址
+    copyBtn.addEventListener('click', function() {
+      const url = shortUrlLink.href;
+      navigator.clipboard.writeText(url).then(() => {
+        copyBtn.textContent = '已複製！';
+        setTimeout(() => copyBtn.textContent = '複製', 2000);
+      });
+    });
     
     // 過期時間格式化
     const expiryLabels = {
@@ -960,8 +1016,18 @@
       const url = urlInput.value.trim();
       if (!url) return;
       
+      // 檢查 Turnstile（如果已載入）
+      if (typeof turnstile !== 'undefined' && !turnstileToken) {
+        resultError.textContent = '請完成人機驗證';
+        resultSuccess.style.display = 'none';
+        resultExpiry.style.display = 'none';
+        resultError.style.display = 'block';
+        resultBox.classList.add('show', 'error');
+        return;
+      }
+      
       submitBtn.disabled = true;
-      submitBtn.textContent = '處理中...';
+      submitBtn.textContent = '建立中...';
       resultBox.classList.remove('show', 'error');
       
       try {
@@ -969,8 +1035,15 @@
           url,
           expiry: expirySelect.value
         };
-        if (customIdCheck.checked && customIdInput.value.trim()) {
+        
+        // 如果有自訂短碼
+        if (customIdInput.value.trim()) {
           body.customId = customIdInput.value.trim();
+        }
+        
+        // 如果有 Turnstile token
+        if (turnstileToken) {
+          body.turnstileToken = turnstileToken;
         }
         
         const response = await fetch('/api/public-create', {
@@ -990,7 +1063,7 @@
           // 顯示過期時間
           if (data.expiresAt) {
             const expiresDate = new Date(data.expiresAt);
-            resultExpiry.textContent = `有效期限：${expiresDate.toLocaleString('zh-TW')} (${expiryLabels[body.expiry] || body.expiry})`;
+            resultExpiry.textContent = `有效期限：${expiresDate.toLocaleString('zh-TW')} (${expiryLabels[expirySelect.value] || expirySelect.value})`;
             resultExpiry.style.display = 'block';
           } else {
             resultExpiry.textContent = '有效期限：永久有效';
@@ -999,6 +1072,15 @@
           
           resultBox.classList.remove('error');
           resultBox.classList.add('show');
+          
+          // 清空表單
+          customIdInput.value = '';
+          
+          // 重設 Turnstile
+          if (typeof turnstile !== 'undefined') {
+            turnstile.reset();
+            turnstileToken = null;
+          }
           
           // 更新統計
           loadStats();
@@ -1010,7 +1092,7 @@
           } else if (data.code === 'RATE_LIMITED') {
             errorMsg = data.error;
           } else if (data.code === 'ID_EXISTS') {
-            errorMsg = '此短碼已被使用，請換一個或取消自訂短碼讓系統自動分配';
+            errorMsg = '此短碼已被使用，請換一個或點擊「隨機短碼」自動生成';
           }
           
           resultError.textContent = errorMsg;
@@ -1028,18 +1110,8 @@
       }
       
       submitBtn.disabled = false;
-      submitBtn.textContent = '縮短網址';
+      submitBtn.textContent = '建立短網址';
     });
-    
-    // 複製網址
-    function copyUrl() {
-      const url = shortUrlLink.href;
-      navigator.clipboard.writeText(url).then(() => {
-        const btn = event.target;
-        btn.textContent = '已複製！';
-        setTimeout(() => btn.textContent = '複製', 2000);
-      });
-    }
     
     // 載入統計數據
     async function loadStats() {
