@@ -423,7 +423,7 @@ function generateAdminHtml(links, pagination) {
         <div class="admin-actions">
           <a href="/admin/analytics" class="btn btn-secondary">📊 分析儀表板</a>
           <button class="btn" onclick="exportData()">📥 匯出資料</button>
-          <a href="/admin?logout=1" class="btn logout-link" onclick="logout(); return false;">登出</a>
+          <a href="/" class="btn logout-link" onclick="logout(); return false;">登出</a>
         </div>
       </div>
       
@@ -583,7 +583,7 @@ function generateAdminHtml(links, pagination) {
       // 登出功能
       function logout() {
         document.cookie = 'admin_session=; Path=/admin; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
-        location.href = '/admin';
+        window.location.href = '/';
       }
     </script>
   `;
