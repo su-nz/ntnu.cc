@@ -95,6 +95,86 @@
       font-weight: 600;
       min-width: 40px;
     }
+    
+    .disclaimer-btn {
+      padding: 0.4rem 0.75rem;
+      font-size: 0.8rem;
+    }
+    
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    
+    .modal-overlay.show {
+      display: flex;
+    }
+    
+    .modal-card {
+      background: white;
+      border-radius: 16px;
+      max-width: 500px;
+      width: 100%;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-xl);
+    }
+    
+    .modal-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .modal-header h3 {
+      font-size: 1.1rem;
+      color: var(--text-dark);
+      margin: 0;
+    }
+    
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-muted);
+      line-height: 1;
+    }
+    
+    .modal-close:hover {
+      color: var(--primary);
+    }
+    
+    .modal-body {
+      padding: 1.5rem;
+    }
+    
+    .modal-body p {
+      margin-bottom: 1rem;
+      color: var(--text-light);
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+    
+    .modal-body p:last-child {
+      margin-bottom: 0;
+    }
+    
+    .modal-body strong {
+      color: var(--text-dark);
+    }
 
     .btn {
       display: inline-flex;
@@ -721,6 +801,18 @@
       .hero-stats {
         flex-direction: column;
         gap: 0.5rem;
+        align-items: center;
+        text-align: center;
+      }
+      
+      .hero-stats span {
+        justify-content: center;
+      }
+      
+      .disclaimer-btn {
+        display: inline-flex !important;
+        padding: 0.3rem 0.5rem;
+        font-size: 0.7rem;
       }
       
       .stats-content {
@@ -771,6 +863,7 @@
       <div class="nav-links">
         <a href="#features" data-i18n="nav.features">功能特色</a>
         <a href="#testimonials" data-i18n="nav.cases">使用案例</a>
+        <button class="btn btn-secondary disclaimer-btn" onclick="openDisclaimer()" data-i18n="nav.disclaimer">免責聲明</button>
         <button class="btn btn-secondary lang-toggle" id="langToggle" onclick="toggleLanguage()">EN</button>
       </div>
     </div>
@@ -970,6 +1063,23 @@
     </div>
   </footer>
   
+  <!-- 免責聲明彈出視窗 -->
+  <div class="modal-overlay" id="disclaimerModal" onclick="closeDisclaimer(event)">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h3 data-i18n="modal.title">免責聲明</h3>
+        <button class="modal-close" onclick="closeDisclaimer()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p><strong data-i18n="modal.notOfficial">此服務非國立臺灣師範大學官方所提供。</strong></p>
+        <p data-i18n="modal.dataManagement">所有資料由服務提供者 NZ 控管與維護，與學校官方無關。</p>
+        <p data-i18n="modal.noGuarantee">本服務不保證永久提供，可能因故隨時終止服務。</p>
+        <p data-i18n="modal.usage">使用本服務即表示您同意自行承擔相關風險。</p>
+        <p data-i18n="modal.contact">如有任何問題，請聯繫：<a href="mailto:ntnu.cc@sunz.tw">ntnu.cc@sunz.tw</a></p>
+      </div>
+    </div>
+  </div>
+  
   <!-- Cloudflare Turnstile（動態載入） -->
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
   
@@ -979,11 +1089,20 @@
       'zh-TW': {
         nav: {
           features: '功能特色',
-          cases: '使用案例'
+          cases: '使用案例',
+          disclaimer: '免責聲明'
         },
         hero: {
           title: '師大短網址服務',
           subtitle: '快速、安全、專為師大師生打造的短網址服務'
+        },
+        modal: {
+          title: '免責聲明',
+          notOfficial: '此服務非國立臺灣師範大學官方所提供。',
+          dataManagement: '所有資料由服務提供者 NZ 控管與維護，與學校官方無關。',
+          noGuarantee: '本服務不保證永久提供，可能因故隨時終止服務。',
+          usage: '使用本服務即表示您同意自行承擔相關風險。',
+          contact: '如有任何問題，請聯繫：'
         },
         form: {
           customId: '自訂短碼（可留空自動）',
@@ -1060,11 +1179,20 @@
       'en': {
         nav: {
           features: 'Features',
-          cases: 'Use Cases'
+          cases: 'Use Cases',
+          disclaimer: 'Disclaimer'
         },
         hero: {
           title: 'NTNU URL Shortener',
           subtitle: 'Fast, secure, and designed for NTNU faculty and students'
+        },
+        modal: {
+          title: 'Disclaimer',
+          notOfficial: 'This service is NOT officially provided by National Taiwan Normal University.',
+          dataManagement: 'All data is managed and maintained by the service provider NZ, independent of the university.',
+          noGuarantee: 'This service is provided without guarantee of permanent availability and may be terminated at any time.',
+          usage: 'By using this service, you agree to assume all related risks.',
+          contact: 'For any questions, please contact: '
         },
         form: {
           customId: 'Custom Short Code (optional)',
@@ -1189,6 +1317,24 @@
     function t(key) {
       return getNestedValue(i18n[currentLang], key) || key;
     }
+    
+    // ============ 免責聲明彈出視窗 ============
+    function openDisclaimer() {
+      document.getElementById('disclaimerModal').classList.add('show');
+      document.body.style.overflow = 'hidden';
+    }
+    
+    function closeDisclaimer(event) {
+      if (!event || event.target === event.currentTarget) {
+        document.getElementById('disclaimerModal').classList.remove('show');
+        document.body.style.overflow = '';
+      }
+    }
+    
+    // ESC 鍵關閉
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeDisclaimer();
+    });
     
     // ============ 主要功能 ============
     // DOM 元素
