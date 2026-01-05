@@ -663,18 +663,34 @@
       }
       
       .navbar-content {
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
         gap: 0.5rem;
       }
       
+      .logo {
+        font-size: 1.2rem;
+      }
+      
+      .logo-img {
+        width: 28px;
+        height: 28px;
+      }
+      
       .nav-links {
-        width: 100%;
-        justify-content: center;
-        gap: 1rem;
+        gap: 0.75rem;
+      }
+      
+      .nav-links a:not(.btn) {
+        display: none;
+      }
+      
+      .lang-toggle {
+        padding: 0.3rem 0.6rem;
+        font-size: 0.75rem;
       }
       
       .hero {
-        padding: 4.5rem 1rem 1.5rem;
+        padding: 4rem 1rem 1.5rem;
       }
       
       .hero h1 {
@@ -902,7 +918,7 @@
           <div class="testimonial-rating">★★★★★</div>
           <p class="testimonial-text" data-i18n="testimonials.t1.text">「分享課程資料給學生變得更方便，非常實用。」</p>
           <div class="testimonial-author">
-            <div class="author-avatar">王</div>
+            <div class="author-avatar">梅</div>
             <div class="author-info">
               <h4 data-i18n="testimonials.t1.name">梅友人</h4>
               <p data-i18n="testimonials.t1.dept">資訊工程學系</p>
@@ -913,7 +929,7 @@
           <div class="testimonial-rating">★★★★★</div>
           <p class="testimonial-text" data-i18n="testimonials.t2.text">「舉辦活動時分享報名連結超方便！自訂短碼讓連結更好記。」</p>
           <div class="testimonial-author">
-            <div class="author-avatar">林</div>
+            <div class="author-avatar">蘇</div>
             <div class="author-info">
               <h4 data-i18n="testimonials.t2.name">蘇哈哈</h4>
               <p data-i18n="testimonials.t2.dept">某社團</p>
@@ -924,7 +940,7 @@
           <div class="testimonial-rating">★★★★★</div>
           <p class="testimonial-text" data-i18n="testimonials.t3.text">「安全性讓我很放心，IP 限制確保只有校內人員能存取管理。」</p>
           <div class="testimonial-author">
-            <div class="author-avatar">陳</div>
+            <div class="author-avatar">小</div>
             <div class="author-info">
               <h4 data-i18n="testimonials.t3.name">小花</h4>
               <p data-i18n="testimonials.t3.dept">師大分部</p>
