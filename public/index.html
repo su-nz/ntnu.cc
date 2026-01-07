@@ -1246,7 +1246,7 @@
   </div>
   
   <!-- QR Code Generator -->
-  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   
   <!-- Cloudflare Turnstile（動態載入） -->
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
@@ -1628,18 +1628,30 @@
     
     // 生成 QR Code
     function generateQRCode(url) {
-      // 清除舊的 QR code
-      qrcodeContainer.innerHTML = '';
+      // 檢查 QRCode 庫是否已載入
+      if (typeof QRCode === 'undefined') {
+        console.error('QRCode library not loaded');
+        qrSection.style.display = 'none';
+        return;
+      }
       
-      // 生成新的 QR code
-      qrCodeInstance = new QRCode(qrcodeContainer, {
-        text: url,
-        width: 200,
-        height: 200,
-        colorDark: '#9B2335',
-        colorLight: '#ffffff',
-        correctLevel: QRCode.CorrectLevel.H
-      });
+      try {
+        // 清除舊的 QR code
+        qrcodeContainer.innerHTML = '';
+        
+        // 生成新的 QR code
+        qrCodeInstance = new QRCode(qrcodeContainer, {
+          text: url,
+          width: 200,
+          height: 200,
+          colorDark: '#9B2335',
+          colorLight: '#ffffff',
+          correctLevel: QRCode.CorrectLevel.H
+        });
+      } catch (error) {
+        console.error('Failed to generate QR code:', error);
+        qrSection.style.display = 'none';
+      }
     }
     
     form.addEventListener('submit', async function(e) {
@@ -1724,12 +1736,16 @@
         } else {
           // 顯示友善的錯誤訊息
           let errorMsg = data.error || t('errors.genericError');
+          
+          // 根據 HTTP 狀態碼或錯誤代碼顯示對應訊息
           if (data.code === 'IP_NOT_ALLOWED') {
             errorMsg = t('errors.ipNotAllowed');
           } else if (data.code === 'RATE_LIMITED') {
             errorMsg = data.error;
-          } else if (data.code === 'ID_EXISTS') {
+          } else if (data.code === 'ID_EXISTS' || response.status === 409) {
             errorMsg = t('errors.idExists');
+          } else if (response.status === 400) {
+            errorMsg = data.error || t('errors.genericError');
           }
           
           resultError.textContent = errorMsg;
@@ -1737,13 +1753,16 @@
           resultExpiry.style.display = 'none';
           resultError.style.display = 'block';
           resultBox.classList.add('show', 'error');
+          qrSection.style.display = 'none';
         }
       } catch (error) {
+        console.error('Submit error:', error);
         resultError.textContent = t('errors.networkError');
         resultSuccess.style.display = 'none';
         resultExpiry.style.display = 'none';
         resultError.style.display = 'block';
         resultBox.classList.add('show', 'error');
+        qrSection.style.display = 'none';
       }
       
       submitBtn.disabled = false;
