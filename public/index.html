@@ -1255,8 +1255,6 @@
     // ============ i18n 多語系系統 ============
     const i18n = {
       'zh-TW': {
-        'result.copyQr': '複製 QR Code',
-        'result.qrCopied': '已複製 QR Code！',
         announcement: {
           text: '公告：現已開放所有使用者使用，若發生惡意行為將恢復師大 IP 限制'
         },
@@ -1301,6 +1299,8 @@
           title: '您的短網址已建立：',
           copy: '複製',
           copied: '已複製！',
+          copyQr: '複製 QR Code',
+          qrCopied: '已複製 QR Code！',
           expiryLabel: '有效期限：',
           expiryForever: '永久有效'
         },
@@ -1606,25 +1606,63 @@
     copyQrBtn.addEventListener('click', async function() {
       try {
         const canvas = qrcodeContainer.querySelector('canvas');
-        if (!canvas) return;
+        if (!canvas) {
+          alert(currentLang === 'zh-TW' ? 'QR Code 尚未生成' : 'QR Code not generated yet');
+          return;
+        }
         
-        canvas.toBlob(async (blob) => {
-          try {
-            await navigator.clipboard.write([
-              new ClipboardItem({ 'image/png': blob })
-            ]);
-            copyQrBtn.textContent = t('result.qrCopied');
-            setTimeout(() => copyQrBtn.textContent = t('result.copyQr'), 2000);
-          } catch (err) {
-            console.error('Failed to copy QR code:', err);
-            alert('複製失敗，請手動截圖保存');
-          }
-        });
+        // 嘗試使用 Clipboard API
+        if (navigator.clipboard && navigator.clipboard.write) {
+          canvas.toBlob(async (blob) => {
+            if (!blob) {
+              fallbackDownloadQR(canvas);
+              return;
+            }
+            
+            try {
+              await navigator.clipboard.write([
+                new ClipboardItem({ 'image/png': blob })
+              ]);
+              copyQrBtn.textContent = t('result.qrCopied');
+              setTimeout(() => copyQrBtn.textContent = t('result.copyQr'), 2000);
+            } catch (err) {
+              console.error('Clipboard API failed:', err);
+              // 降級：提供下載
+              fallbackDownloadQR(canvas);
+            }
+          });
+        } else {
+          // 瀏覽器不支援 Clipboard API，提供下載
+          fallbackDownloadQR(canvas);
+        }
       } catch (err) {
         console.error('Failed to copy QR code:', err);
-        alert('複製失敗，請手動截圖保存');
+        fallbackDownloadQR(qrcodeContainer.querySelector('canvas'));
       }
     });
+    
+    // 降級方案：下載 QR Code
+    function fallbackDownloadQR(canvas) {
+      if (!canvas) return;
+      
+      try {
+        const url = canvas.toDataURL('image/png');
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'qrcode-ntnu-cc.png';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        
+        copyQrBtn.textContent = currentLang === 'zh-TW' ? '已下載 QR Code' : 'QR Code Downloaded';
+        setTimeout(() => copyQrBtn.textContent = t('result.copyQr'), 2000);
+      } catch (err) {
+        console.error('Failed to download QR code:', err);
+        alert(currentLang === 'zh-TW' 
+          ? '複製失敗，請手動截圖保存' 
+          : 'Copy failed, please take a screenshot');
+      }
+    }
     
     // 生成 QR Code
     function generateQRCode(url) {
