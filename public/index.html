@@ -521,6 +521,47 @@
       color: var(--text-muted);
     }
     
+    .qr-section {
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #d1fae5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .qr-container {
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+      display: inline-block;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .qr-container canvas {
+      display: block;
+    }
+    
+    .btn-copy-qr {
+      padding: 0.5rem 1.25rem;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+      font-weight: 500;
+    }
+    
+    .btn-copy-qr:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+    
     .hero-stats {
       display: flex;
       justify-content: center;
@@ -1044,6 +1085,10 @@
             <button type="button" class="btn-copy" id="copyBtn" data-i18n="result.copy">複製</button>
           </div>
           <p class="result-expiry" id="resultExpiry"></p>
+          <div class="qr-section" id="qrSection" style="display: none;">
+            <div class="qr-container" id="qrcodeContainer"></div>
+            <button type="button" class="btn-copy-qr" id="copyQrBtn" data-i18n="result.copyQr">複製 QR Code</button>
+          </div>
           <p class="result-message" id="resultError"></p>
         </div>
       </div>
@@ -1200,6 +1245,9 @@
     </div>
   </div>
   
+  <!-- QR Code Generator -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  
   <!-- Cloudflare Turnstile（動態載入） -->
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
   
@@ -1207,6 +1255,8 @@
     // ============ i18n 多語系系統 ============
     const i18n = {
       'zh-TW': {
+        'result.copyQr': '複製 QR Code',
+        'result.qrCopied': '已複製 QR Code！',
         announcement: {
           text: '公告：現已開放所有使用者使用，若發生惡意行為將恢復師大 IP 限制'
         },
@@ -1344,6 +1394,8 @@
           title: 'Your short URL is ready:',
           copy: 'Copy',
           copied: 'Copied!',
+          copyQr: 'Copy QR Code',
+          qrCopied: 'QR Code Copied!',
           expiryLabel: 'Expires: ',
           expiryForever: 'Never expires'
         },
@@ -1471,11 +1523,16 @@
     const submitBtn = document.getElementById('submitBtn');
     const randomBtn = document.getElementById('randomBtn');
     const copyBtn = document.getElementById('copyBtn');
+    const copyQrBtn = document.getElementById('copyQrBtn');
+    const qrSection = document.getElementById('qrSection');
+    const qrcodeContainer = document.getElementById('qrcodeContainer');
     const resultBox = document.getElementById('resultBox');
     const resultSuccess = document.getElementById('resultSuccess');
     const resultError = document.getElementById('resultError');
     const resultExpiry = document.getElementById('resultExpiry');
     const shortUrlLink = document.getElementById('shortUrl');
+    
+    let qrCodeInstance = null;
     
     // Turnstile
     let turnstileToken = null;
@@ -1545,6 +1602,46 @@
       });
     });
     
+    // 複製 QR Code
+    copyQrBtn.addEventListener('click', async function() {
+      try {
+        const canvas = qrcodeContainer.querySelector('canvas');
+        if (!canvas) return;
+        
+        canvas.toBlob(async (blob) => {
+          try {
+            await navigator.clipboard.write([
+              new ClipboardItem({ 'image/png': blob })
+            ]);
+            copyQrBtn.textContent = t('result.qrCopied');
+            setTimeout(() => copyQrBtn.textContent = t('result.copyQr'), 2000);
+          } catch (err) {
+            console.error('Failed to copy QR code:', err);
+            alert('複製失敗，請手動截圖保存');
+          }
+        });
+      } catch (err) {
+        console.error('Failed to copy QR code:', err);
+        alert('複製失敗，請手動截圖保存');
+      }
+    });
+    
+    // 生成 QR Code
+    function generateQRCode(url) {
+      // 清除舊的 QR code
+      qrcodeContainer.innerHTML = '';
+      
+      // 生成新的 QR code
+      qrCodeInstance = new QRCode(qrcodeContainer, {
+        text: url,
+        width: 200,
+        height: 200,
+        colorDark: '#9B2335',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    }
+    
     form.addEventListener('submit', async function(e) {
       e.preventDefault();
       
@@ -1605,6 +1702,10 @@
             resultExpiry.textContent = t('result.expiryLabel') + t('result.expiryForever');
             resultExpiry.style.display = 'block';
           }
+          
+          // 生成 QR Code
+          generateQRCode(data.shortUrl);
+          qrSection.style.display = 'flex';
           
           resultBox.classList.remove('error');
           resultBox.classList.add('show');
