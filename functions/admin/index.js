@@ -481,7 +481,7 @@ function generateAdminHtml(links, pagination) {
     
     paginationHtml = `
       <div class="pagination">
-        ${pagination.prevCursor ? `<a href="${prevUrl}" class="btn btn-secondary">上一頁</a>` : ''}
+        ${pagination.currentCursor ? `<a href="${prevUrl}" class="btn btn-secondary">上一頁</a>` : ''}
         ${pagination.hasMore ? `<a href="${nextUrl}" class="btn btn-secondary">下一頁</a>` : ''}
       </div>
     `;
