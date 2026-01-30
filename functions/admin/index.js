@@ -228,6 +228,7 @@ async function renderAdminDashboard(context) {
   // 取得分頁參數
   const url = new URL(request.url);
   const cursor = url.searchParams.get('cursor') || undefined;
+  const prevCursor = url.searchParams.get('prev') || undefined;
   const search = url.searchParams.get('search') || '';
   const limit = 50;
   
@@ -277,6 +278,8 @@ async function renderAdminDashboard(context) {
     cursor: listResult.cursor,
     hasMore: !listResult.list_complete,
     search,
+    currentCursor: cursor,
+    prevCursor: prevCursor,
   });
   
   return createHtmlResponse(html);
@@ -465,13 +468,22 @@ function generateAdminHtml(links, pagination) {
       </td>
     </tr>
     `;
-  }).join('');
-  
-  const paginationHtml = pagination.hasMore ? `
-    <div class="pagination">
-      <a href="/admin?cursor=${encodeURIComponent(pagination.cursor)}${pagination.search ? '&search=' + encodeURIComponent(pagination.search) : ''}" class="btn btn-secondary">下一頁</a>
-    </div>
-  ` : '';
+  // 建立分頁按鈕
+  let paginationHtml = '';
+  if (pagination.prevCursor || pagination.hasMore) {
+    const searchParam = pagination.search ? `&search=${encodeURIComponent(pagination.search)}` : '';
+    const prevUrl = pagination.prevCursor 
+      ? `/admin?cursor=${encodeURIComponent(pagination.prevCursor)}${searchParam}`
+      : '/admin' + (pagination.search ? `?search=${encodeURIComponent(pagination.search)}` : '');
+    const nextUrl = `/admin?cursor=${encodeURIComponent(pagination.cursor)}&prev=${encodeURIComponent(pagination.currentCursor || '')}${searchParam}`;
+    
+    paginationHtml = `
+      <div class="pagination">
+        ${pagination.prevCursor || !pagination.currentCursor ? `<a href="${prevUrl}" class="btn btn-secondary">上一頁</a>` : ''}
+        ${pagination.hasMore ? `<a href="${nextUrl}" class="btn btn-secondary">下一頁</a>` : ''}
+      </div>
+    `;
+  }
   
   const content = `
     <div class="container">
