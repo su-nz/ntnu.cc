@@ -168,7 +168,7 @@ async function handleDelete(context) {
       return createErrorResponse('Session expired', 'SESSION_EXPIRED', 401);
     }
   }
-  
+   
   // 解析要刪除的 ID
   let body;
   try {
