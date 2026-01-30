@@ -13,12 +13,6 @@ import { verifyCaptcha } from '../lib/security.js';
 export async function onRequest(context) {
   const { request, env } = context;
   const method = request.method;
-  const url = new URL(request.url);
-  
-  // 處理登出請求（支援 /admin/logout 和 /logout）
-  if (url.pathname === '/admin/logout' || url.pathname.endsWith('/logout')) {
-    return handleLogout(context);
-  }
   
   if (method === 'GET') {
     return handleGet(context);
@@ -150,24 +144,6 @@ async function handlePost(context) {
     status: response.status,
     headers: newHeaders,
   });
-}
-
-/**
- * 處理登出請求
- */
-async function handleLogout(context) {
-  const { request } = context;
-  
-  // 清除 cookie 並重導向到首頁
-  const response = new Response(null, {
-    status: 302,
-    headers: {
-      'Location': '/',
-      'Set-Cookie': 'admin_session=; Path=/admin; HttpOnly; Secure; SameSite=Strict; Max-Age=0',
-    },
-  });
-  
-  return response;
 }
 
 /**
