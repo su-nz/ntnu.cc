@@ -242,11 +242,14 @@ async function renderAdminDashboard(context) {
   const linkPromises = listResult.keys.map(async (key) => {
     const id = key.name.replace('link:', '');
     
-    // 並行讀取 targetUrl 和 stats
-    const [targetUrl, stats] = await Promise.all([
-      env.LINKS_KV.get(key.name),
+    // 並行讀取 targetUrl（含 metadata）和 stats
+    const [linkValue, stats] = await Promise.all([
+      env.LINKS_KV.getWithMetadata(key.name),
       env.LINKS_KV.get(`stats:${id}`, { type: 'json' })
     ]);
+    
+    const targetUrl = linkValue.value;
+    const metadata = linkValue.metadata || {};
     
     // 搜尋過濾
     if (search) {
@@ -261,8 +264,9 @@ async function renderAdminDashboard(context) {
       id,
       targetUrl,
       clicks: stats?.clicks || 0,
-      createdAt: stats?.createdAt || 'Unknown',
+      createdAt: stats?.createdAt || metadata.createdAt || 'Unknown',
       lastAccess: stats?.lastAccess || 'Never',
+      expiresAt: stats?.expiresAt || metadata.expiresAt || null,
     };
   });
   
@@ -354,8 +358,13 @@ function generateAdminHtml(links, pagination) {
       text-align: center;
     }
     
+    .links-table .expiry-col {
+      width: 120px;
+      text-align: center;
+    }
+    
     .links-table .actions-col {
-      width: 100px;
+      width: 120px;
     }
     
     .short-url {
@@ -408,7 +417,32 @@ function generateAdminHtml(links, pagination) {
     }
   `;
   
-  const linksHtml = links.map(link => `
+  const linksHtml = links.map(link => {
+    // 計算剩餘時間
+    let expiryText = '永久';
+    if (link.expiresAt) {
+      const expiryTime = new Date(link.expiresAt).getTime();
+      const now = Date.now();
+      const remaining = expiryTime - now;
+      
+      if (remaining <= 0) {
+        expiryText = '<span style="color: var(--error);">已過期</span>';
+      } else {
+        const days = Math.floor(remaining / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((remaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+        
+        if (days > 0) {
+          expiryText = `${days} 天`;
+        } else if (hours > 0) {
+          expiryText = `${hours} 小時`;
+        } else {
+          expiryText = `${minutes} 分鐘`;
+        }
+      }
+    }
+    
+    return `
     <tr>
       <td class="checkbox-col">
         <input type="checkbox" class="link-checkbox" data-id="${escapeHtml(link.id)}">
@@ -422,12 +456,16 @@ function generateAdminHtml(links, pagination) {
       <td class="stats-col">
         <span class="stats-badge">${link.clicks}</span>
       </td>
+      <td class="expiry-col">
+        <span class="stats-badge">${expiryText}</span>
+      </td>
       <td class="actions-col">
         <button class="btn btn-secondary" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;" onclick="copyToClipboard('https://ntnu.cc/${escapeHtml(link.id)}')">複製</button>
         <button class="btn btn-danger" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;" onclick="deleteLinks(['${escapeHtml(link.id)}'])">刪除</button>
       </td>
     </tr>
-  `).join('');
+    `;
+  }).join('');
   
   const paginationHtml = pagination.hasMore ? `
     <div class="pagination">
@@ -471,11 +509,12 @@ function generateAdminHtml(links, pagination) {
               <th class="id-col">短碼</th>
               <th class="url-col">目標 URL</th>
               <th class="stats-col">點擊</th>
+              <th class="expiry-col">時效</th>
               <th class="actions-col">操作</th>
             </tr>
           </thead>
           <tbody>
-            ${linksHtml || '<tr><td colspan="5" class="text-center text-muted" style="padding: 2rem;">沒有找到任何短網址</td></tr>'}
+            ${linksHtml || '<tr><td colspan="6" class="text-center text-muted" style="padding: 2rem;">沒有找到任何短網址</td></tr>'}
           </tbody>
         </table>
         
