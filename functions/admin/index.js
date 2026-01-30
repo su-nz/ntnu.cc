@@ -610,7 +610,8 @@ function generateAdminHtml(links, pagination) {
             '"' + l.id + '","' + l.url + '",' + l.clicks
           ).join('\\n');
           filename = 'ntnu-cc-links.csv';
-        window.location.href = '/admin/logout
+          type = 'text/csv';
+        } else {
           content = JSON.stringify(links, null, 2);
           filename = 'ntnu-cc-links.json';
           type = 'application/json';
@@ -627,8 +628,7 @@ function generateAdminHtml(links, pagination) {
       
       // 登出功能
       function logout() {
-        document.cookie = 'admin_session=; Path=/admin; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
-        window.location.href = '/';
+        window.location.href = '/admin/logout';
       }
     </script>
   `;
