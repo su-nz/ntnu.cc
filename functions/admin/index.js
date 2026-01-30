@@ -8,6 +8,7 @@ import { validateApiKey } from '../lib/validation.js';
 import { checkIpLockout, recordFailedAttempt, clearFailedAttempts } from '../lib/security.js';
 import { notifyLoginFailed, notifyLinkDeleted } from '../lib/discord.js';
 import { adminLoginPage, baseTemplate } from '../lib/templates.js';
+import { verifyCaptcha } from '../lib/security.js';
 
 export async function onRequest(context) {
   const { request, env } = context;
@@ -68,6 +69,21 @@ async function handlePost(context) {
   const country = request.headers.get('cf-ipcountry') || 'Unknown';
   const userAgent = request.headers.get('user-agent') || '';
   
+  // 檢查 CAPTCHA 驗證
+  let formData; // Declare once at the top of the function
+
+  try {
+    formData = await request.formData();
+  } catch {
+    return createHtmlResponse(adminLoginPage('無效的請求'), 400);
+  }
+
+  const captchaToken = formData.get('captchaToken');
+  const captchaValid = await verifyCaptcha(captchaToken, env.CAPTCHA_SECRET_KEY);
+  if (!captchaValid) {
+    return createHtmlResponse(adminLoginPage('CAPTCHA 驗證失敗，請重試'), 400);
+  }
+
   // 檢查 IP 鎖定
   const lockout = await checkIpLockout(env.LINKS_KV, ip);
   if (lockout.locked) {
@@ -76,13 +92,6 @@ async function handlePost(context) {
   }
   
   // 解析表單
-  let formData;
-  try {
-    formData = await request.formData();
-  } catch {
-    return createHtmlResponse(adminLoginPage('無效的請求'), 400);
-  }
-  
   const apiKey = formData.get('apiKey');
   
   // 驗證 API Key

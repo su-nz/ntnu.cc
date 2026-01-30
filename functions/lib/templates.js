@@ -701,11 +701,13 @@ export function adminLoginPage(error = '') {
   
   const errorHtml = error ? `<div class="alert alert-error">${escapeHtml(error)}</div>` : '';
   
+  const captchaScript = `<script src="https://www.google.com/recaptcha/api.js" async defer></script>`;
+
   const content = `
     <div class="container login-container">
       <div class="card login-card">
         <div class="logo">
-          <h1>🔐 管理後台</h1>
+          <h1>🔒 管理後台</h1>
           <p class="text-muted">ntnu.cc 短網址服務</p>
         </div>
         
@@ -715,13 +717,15 @@ export function adminLoginPage(error = '') {
           <label for="apiKey">API Key</label>
           <input type="password" id="apiKey" name="apiKey" placeholder="請輸入管理員 API Key" required autocomplete="current-password">
           
+          <div class="g-recaptcha" data-sitekey="${escapeHtml(env.CAPTCHA_SITE_KEY)}"></div>
+          
           <button type="submit" class="btn" style="width: 100%;">登入</button>
         </form>
       </div>
     </div>
   `;
-  
-  return baseTemplate({ title: '管理員登入', content, styles });
+
+  return baseTemplate({ title: '管理員登入', content, styles }) + captchaScript;
 }
 
 /**

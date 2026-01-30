@@ -228,3 +228,30 @@ export function verifyCsrfToken(request, sessionToken) {
   
   return headerToken === sessionToken;
 }
+
+/**
+ * 驗證 CAPTCHA Token
+ * @param {string} token - CAPTCHA Token from client
+ * @param {string} secretKey - CAPTCHA Secret Key
+ * @returns {Promise<boolean>} - Whether the CAPTCHA is valid
+ */
+export async function verifyCaptcha(token, secretKey) {
+  const url = 'https://www.google.com/recaptcha/api/siteverify';
+  const params = new URLSearchParams();
+  params.append('secret', secretKey);
+  params.append('response', token);
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params.toString(),
+    });
+
+    const data = await response.json();
+    return data.success;
+  } catch (error) {
+    console.error('CAPTCHA verification failed:', error);
+    return false;
+  }
+}
