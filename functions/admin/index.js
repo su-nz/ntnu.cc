@@ -75,20 +75,20 @@ async function handlePost(context) {
   try {
     formData = await request.formData();
   } catch {
-    return createHtmlResponse(adminLoginPage('無效的請求'), 400);
+    return createHtmlResponse(adminLoginPage('無效的請求', env.CAPTCHA_SITE_KEY), 400);
   }
 
   const captchaToken = formData.get('captchaToken');
   const captchaValid = await verifyCaptcha(captchaToken, env.CAPTCHA_SECRET_KEY);
   if (!captchaValid) {
-    return createHtmlResponse(adminLoginPage('CAPTCHA 驗證失敗，請重試'), 400);
+    return createHtmlResponse(adminLoginPage('CAPTCHA 驗證失敗，請重試', env.CAPTCHA_SITE_KEY), 400);
   }
 
   // 檢查 IP 鎖定
   const lockout = await checkIpLockout(env.LINKS_KV, ip);
   if (lockout.locked) {
     const retryAfter = Math.ceil((lockout.until - Date.now()) / 1000);
-    return createHtmlResponse(adminLoginPage(`IP 已被鎖定，請在 ${retryAfter} 秒後重試`), 429);
+    return createHtmlResponse(adminLoginPage(`IP 已被鎖定，請在 ${retryAfter} 秒後重試`, env.CAPTCHA_SITE_KEY), 429);
   }
   
   // 解析表單
@@ -107,10 +107,10 @@ async function handlePost(context) {
     });
     
     if (attempt.locked) {
-      return createHtmlResponse(adminLoginPage('登入失敗次數過多，IP 已被鎖定 15 分鐘'), 429);
+      return createHtmlResponse(adminLoginPage('登入失敗次數過多，IP 已被鎖定 15 分鐘', env.CAPTCHA_SITE_KEY), 429);
     }
     
-    return createHtmlResponse(adminLoginPage(`登入失敗，還剩 ${5 - attempt.attempts} 次嘗試機會`), 401);
+    return createHtmlResponse(adminLoginPage(`登入失敗，還剩 ${5 - attempt.attempts} 次嘗試機會`, env.CAPTCHA_SITE_KEY), 401);
   }
   
   // 清除失敗嘗試
