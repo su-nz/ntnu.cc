@@ -15,8 +15,8 @@ export async function onRequest(context) {
   const method = request.method;
   const url = new URL(request.url);
   
-  // 處理登出請求
-  if (url.pathname === '/admin/logout') {
+  // 處理登出請求（支援 /admin/logout 和 /logout）
+  if (url.pathname === '/admin/logout' || url.pathname.endsWith('/logout')) {
     return handleLogout(context);
   }
   
