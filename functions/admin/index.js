@@ -468,6 +468,8 @@ function generateAdminHtml(links, pagination) {
       </td>
     </tr>
     `;
+  });
+  
   // 建立分頁按鈕
   let paginationHtml = '';
   if (pagination.prevCursor || pagination.hasMore) {
