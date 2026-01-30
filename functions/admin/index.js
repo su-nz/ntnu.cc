@@ -231,30 +231,36 @@ async function renderAdminDashboard(context) {
     cursor,
   });
   
-  // 取得完整資料
-  const links = [];
-  for (const key of listResult.keys) {
+  // 並行取得完整資料以提升效能
+  const linkPromises = listResult.keys.map(async (key) => {
     const id = key.name.replace('link:', '');
-    const targetUrl = await env.LINKS_KV.get(key.name);
-    const stats = await env.LINKS_KV.get(`stats:${id}`, { type: 'json' });
+    
+    // 並行讀取 targetUrl 和 stats
+    const [targetUrl, stats] = await Promise.all([
+      env.LINKS_KV.get(key.name),
+      env.LINKS_KV.get(`stats:${id}`, { type: 'json' })
+    ]);
     
     // 搜尋過濾
     if (search) {
       const searchLower = search.toLowerCase();
       if (!id.toLowerCase().includes(searchLower) && 
           !targetUrl.toLowerCase().includes(searchLower)) {
-        continue;
+        return null; // 不符合搜尋條件
       }
     }
     
-    links.push({
+    return {
       id,
       targetUrl,
       clicks: stats?.clicks || 0,
       createdAt: stats?.createdAt || 'Unknown',
       lastAccess: stats?.lastAccess || 'Never',
-    });
-  }
+    };
+  });
+  
+  // 等待所有資料讀取完成，並過濾掉 null 值
+  const links = (await Promise.all(linkPromises)).filter(link => link !== null);
   
   const html = generateAdminHtml(links, {
     cursor: listResult.cursor,
