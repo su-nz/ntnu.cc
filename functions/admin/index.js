@@ -6,7 +6,7 @@
 import { createHtmlResponse, createResponse, createErrorResponse, escapeHtml, getClientInfo } from '../lib/utils.js';
 import { validateApiKey } from '../lib/validation.js';
 import { checkIpLockout, recordFailedAttempt, clearFailedAttempts } from '../lib/security.js';
-import { notifyLoginFailed, notifyLinkDeleted } from '../lib/discord.js';
+import { notifyLoginFailed, notifyLinkDeleted, notifyLoginSuccess } from '../lib/discord.js';
 import { adminLoginPage, baseTemplate } from '../lib/templates.js';
 import { verifyCaptcha } from '../lib/security.js';
 
@@ -115,6 +115,13 @@ async function handlePost(context) {
   
   // 清除失敗嘗試
   await clearFailedAttempts(env.LINKS_KV, ip);
+  
+  // 發送登入成功通知
+  await notifyLoginSuccess(env.DISCORD_WEBHOOK_URL, {
+    ip,
+    country,
+    userAgent,
+  });
   
   // 建立 Session
   const sessionKey = crypto.randomUUID();
