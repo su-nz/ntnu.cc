@@ -714,14 +714,30 @@ export function adminLoginPage(error = '', captchaSiteKey = '') {
         
         ${errorHtml}
         
-        <form method="POST" action="/admin">
+        <form method="POST" action="/admin" id="loginForm">
           <label for="apiKey">API Key</label>
           <input type="password" id="apiKey" name="apiKey" placeholder="請輸入管理員 API Key" required autocomplete="current-password">
           
-          <div class="g-recaptcha" data-sitekey="${escapeHtml(captchaSiteKey)}"></div>
+          <div class="g-recaptcha" data-sitekey="${escapeHtml(captchaSiteKey)}" data-callback="onCaptchaSuccess"></div>
+          <input type="hidden" id="captchaToken" name="captchaToken">
           
           <button type="submit" class="btn" style="width: 100%;">登入</button>
         </form>
+        
+        <script>
+          function onCaptchaSuccess(token) {
+            document.getElementById('captchaToken').value = token;
+          }
+          
+          document.getElementById('loginForm').addEventListener('submit', function(e) {
+            const token = document.getElementById('captchaToken').value;
+            if (!token) {
+              e.preventDefault();
+              alert('請完成 CAPTCHA 驗證');
+              return false;
+            }
+          });
+        </script>
       </div>
     </div>
   `;
