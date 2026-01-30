@@ -671,9 +671,10 @@ export function rateLimitedPage(retryAfter) {
 /**
  * 管理員登入頁面
  * @param {string} error 
+ * @param {string} captchaSiteKey 
  * @returns {string}
  */
-export function adminLoginPage(error = '') {
+export function adminLoginPage(error = '', captchaSiteKey = '') {
   const styles = `
     .login-container {
       display: flex;
@@ -698,9 +699,9 @@ export function adminLoginPage(error = '') {
       margin-bottom: 0.5rem;
     }
   `;
-  
+
   const errorHtml = error ? `<div class="alert alert-error">${escapeHtml(error)}</div>` : '';
-  
+
   const captchaScript = `<script src="https://www.google.com/recaptcha/api.js" async defer></script>`;
 
   const content = `
@@ -717,7 +718,7 @@ export function adminLoginPage(error = '') {
           <label for="apiKey">API Key</label>
           <input type="password" id="apiKey" name="apiKey" placeholder="請輸入管理員 API Key" required autocomplete="current-password">
           
-          <div class="g-recaptcha" data-sitekey="${escapeHtml(env.CAPTCHA_SITE_KEY)}"></div>
+          <div class="g-recaptcha" data-sitekey="${escapeHtml(captchaSiteKey)}"></div>
           
           <button type="submit" class="btn" style="width: 100%;">登入</button>
         </form>

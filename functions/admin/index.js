@@ -56,8 +56,8 @@ async function handleGet(context) {
     }
   }
   
-  // 顯示登入頁面
-  return createHtmlResponse(adminLoginPage());
+  // 顯示登入頁面，傳入 CAPTCHA_SITE_KEY
+  return createHtmlResponse(adminLoginPage('', env.CAPTCHA_SITE_KEY));
 }
 
 /**
