@@ -481,7 +481,7 @@ function generateAdminHtml(links, pagination) {
     
     paginationHtml = `
       <div class="pagination">
-        ${pagination.prevCursor || !pagination.currentCursor ? `<a href="${prevUrl}" class="btn btn-secondary">上一頁</a>` : ''}
+        ${pagination.prevCursor ? `<a href="${prevUrl}" class="btn btn-secondary">上一頁</a>` : ''}
         ${pagination.hasMore ? `<a href="${nextUrl}" class="btn btn-secondary">下一頁</a>` : ''}
       </div>
     `;
@@ -528,7 +528,7 @@ function generateAdminHtml(links, pagination) {
             </tr>
           </thead>
           <tbody>
-            ${linksHtml || '<tr><td colspan="6" class="text-center text-muted" style="padding: 2rem;">沒有找到任何短網址</td></tr>'}
+            ${linksHtml.join('') || '<tr><td colspan="6" class="text-center text-muted" style="padding: 2rem;">沒有找到任何短網址</td></tr>'}
           </tbody>
         </table>
         
