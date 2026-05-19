@@ -32,6 +32,44 @@
   const totalIdx  = $('#totalIdx');
   const canvas    = $('#canvas');
 
+  // --- 本機保存(SPEC2 §5.3,純前端不落地,只存在瀏覽器) -----------
+  const STORAGE_KEY = 'ntnu.deskcard.records.v1';
+  function persist() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(records)); } catch (_) {}
+  }
+  function restore() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      const arr = JSON.parse(raw);
+      if (Array.isArray(arr)) {
+        arr.forEach(r => {
+          if (r && typeof r.name === 'string') {
+            records.push({ name: r.name, title: r.title || '', org: r.org || '' });
+          }
+        });
+      }
+    } catch (_) { /* 損毀就忽略 */ }
+  }
+
+  // --- 即時欄位檢查(SPEC2 §5.2) ---------------------------------
+  const LIMITS = { name: 12, title: 16, org: 20 };
+  function validateField(input, errEl, fieldEl, label, limit) {
+    const v = input.value || '';
+    if (v.length > limit) {
+      errEl.textContent = `${label}過長 (${v.length}/${limit}),會自動縮小字級但建議精簡`;
+      fieldEl.classList.add('has-error');
+    } else {
+      errEl.textContent = '';
+      fieldEl.classList.remove('has-error');
+    }
+  }
+  function runValidation() {
+    validateField(inName,  $('#errName'),  $('#fieldName'),  '姓名', LIMITS.name);
+    validateField(inTitle, $('#errTitle'), $('#fieldTitle'), '職稱', LIMITS.title);
+    validateField(inOrg,   $('#errOrg'),   $('#fieldOrg'),   '單位', LIMITS.org);
+  }
+
   // --- 預覽渲染 -------------------------------------------------
   function renderPreview() {
     const rec = currentIdx >= 0 ? records[currentIdx] : {
@@ -127,7 +165,9 @@
     editingIdx = -1;
     btnUpdate.disabled = true;
     inName.value = inTitle.value = inOrg.value = '';
+    runValidation();
     inName.focus();
+    persist();
     renderList(); renderPreview();
   });
 
@@ -137,26 +177,30 @@
     if (!rec.name) { T('姓名不可為空', 'warning'); return; }
     records[editingIdx] = rec;
     currentIdx = editingIdx;
+    persist();
     renderList(); renderPreview();
     T('已更新', 'success');
   });
 
   btnClear.addEventListener('click', () => {
     if (!records.length) return;
-    if (!confirm('確定清空整份名單?')) return;
+    if (!confirm('確定清空整份名單?(將同時移除瀏覽器自動保存的資料)')) return;
     records.length = 0;
     currentIdx = -1; editingIdx = -1;
     btnUpdate.disabled = true;
+    persist();
     renderList(); renderPreview();
   });
 
-  // 表單即時預覽
+  // 表單即時預覽 + 即時驗證
   [inName, inTitle, inOrg].forEach(el => {
     el.addEventListener('input', () => {
+      runValidation();
       if (editingIdx < 0) {
         currentIdx = -1;
         renderPreview();
       }
+      // 編輯既有筆時不即時改預覽,維持那筆原貌直到按「更新此筆」
     });
   });
 
@@ -237,6 +281,7 @@
     sheetHeaders = []; sheetRows = [];
     $('#mapping').style.display = 'none';
     currentIdx = records.length ? records.length - 1 : -1;
+    persist();
     renderList(); renderPreview();
   });
 
@@ -306,6 +351,12 @@
   });
 
   // --- 初始 -----------------------------------------------------
+  restore();
+  if (records.length) {
+    currentIdx = 0;
+    T(`已自動載入上次的 ${records.length} 筆名單(僅存於此瀏覽器)`, 'success');
+  }
+  runValidation();
   renderList();
   renderPreview();
   window.addEventListener('resize', renderPreview);

@@ -1,0 +1,36 @@
+{
+  "_meta": {
+    "name": "NTNU 視覺識別色票",
+    "source": "依師大紅 #9B2335 為主軸延伸,搭配既有 ntnu.cc 設計系統使用",
+    "note": "本檔為工具子站可 fetch 取用的標準色票;若官方有正式色票釋出,請以官方為準。"
+  },
+  "primary": {
+    "ntnuRed":      { "hex": "#9B2335", "name": "師大紅",   "usage": "主色、強調、CTA" },
+    "ntnuRedDark":  { "hex": "#7A1C2A", "name": "師大深紅", "usage": "hover / 重點文字" },
+    "ntnuRedLight": { "hex": "#C94C5C", "name": "師大粉紅", "usage": "漸層、次要強調" }
+  },
+  "accent": {
+    "gold":     { "hex": "#D4A24C", "name": "金黃", "usage": "獎項 / 證書點綴" },
+    "skyBlue":  { "hex": "#6FA8DC", "name": "水藍", "usage": "資訊提示" },
+    "classic":  { "hex": "#4A4A4A", "name": "古典灰", "usage": "正式文件、低調強調" }
+  },
+  "neutral": {
+    "textPrimary":   { "hex": "#2d2d2d", "name": "主要文字" },
+    "textSecondary": { "hex": "#555555", "name": "次要文字" },
+    "textMuted":     { "hex": "#777777", "name": "輔助文字" },
+    "border":        { "hex": "#e5e7eb", "name": "邊框" },
+    "bgLight":       { "hex": "#fff9f9", "name": "淺底" },
+    "bgWhite":       { "hex": "#ffffff", "name": "白底" }
+  },
+  "semantic": {
+    "success": { "hex": "#10b981", "name": "成功" },
+    "warning": { "hex": "#f59e0b", "name": "警示" },
+    "error":   { "hex": "#ef4444", "name": "錯誤" }
+  },
+  "gradients": {
+    "primary": {
+      "css": "linear-gradient(135deg, #9B2335 0%, #B83A4B 50%, #C94C5C 100%)",
+      "usage": "主視覺、按鈕、icon 背景"
+    }
+  }
+}

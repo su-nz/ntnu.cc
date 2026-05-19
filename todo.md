@@ -27,7 +27,18 @@
   - hero 與 features 之間新增 `#ecosystem` 區塊,三張卡片(視覺工具箱 ready / 文件中心 soon / 資源索引 soon)
   - navbar 第一個錨點 + footer 服務欄連到 `tools.ntnu.cc`
   - i18n 中英文補齊 `ecosystem.*` / `nav.ecosystem`
-  - ⚠️ 純前端改動,**尚未在瀏覽器中視覺驗證**,行動裝置斷點要再看一眼
+- [x] **SPEC2 §4.2 colors.json**:[public/assets/ntnu-vi/colors.json](public/assets/ntnu-vi/colors.json)
+  - 五組色票:primary(師大紅系)/ accent(金/藍/灰)/ neutral / semantic / gradients
+  - 工具子站可 `fetch('/assets/ntnu-vi/colors.json')` 取用,免重複寫死
+- [x] **桌牌即時錯誤檢查(SPEC2 §5.2)**:[public/_sites/tools/deskcard/app.js](public/_sites/tools/deskcard/app.js)
+  - 姓名/職稱/單位各自有建議字數上限(12 / 16 / 20),超過時 inline 紅字提示,但不阻擋(交給 auto-fit)
+- [x] **桌牌名單本機自動保存(SPEC2 §5.3)**:`localStorage` key `ntnu.deskcard.records.v1`
+  - 不引入 LocalForage(規格雖列,但目前資料量 + 結構簡單,原生 API 足矣)
+  - 新增/更新/匯入/清空都會同步,重新進來自動載入並 toast 提示
+- [x] **三個頁面 RWD 強化**:
+  - [public/index.html](public/index.html) `#ecosystem` 區塊 < 768px 微調 padding / icon / 字級
+  - [public/_sites/tools/index.html](public/_sites/tools/index.html) 補完整 < 768px 規則(原本沒任何 @media)
+  - [public/_sites/tools/deskcard/index.html](public/_sites/tools/deskcard/index.html) 新增 1280 / 1100 / 768 三層斷點;< 1100 用 flex order 把預覽放最上面、名單放最下面;手機按鈕全寬
 
 ---
 
@@ -56,25 +67,27 @@
 - `/api/*`、`/admin/*`
 - 既有靜態檔(`/NTNU_Red.png`、`/og-image.png` 等)
 
-### 4. VI 資產對不上 SPEC
-[public/assets/ntnu-vi/](public/assets/ntnu-vi/) 實際是教室或建築照片(`A101` / `A104` / `A701~A721` / `B101~B109`)
-**不是** SPEC2 §2.2 / §4.2 所說的「校徽各版本 + colors.json + 字體圖檔」。
-桌牌 MVP 目前 fallback 用 `/NTNU_Red.png` 當校徽。
-- **要不要補真的 VI 素材?**
-- **還是修 SPEC2 描述以符合現況?**
-- 需要使用者拍板
-
-### 5. 桌牌雙面反轉 — 仍需列印實測
+### 4. 桌牌雙面反轉 — 仍需列印實測
 雖然 html2canvas 已可正確擷取 `rotate(180deg)`,但**對折立桌時翻過來看的方向**仍需印一張驗證。
 
-### 6. templates.js inline CSS sibling 同步
+### 5. templates.js inline CSS sibling 同步
 [functions/lib/templates.js](functions/lib/templates.js) baseTemplate 的 inline CSS 與 [public/assets/ntnu-theme.css](public/assets/ntnu-theme.css) 是 sibling 複本,改動其一要手動同步。
 
 ---
 
-## 🔴 還沒動的 SPEC2 項目
+## 🔴 SPEC2 中刻意保留未做的項目
 
-(目前 SPEC2 列表已全部至少有一版產出,後續工作以「驗證 + 修缺陷」為主,見上方 🟡 區。)
+這些屬於「另一個 MVP 級別」的工作,不在當前 scope:
+
+- **§5.1 3/4 條狀 + 三折/四折版型 + 裁切線**:目前桌牌是 1/2 對折,SPEC 寫的是 3/4 條狀三折(立牌)。要做需要重新設計 .a4 結構 + 摺線標示,且需印實測。
+- **§5.2 元件鎖定 + 拖拉**:目前文字位置完全固定(由 CSS center),沒有拖拉。要做需要引入 drag handle + 鎖定狀態機。
+- **§8 階段一其他工具**:證書產生器 / 識別證排版仍標 `soon`。架構上已預留 `public/_sites/tools/cert/` 與 `/badge/` 路徑,直接照桌牌模式複製即可。
+
+---
+
+## 🔴 SPEC 與現況的描述差異(需使用者拍板)
+
+- **VI 資產**:[public/assets/ntnu-vi/](public/assets/ntnu-vi/) 實際是教室/建築照(`A101` / `A701~A721` 等),非 SPEC2 §2.2 寫的「校徽各版本」。`colors.json` 已補上,但圖檔本身要不要補正版校徽尚未決定。
 
 ---
 
