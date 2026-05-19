@@ -13,6 +13,7 @@ const EVENT_COLORS = {
   RATE_LIMITED: 0xE67E22,    // 橙色
   LINK_DELETED: 0x9B59B6,    // 紫色
   LOGIN_FAILED: 0xE74C3C,    // 紅色
+  LOGIN_SUCCESS: 0x2ECC71,   // 綠色
 };
 
 /**
@@ -137,6 +138,26 @@ export async function notifyRateLimited(webhookUrl, { ip, endpoint, count }) {
     fields: [
       { name: 'Endpoint', value: endpoint, inline: true },
       { name: 'Request Count', value: String(count), inline: true },
+      { name: 'Timestamp', value: new Date().toISOString(), inline: true },
+    ],
+    footer: { text: `IP: ${ip}` },
+  };
+  
+  return sendWebhook(webhookUrl, embed);
+}
+
+/**
+ * 通知：登入成功
+ * @param {string} webhookUrl 
+ * @param {Object} data 
+ */
+export async function notifyLoginSuccess(webhookUrl, { ip, country, userAgent }) {
+  const embed = {
+    title: '✅ Login Success',
+    color: EVENT_COLORS.LOGIN_SUCCESS,
+    fields: [
+      { name: 'Country', value: country || 'Unknown', inline: true },
+      { name: 'User-Agent', value: truncate(userAgent || 'Unknown', 100) },
       { name: 'Timestamp', value: new Date().toISOString(), inline: true },
     ],
     footer: { text: `IP: ${ip}` },

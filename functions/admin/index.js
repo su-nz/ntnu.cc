@@ -6,8 +6,9 @@
 import { createHtmlResponse, createResponse, createErrorResponse, escapeHtml, getClientInfo } from '../lib/utils.js';
 import { validateApiKey } from '../lib/validation.js';
 import { checkIpLockout, recordFailedAttempt, clearFailedAttempts } from '../lib/security.js';
-import { notifyLoginFailed, notifyLinkDeleted } from '../lib/discord.js';
+import { notifyLoginFailed, notifyLinkDeleted, notifyLoginSuccess } from '../lib/discord.js';
 import { adminLoginPage, baseTemplate } from '../lib/templates.js';
+import { verifyCaptcha } from '../lib/security.js';
 
 export async function onRequest(context) {
   const { request, env } = context;
@@ -55,8 +56,8 @@ async function handleGet(context) {
     }
   }
   
-  // 顯示登入頁面
-  return createHtmlResponse(adminLoginPage());
+  // 顯示登入頁面，傳入 CAPTCHA_SITE_KEY
+  return createHtmlResponse(adminLoginPage('', env.CAPTCHA_SITE_KEY));
 }
 
 /**
@@ -68,21 +69,29 @@ async function handlePost(context) {
   const country = request.headers.get('cf-ipcountry') || 'Unknown';
   const userAgent = request.headers.get('user-agent') || '';
   
+  // 檢查 CAPTCHA 驗證
+  let formData; // Declare once at the top of the function
+
+  try {
+    formData = await request.formData();
+  } catch {
+    return createHtmlResponse(adminLoginPage('無效的請求', env.CAPTCHA_SITE_KEY), 400);
+  }
+
+  const captchaToken = formData.get('captchaToken');
+  const captchaValid = await verifyCaptcha(captchaToken, env.CAPTCHA_SECRET_KEY);
+  if (!captchaValid) {
+    return createHtmlResponse(adminLoginPage('CAPTCHA 驗證失敗，請重試', env.CAPTCHA_SITE_KEY), 400);
+  }
+
   // 檢查 IP 鎖定
   const lockout = await checkIpLockout(env.LINKS_KV, ip);
   if (lockout.locked) {
     const retryAfter = Math.ceil((lockout.until - Date.now()) / 1000);
-    return createHtmlResponse(adminLoginPage(`IP 已被鎖定，請在 ${retryAfter} 秒後重試`), 429);
+    return createHtmlResponse(adminLoginPage(`IP 已被鎖定，請在 ${retryAfter} 秒後重試`, env.CAPTCHA_SITE_KEY), 429);
   }
   
   // 解析表單
-  let formData;
-  try {
-    formData = await request.formData();
-  } catch {
-    return createHtmlResponse(adminLoginPage('無效的請求'), 400);
-  }
-  
   const apiKey = formData.get('apiKey');
   
   // 驗證 API Key
@@ -98,14 +107,21 @@ async function handlePost(context) {
     });
     
     if (attempt.locked) {
-      return createHtmlResponse(adminLoginPage('登入失敗次數過多，IP 已被鎖定 15 分鐘'), 429);
+      return createHtmlResponse(adminLoginPage('登入失敗次數過多，IP 已被鎖定 15 分鐘', env.CAPTCHA_SITE_KEY), 429);
     }
     
-    return createHtmlResponse(adminLoginPage(`登入失敗，還剩 ${5 - attempt.attempts} 次嘗試機會`), 401);
+    return createHtmlResponse(adminLoginPage(`登入失敗，還剩 ${5 - attempt.attempts} 次嘗試機會`, env.CAPTCHA_SITE_KEY), 401);
   }
   
   // 清除失敗嘗試
   await clearFailedAttempts(env.LINKS_KV, ip);
+  
+  // 發送登入成功通知
+  await notifyLoginSuccess(env.DISCORD_WEBHOOK_URL, {
+    ip,
+    country,
+    userAgent,
+  });
   
   // 建立 Session
   const sessionKey = crypto.randomUUID();
@@ -159,7 +175,7 @@ async function handleDelete(context) {
       return createErrorResponse('Session expired', 'SESSION_EXPIRED', 401);
     }
   }
-  
+   
   // 解析要刪除的 ID
   let body;
   try {
@@ -212,6 +228,7 @@ async function renderAdminDashboard(context) {
   // 取得分頁參數
   const url = new URL(request.url);
   const cursor = url.searchParams.get('cursor') || undefined;
+  const prevCursor = url.searchParams.get('prev') || undefined;
   const search = url.searchParams.get('search') || '';
   const limit = 50;
   
@@ -222,35 +239,47 @@ async function renderAdminDashboard(context) {
     cursor,
   });
   
-  // 取得完整資料
-  const links = [];
-  for (const key of listResult.keys) {
+  // 並行取得完整資料以提升效能
+  const linkPromises = listResult.keys.map(async (key) => {
     const id = key.name.replace('link:', '');
-    const targetUrl = await env.LINKS_KV.get(key.name);
-    const stats = await env.LINKS_KV.get(`stats:${id}`, { type: 'json' });
+    
+    // 並行讀取 targetUrl（含 metadata）和 stats
+    const [linkValue, stats] = await Promise.all([
+      env.LINKS_KV.getWithMetadata(key.name),
+      env.LINKS_KV.get(`stats:${id}`, { type: 'json' })
+    ]);
+    
+    const targetUrl = linkValue.value;
+    const metadata = linkValue.metadata || {};
     
     // 搜尋過濾
     if (search) {
       const searchLower = search.toLowerCase();
       if (!id.toLowerCase().includes(searchLower) && 
           !targetUrl.toLowerCase().includes(searchLower)) {
-        continue;
+        return null; // 不符合搜尋條件
       }
     }
     
-    links.push({
+    return {
       id,
       targetUrl,
       clicks: stats?.clicks || 0,
-      createdAt: stats?.createdAt || 'Unknown',
+      createdAt: stats?.createdAt || metadata.createdAt || 'Unknown',
       lastAccess: stats?.lastAccess || 'Never',
-    });
-  }
+      expiresAt: stats?.expiresAt || metadata.expiresAt || null,
+    };
+  });
+  
+  // 等待所有資料讀取完成，並過濾掉 null 值
+  const links = (await Promise.all(linkPromises)).filter(link => link !== null);
   
   const html = generateAdminHtml(links, {
     cursor: listResult.cursor,
     hasMore: !listResult.list_complete,
     search,
+    currentCursor: cursor,
+    prevCursor: prevCursor,
   });
   
   return createHtmlResponse(html);
@@ -332,8 +361,13 @@ function generateAdminHtml(links, pagination) {
       text-align: center;
     }
     
+    .links-table .expiry-col {
+      width: 120px;
+      text-align: center;
+    }
+    
     .links-table .actions-col {
-      width: 100px;
+      width: 120px;
     }
     
     .short-url {
@@ -386,7 +420,32 @@ function generateAdminHtml(links, pagination) {
     }
   `;
   
-  const linksHtml = links.map(link => `
+  const linksHtml = links.map(link => {
+    // 計算剩餘時間
+    let expiryText = '永久';
+    if (link.expiresAt) {
+      const expiryTime = new Date(link.expiresAt).getTime();
+      const now = Date.now();
+      const remaining = expiryTime - now;
+      
+      if (remaining <= 0) {
+        expiryText = '<span style="color: var(--error);">已過期</span>';
+      } else {
+        const days = Math.floor(remaining / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((remaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+        
+        if (days > 0) {
+          expiryText = `${days} 天`;
+        } else if (hours > 0) {
+          expiryText = `${hours} 小時`;
+        } else {
+          expiryText = `${minutes} 分鐘`;
+        }
+      }
+    }
+    
+    return `
     <tr>
       <td class="checkbox-col">
         <input type="checkbox" class="link-checkbox" data-id="${escapeHtml(link.id)}">
@@ -400,18 +459,33 @@ function generateAdminHtml(links, pagination) {
       <td class="stats-col">
         <span class="stats-badge">${link.clicks}</span>
       </td>
+      <td class="expiry-col">
+        <span class="stats-badge">${expiryText}</span>
+      </td>
       <td class="actions-col">
         <button class="btn btn-secondary" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;" onclick="copyToClipboard('https://ntnu.cc/${escapeHtml(link.id)}')">複製</button>
         <button class="btn btn-danger" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;" onclick="deleteLinks(['${escapeHtml(link.id)}'])">刪除</button>
       </td>
     </tr>
-  `).join('');
+    `;
+  });
   
-  const paginationHtml = pagination.hasMore ? `
-    <div class="pagination">
-      <a href="/admin?cursor=${encodeURIComponent(pagination.cursor)}${pagination.search ? '&search=' + encodeURIComponent(pagination.search) : ''}" class="btn btn-secondary">下一頁</a>
-    </div>
-  ` : '';
+  // 建立分頁按鈕
+  let paginationHtml = '';
+  if (pagination.prevCursor || pagination.hasMore) {
+    const searchParam = pagination.search ? `&search=${encodeURIComponent(pagination.search)}` : '';
+    const prevUrl = pagination.prevCursor 
+      ? `/admin?cursor=${encodeURIComponent(pagination.prevCursor)}${searchParam}`
+      : '/admin' + (pagination.search ? `?search=${encodeURIComponent(pagination.search)}` : '');
+    const nextUrl = `/admin?cursor=${encodeURIComponent(pagination.cursor)}&prev=${encodeURIComponent(pagination.currentCursor || '')}${searchParam}`;
+    
+    paginationHtml = `
+      <div class="pagination">
+        ${pagination.currentCursor ? `<a href="${prevUrl}" class="btn btn-secondary">上一頁</a>` : ''}
+        ${pagination.hasMore ? `<a href="${nextUrl}" class="btn btn-secondary">下一頁</a>` : ''}
+      </div>
+    `;
+  }
   
   const content = `
     <div class="container">
@@ -449,11 +523,12 @@ function generateAdminHtml(links, pagination) {
               <th class="id-col">短碼</th>
               <th class="url-col">目標 URL</th>
               <th class="stats-col">點擊</th>
+              <th class="expiry-col">時效</th>
               <th class="actions-col">操作</th>
             </tr>
           </thead>
           <tbody>
-            ${linksHtml || '<tr><td colspan="5" class="text-center text-muted" style="padding: 2rem;">沒有找到任何短網址</td></tr>'}
+            ${linksHtml.join('') || '<tr><td colspan="6" class="text-center text-muted" style="padding: 2rem;">沒有找到任何短網址</td></tr>'}
           </tbody>
         </table>
         
@@ -582,8 +657,7 @@ function generateAdminHtml(links, pagination) {
       
       // 登出功能
       function logout() {
-        document.cookie = 'admin_session=; Path=/admin; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
-        window.location.href = '/';
+        window.location.href = '/admin/logout';
       }
     </script>
   `;

@@ -9,13 +9,32 @@ import { escapeHtml } from './utils.js';
  * @param {Object} options 
  * @returns {string}
  */
-export function baseTemplate({ title, content, styles = '', scripts = '' }) {
+export function baseTemplate({ title, content, styles = '', scripts = '', meta = {} }) {
+  const ogTags = meta.og ? `
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="${escapeHtml(meta.og.type || 'website')}">
+  <meta property="og:url" content="${escapeHtml(meta.og.url || 'https://ntnu.cc/')}">
+  <meta property="og:title" content="${escapeHtml(meta.og.title || title)}">
+  <meta property="og:description" content="${escapeHtml(meta.og.description || '')}">
+  <meta property="og:image" content="${escapeHtml(meta.og.image || 'https://ntnu.cc/og-image.png')}">
+  <meta property="og:locale" content="zh_TW">
+  <meta property="og:site_name" content="ntnu.cc">
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="${escapeHtml(meta.og.url || 'https://ntnu.cc/')}">
+  <meta name="twitter:title" content="${escapeHtml(meta.og.title || title)}">
+  <meta name="twitter:description" content="${escapeHtml(meta.og.description || '')}">
+  <meta name="twitter:image" content="${escapeHtml(meta.og.image || 'https://ntnu.cc/og-image.png')}">
+  ` : '';
+  
   return `<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${escapeHtml(title)} - ntnu.cc</title>
+  ${ogTags}
   <link rel="icon" type="image/png" href="/NTNU_Red.png">
   <style>
     :root {
@@ -429,7 +448,21 @@ export function redirectPreviewPage({ id, targetUrl }) {
     </script>
   `;
   
-  return baseTemplate({ title: `前往 ${id}`, content, styles, scripts });
+  // 截斷目標 URL 顯示（太長的話）
+  const displayUrl = targetUrl.length > 50 ? targetUrl.substring(0, 50) + '...' : targetUrl;
+  
+  // OG Meta 資訊
+  const meta = {
+    og: {
+      type: 'website',
+      url: `https://ntnu.cc/${id}`,
+      title: `前往 ${id} - ntnu.cc`,
+      description: `ntnu.cc 短網址 ${id} 即將帶您前往：${displayUrl}`,
+      image: 'https://ntnu.cc/og-image.png'
+    }
+  };
+  
+  return baseTemplate({ title: `前往 ${id}`, content, styles, scripts, meta });
 }
 
 /**
@@ -671,9 +704,10 @@ export function rateLimitedPage(retryAfter) {
 /**
  * 管理員登入頁面
  * @param {string} error 
+ * @param {string} captchaSiteKey 
  * @returns {string}
  */
-export function adminLoginPage(error = '') {
+export function adminLoginPage(error = '', captchaSiteKey = '') {
   const styles = `
     .login-container {
       display: flex;
@@ -698,30 +732,50 @@ export function adminLoginPage(error = '') {
       margin-bottom: 0.5rem;
     }
   `;
-  
+
   const errorHtml = error ? `<div class="alert alert-error">${escapeHtml(error)}</div>` : '';
-  
+
+  const captchaScript = `<script src="https://www.google.com/recaptcha/api.js" async defer></script>`;
+
   const content = `
     <div class="container login-container">
       <div class="card login-card">
         <div class="logo">
-          <h1>🔐 管理後台</h1>
+          <h1>🔒 管理後台</h1>
           <p class="text-muted">ntnu.cc 短網址服務</p>
         </div>
         
         ${errorHtml}
         
-        <form method="POST" action="/admin">
+        <form method="POST" action="/admin" id="loginForm">
           <label for="apiKey">API Key</label>
           <input type="password" id="apiKey" name="apiKey" placeholder="請輸入管理員 API Key" required autocomplete="current-password">
           
+          <div class="g-recaptcha" data-sitekey="${escapeHtml(captchaSiteKey)}" data-callback="onCaptchaSuccess"></div>
+          <input type="hidden" id="captchaToken" name="captchaToken">
+          
           <button type="submit" class="btn" style="width: 100%;">登入</button>
         </form>
+        
+        <script>
+          function onCaptchaSuccess(token) {
+            document.getElementById('captchaToken').value = token;
+          }
+          
+          document.getElementById('loginForm').addEventListener('submit', function(e) {
+            const token = document.getElementById('captchaToken').value;
+            if (!token) {
+              e.preventDefault();
+              alert('請完成 CAPTCHA 驗證');
+              return false;
+            }
+          });
+        </script>
       </div>
     </div>
   `;
-  
-  return baseTemplate({ title: '管理員登入', content, styles });
+
+  return baseTemplate({ title: '管理員登入', content, styles }) + captchaScript;
 }
 
 /**
