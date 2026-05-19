@@ -8,20 +8,39 @@ import { notifySystemError } from './lib/discord.js';
 // 靜態檔案副檔名，不需要中間件處理
 const STATIC_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico', '.webp', '.css', '.js', '.woff', '.woff2', '.ttf', '.eot', '.map', '.xml', '.txt', '.json'];
 
+// 子網域 → public/_sites/<bucket>/ 對應表
+// 注意：靜態副檔名請求（如 /assets/foo.css、/NTNU_Red.png）已在上方分支跳出，
+// 不會進入此 rewrite，因此各子網域共用根目錄下的 /assets/* 與圖檔。
+const SUBDOMAIN_SITES = {
+  'tools.ntnu.cc': 'tools',
+};
+
 export async function onRequest(context) {
   const { request, next, env } = context;
   const url = new URL(request.url);
   const pathname = url.pathname;
-  
+  const host = (request.headers.get('host') || url.host || '').toLowerCase();
+
   // 跳過靜態檔案，讓 Cloudflare Pages 直接處理
   const isStaticFile = STATIC_EXTENSIONS.some(ext => pathname.toLowerCase().endsWith(ext));
   if (isStaticFile) {
     return next();
   }
-  
+
+  // 子網域 host-based rewrite：tools.ntnu.cc/foo → /_sites/tools/foo
+  // 已避開短網址轉址（host=ntnu.cc 不會進這個分支），所以 [id].js 行為不受影響。
+  const siteBucket = SUBDOMAIN_SITES[host];
+
   try {
-    // 執行後續處理
-    const response = await next();
+    let response;
+    if (siteBucket) {
+      const rewritten = new URL(request.url);
+      const original = pathname === '/' ? '/' : pathname.replace(/\/+$/, '') || '/';
+      rewritten.pathname = `/_sites/${siteBucket}${original === '/' ? '/' : original}`;
+      response = await next(rewritten.toString());
+    } else {
+      response = await next();
+    }
     
     // 加入安全標頭
     const securityHeaders = getSecurityHeaders();

@@ -1,0 +1,226 @@
+/* ntnu.cc 共用主題
+   抽自 functions/lib/templates.js 的 :root 變數與基礎元件樣式。
+   templates.js 仍維持自帶 inline CSS（後端動態組合需要），請保持兩處同步。 */
+
+:root {
+  --primary: #9B2335;
+  --primary-dark: #7A1C2A;
+  --primary-light: #C94C5C;
+  --bg-gradient: linear-gradient(135deg, #9B2335 0%, #B83A4B 50%, #C94C5C 100%);
+  --bg-white: #ffffff;
+  --bg-light: #fff9f9;
+  --text-primary: #2d2d2d;
+  --text-secondary: #555555;
+  --text-muted: #777777;
+  --accent: #9B2335;
+  --accent-hover: #C94C5C;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --border: #e5e7eb;
+  --shadow-sm: 0 1px 2px rgba(155, 35, 53, 0.08);
+  --shadow-md: 0 4px 6px -1px rgba(155, 35, 53, 0.12);
+  --shadow-lg: 0 10px 15px -3px rgba(155, 35, 53, 0.12);
+  --shadow-xl: 0 20px 25px -5px rgba(155, 35, 53, 0.12);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans TC', sans-serif;
+  background: var(--bg-light);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.card {
+  background: var(--bg-white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: var(--shadow-lg);
+}
+
+h1, h2, h3 { color: var(--text-primary); margin-bottom: 1rem; }
+h1 { font-size: 2rem; }
+h2 { font-size: 1.5rem; }
+h3 { font-size: 1.25rem; }
+
+p { color: var(--text-secondary); margin-bottom: 1rem; }
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+a:hover { color: var(--accent-hover); }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  background: var(--bg-gradient);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  color: white;
+}
+.btn:disabled {
+  background: var(--text-muted);
+  cursor: not-allowed;
+  transform: none;
+}
+.btn-secondary {
+  background: var(--bg-white);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+.btn-secondary:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--bg-white);
+}
+.btn-success { background: var(--success); }
+.btn-danger { background: var(--error); }
+.btn-sm { padding: 0.5rem 1rem; font-size: 0.85rem; }
+
+input, textarea, select {
+  width: 100%;
+  padding: 0.65rem 0.875rem;
+  background: var(--bg-white);
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+input:focus, textarea:focus, select:focus { border-color: var(--primary); }
+
+label {
+  display: block;
+  margin-bottom: 0.4rem;
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.alert {
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+.alert-success { background: rgba(16, 185, 129, 0.1); border: 1px solid var(--success); color: #047857; }
+.alert-error   { background: rgba(239, 68, 68, 0.1); border: 1px solid var(--error); color: #b91c1c; }
+.alert-warning { background: rgba(245, 158, 11, 0.1); border: 1px solid var(--warning); color: #b45309; }
+
+.text-center { text-align: center; }
+.text-muted { color: var(--text-muted); }
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mt-3 { margin-top: 1.5rem; }
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+.mb-3 { margin-bottom: 1.5rem; }
+
+/* Toast / Modal helpers — 配合 ntnu-ui.js */
+.ntnu-toast-host {
+  position: fixed;
+  top: 1.25rem;
+  right: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  z-index: 9999;
+  pointer-events: none;
+}
+.ntnu-toast {
+  background: var(--text-primary);
+  color: #fff;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  box-shadow: var(--shadow-lg);
+  font-size: 0.9rem;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity .2s, transform .2s;
+  pointer-events: auto;
+  max-width: 320px;
+}
+.ntnu-toast.show { opacity: 1; transform: translateY(0); }
+.ntnu-toast.success { background: var(--success); }
+.ntnu-toast.error { background: var(--error); }
+.ntnu-toast.warning { background: var(--warning); color: #1f2937; }
+
+.ntnu-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 5000;
+}
+.ntnu-modal-overlay.show { display: flex; }
+.ntnu-modal-card {
+  background: #fff;
+  border-radius: 16px;
+  max-width: 520px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-xl);
+}
+.ntnu-modal-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.ntnu-modal-header h3 { margin: 0; font-size: 1.1rem; }
+.ntnu-modal-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--text-muted);
+}
+.ntnu-modal-close:hover { color: var(--primary); }
+.ntnu-modal-body { padding: 1.5rem; }
+
+/* Dropzone */
+.ntnu-dropzone {
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--text-muted);
+  background: var(--bg-light);
+  cursor: pointer;
+  transition: all .2s;
+}
+.ntnu-dropzone.dragover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: #fff;
+}

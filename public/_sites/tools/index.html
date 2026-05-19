@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>師大視覺工具箱 — tools.ntnu.cc</title>
+  <meta name="description" content="師大視覺自動化工具箱：免登入、純前端處理、嚴格遵循師大 VI 規範。">
+  <link rel="icon" type="image/png" href="/NTNU_Red.png">
+  <link rel="stylesheet" href="/assets/ntnu-theme.css">
+  <style>
+    body { background: linear-gradient(180deg, var(--bg-light) 0%, #fff 100%); }
+
+    .topbar {
+      background: var(--bg-white);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem;
+    }
+    .topbar-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 1.1rem;
+      text-decoration: none;
+    }
+    .brand img { width: 28px; height: 28px; }
+    .brand small {
+      color: var(--text-muted);
+      font-weight: 500;
+      font-size: 0.8rem;
+      margin-left: 0.5rem;
+    }
+    .topbar a.btn-secondary { padding: 0.4rem 0.9rem; font-size: 0.85rem; }
+
+    .hero {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 3rem 2rem 1rem;
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: 2.2rem;
+      background: var(--bg-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 0.5rem;
+    }
+    .hero p { font-size: 1rem; color: var(--text-secondary); }
+
+    .grid {
+      max-width: 1100px;
+      margin: 1rem auto 3rem;
+      padding: 0 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .tool-card {
+      background: var(--bg-white);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.5rem;
+      transition: all .2s;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .tool-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--primary-light);
+    }
+    .tool-card[aria-disabled="true"] {
+      opacity: 0.55;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+    .tool-card .icon {
+      width: 44px; height: 44px;
+      border-radius: 10px;
+      background: var(--bg-gradient);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      margin-bottom: 0.5rem;
+    }
+    .tool-card h3 { font-size: 1.1rem; margin: 0; color: var(--text-primary); }
+    .tool-card p { font-size: 0.9rem; margin: 0; color: var(--text-secondary); }
+    .tool-card .badge {
+      align-self: flex-start;
+      font-size: 0.7rem;
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+      background: var(--bg-light);
+      color: var(--primary);
+      border: 1px solid var(--primary-light);
+      margin-top: 0.5rem;
+    }
+    .tool-card .badge.soon { color: var(--text-muted); border-color: var(--border); background: #f9fafb; }
+
+    .footer {
+      text-align: center;
+      padding: 2rem 1rem 3rem;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+    .footer a { color: var(--primary); }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="/" class="brand">
+        <img src="/NTNU_Red.png" alt="">
+        tools.ntnu.cc
+        <small>師大視覺工具箱</small>
+      </a>
+      <a href="https://ntnu.cc/" class="btn btn-secondary">回主站</a>
+    </div>
+  </header>
+
+  <section class="hero">
+    <h1>師大視覺自動化工具箱</h1>
+    <p>免登入、純前端處理、嚴格遵循師大 VI 規範。所有資料只在你的瀏覽器中運算。</p>
+  </section>
+
+  <main class="grid" id="toolGrid"></main>
+
+  <footer class="footer">
+    <p>© 2026 ntnu.cc · 非官方師大入口 · <a href="https://github.com/su-nz/ntnu.cc" target="_blank" rel="noopener">GitHub</a></p>
+  </footer>
+
+  <script>
+    // 工具清單註冊表 —— 新增工具時改這一份即可
+    const TOOLS = [
+      {
+        slug: 'deskcard',
+        name: 'A4 摺紙桌牌產生器',
+        desc: '依師大 VI 自動排版,支援 CSV/Excel 批次匯入、雙面反轉、PDF 輸出。',
+        icon: '🎴',
+        href: '/deskcard',
+        status: 'ready'
+      },
+      {
+        slug: 'cert',
+        name: '證書產生器',
+        desc: '套用師大樣板,批次產出活動 / 研習證書。',
+        icon: '📜',
+        status: 'soon'
+      },
+      {
+        slug: 'badge',
+        name: '識別證排版',
+        desc: '統一格式產出活動工作人員 / 來賓識別證。',
+        icon: '🪪',
+        status: 'soon'
+      }
+    ];
+
+    const grid = document.getElementById('toolGrid');
+    for (const t of TOOLS) {
+      const ready = t.status === 'ready';
+      const el = document.createElement('a');
+      el.className = 'tool-card';
+      el.href = ready ? t.href : '#';
+      if (!ready) el.setAttribute('aria-disabled', 'true');
+      el.innerHTML = `
+        <div class="icon">${t.icon}</div>
+        <h3>${t.name}</h3>
+        <p>${t.desc}</p>
+        <span class="badge ${ready ? '' : 'soon'}">${ready ? '可使用' : '規劃中'}</span>
+      `;
+      grid.appendChild(el);
+    }
+  </script>
+</body>
+</html>

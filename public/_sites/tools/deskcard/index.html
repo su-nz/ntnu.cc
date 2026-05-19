@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A4 桌牌產生器 — tools.ntnu.cc</title>
+  <meta name="description" content="A4 對折桌牌產生器:批次匯入名單,雙面反轉自動對齊,純前端 PDF 輸出。">
+  <link rel="icon" type="image/png" href="/NTNU_Red.png">
+  <link rel="stylesheet" href="/assets/ntnu-theme.css">
+  <style>
+    body { background: #f3f4f6; }
+
+    .topbar {
+      background: var(--bg-white);
+      border-bottom: 1px solid var(--border);
+      padding: 0.85rem 1.5rem;
+      position: sticky; top: 0; z-index: 10;
+    }
+    .topbar-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    }
+    .brand {
+      display: flex; align-items: center; gap: 0.5rem;
+      color: var(--primary); font-weight: 700; text-decoration: none; font-size: 1rem;
+    }
+    .brand img { width: 24px; height: 24px; }
+    .breadcrumb a { color: var(--text-muted); font-size: 0.85rem; }
+    .breadcrumb a:hover { color: var(--primary); }
+
+    .app {
+      display: grid;
+      grid-template-columns: 360px 1fr 220px;
+      gap: 1rem;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1rem;
+      align-items: start;
+    }
+    @media (max-width: 1100px) { .app { grid-template-columns: 1fr; } }
+
+    .panel {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      box-shadow: var(--shadow-sm);
+    }
+    .panel h2 {
+      font-size: 1rem;
+      margin: 0 0 0.75rem;
+      color: var(--text-primary);
+      display: flex; align-items: center; gap: 0.4rem;
+    }
+    .panel h2 .step {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: var(--bg-gradient); color: #fff;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: 700;
+    }
+    .panel + .panel { margin-top: 1rem; }
+
+    .field { margin-bottom: 0.85rem; }
+    .field label { font-size: 0.8rem; }
+    .field input, .field select { font-size: 0.9rem; padding: 0.5rem 0.7rem; }
+
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+
+    .preview-area {
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+    }
+    .page-label { font-size: 0.85rem; color: var(--text-muted); }
+    .a4 {
+      /* A4 橫式 1:√2 ≈ 297:210 */
+      width: min(100%, 700px);
+      aspect-ratio: 297 / 210;
+      background: #fff;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      position: relative;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .a4 .fold-line {
+      position: absolute; left: 0; right: 0; top: 50%;
+      border-top: 1.5px dashed #d1d5db;
+      pointer-events: none;
+    }
+    .a4 .half {
+      position: absolute; left: 0; right: 0; height: 50%;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 6%;
+      text-align: center;
+      box-sizing: border-box;
+    }
+    .a4 .half.back  { top: 0; transform: rotate(180deg); }
+    .a4 .half.front { bottom: 0; }
+    .a4 .logo {
+      position: absolute;
+      width: 8%;
+      opacity: 0.95;
+    }
+    .a4 .half.back .logo  { top: 5%; left: 5%; }
+    .a4 .half.front .logo { bottom: 5%; right: 5%; }
+
+    .name {
+      font-weight: 800;
+      color: var(--primary);
+      line-height: 1.1;
+      letter-spacing: 0.04em;
+      word-break: keep-all;
+      max-width: 100%;
+    }
+    .title {
+      margin-top: 0.4em;
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+    .org {
+      margin-top: 0.2em;
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+
+    .pages {
+      display: flex; flex-direction: column; gap: 0.4rem;
+      max-height: calc(100vh - 200px); overflow-y: auto;
+      padding-right: 0.25rem;
+    }
+    .page-thumb {
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      padding: 0.5rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      background: #fff;
+      transition: all .15s;
+    }
+    .page-thumb:hover { border-color: var(--primary-light); }
+    .page-thumb.active { border-color: var(--primary); background: var(--bg-light); }
+    .page-thumb .pname { font-weight: 600; color: var(--text-primary); word-break: break-all; }
+    .page-thumb .pmeta { color: var(--text-muted); font-size: 0.75rem; margin-top: 0.15rem; }
+    .empty { color: var(--text-muted); font-size: 0.85rem; text-align: center; padding: 1rem; }
+
+    .actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .actions .btn { padding: 0.55rem 1rem; font-size: 0.9rem; }
+
+    #dropzone {
+      padding: 1rem;
+      font-size: 0.85rem;
+    }
+    .mapping-grid {
+      display: grid; grid-template-columns: 80px 1fr; gap: 0.4rem 0.6rem;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+    .mapping-grid label { margin: 0; }
+    .mapping-grid select { margin: 0; padding: 0.4rem 0.6rem; font-size: 0.85rem; }
+
+    .tip { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.4rem; }
+    .danger { color: var(--error); }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="/" class="brand">
+        <img src="/NTNU_Red.png" alt="">
+        tools.ntnu.cc
+      </a>
+      <nav class="breadcrumb">
+        <a href="/">工具箱</a> / <span style="color:var(--text-primary);font-size:0.85rem;">A4 桌牌產生器</span>
+      </nav>
+    </div>
+  </header>
+
+  <div class="app">
+    <!-- Left: Editor -->
+    <aside>
+      <section class="panel">
+        <h2><span class="step">1</span>單筆編輯</h2>
+        <div class="field">
+          <label>姓名</label>
+          <input type="text" id="inName" placeholder="王小明" maxlength="20">
+        </div>
+        <div class="field">
+          <label>職稱</label>
+          <input type="text" id="inTitle" placeholder="助理教授" maxlength="30">
+        </div>
+        <div class="field">
+          <label>單位</label>
+          <input type="text" id="inOrg" placeholder="資訊工程學系" maxlength="40">
+        </div>
+        <div class="row">
+          <button class="btn btn-secondary btn-sm" id="btnAdd">新增至清單</button>
+          <button class="btn btn-secondary btn-sm" id="btnUpdate" disabled>更新此筆</button>
+        </div>
+        <p class="tip">姓名過長時會自動縮小字體以避免跑版。</p>
+      </section>
+
+      <section class="panel">
+        <h2><span class="step">2</span>批次匯入</h2>
+        <div id="dropzone">
+          將 .csv / .xlsx 檔案拖到這裡<br>
+          <small>或</small>
+          <div style="margin-top:0.4rem;">
+            <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" style="display:none;">
+            <button class="btn btn-secondary btn-sm" id="btnPick">選擇檔案</button>
+          </div>
+        </div>
+        <div id="mapping" style="display:none; margin-top:0.85rem;">
+          <div class="mapping-grid">
+            <label>姓名</label><select id="mapName"></select>
+            <label>職稱</label><select id="mapTitle"></select>
+            <label>單位</label><select id="mapOrg"></select>
+          </div>
+          <button class="btn btn-sm" id="btnImport">匯入這 <span id="rowCount">0</span> 筆</button>
+          <p class="tip" id="importHint"></p>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2><span class="step">3</span>輸出</h2>
+        <div class="actions">
+          <button class="btn" id="btnPdf">下載 PDF</button>
+          <button class="btn btn-secondary btn-sm" id="btnClear">清空清單</button>
+        </div>
+        <p class="tip">A4 橫式對折桌牌:上半為背面 (180° 反轉),下半為正面,沿中央虛線對折即可立起。</p>
+      </section>
+    </aside>
+
+    <!-- Center: Preview -->
+    <main class="preview-area">
+      <div class="page-label">A4 橫式 · 對折桌牌預覽 (第 <span id="curIdx">-</span> / <span id="totalIdx">0</span> 筆)</div>
+      <div class="a4" id="canvas">
+        <div class="half back">
+          <img src="/NTNU_Red.png" alt="" class="logo">
+          <div class="name" data-role="name">王小明</div>
+          <div class="title" data-role="title">助理教授</div>
+          <div class="org" data-role="org">資訊工程學系</div>
+        </div>
+        <div class="fold-line"></div>
+        <div class="half front">
+          <img src="/NTNU_Red.png" alt="" class="logo">
+          <div class="name" data-role="name">王小明</div>
+          <div class="title" data-role="title">助理教授</div>
+          <div class="org" data-role="org">資訊工程學系</div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Right: Page list -->
+    <aside class="panel">
+      <h2>名單 (<span id="listCount">0</span>)</h2>
+      <div id="pageList" class="pages">
+        <div class="empty">尚未加入任何資料</div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- 外部函式庫:CSP 白名單已涵蓋 cdnjs / jsDelivr -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+  <script src="/assets/ntnu-ui.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
