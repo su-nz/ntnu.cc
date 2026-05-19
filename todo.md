@@ -23,10 +23,11 @@
 - [x] **桌牌產生器 MVP 檔案**:
   - [public/_sites/tools/deskcard/index.html](public/_sites/tools/deskcard/index.html)
   - [public/_sites/tools/deskcard/app.js](public/_sites/tools/deskcard/app.js)
-- [x] **SPEC2 §3 主域名首頁升級**:[public/index.html](public/index.html)
-  - hero 與 features 之間新增 `#ecosystem` 區塊,三張卡片(視覺工具箱 ready / 文件中心 soon / 資源索引 soon)
-  - navbar 第一個錨點 + footer 服務欄連到 `tools.ntnu.cc`
-  - i18n 中英文補齊 `ecosystem.*` / `nav.ecosystem`
+- [x] **SPEC2 §3 主域名首頁升級**(2026-05-19 改設計):[public/index.html](public/index.html)
+  - 一度做了 `#ecosystem` 三卡區塊,後續使用者決定簡化:**整段拿掉,改成 navbar 一個「工具箱」連結到 `tools.ntnu.cc`**
+  - footer 服務欄仍保留工具箱連結
+  - i18n 改用 `nav.tools` (中:工具箱 / 英:Toolbox)
+  - 公告 banner 與 ecosystem section 都已從 HTML / CSS / i18n 移除
 - [x] **SPEC2 §4.2 colors.json**:[public/assets/ntnu-vi/colors.json](public/assets/ntnu-vi/colors.json)
   - 五組色票:primary(師大紅系)/ accent(金/藍/灰)/ neutral / semantic / gradients
   - 工具子站可 `fetch('/assets/ntnu-vi/colors.json')` 取用,免重複寫死

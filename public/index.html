@@ -576,125 +576,6 @@
       100% { transform: scale(1); }
     }
     
-    /* Ecosystem Section - 師大服務生態 */
-    .ecosystem {
-      padding: 4rem 2rem;
-      background: var(--bg-white);
-      border-bottom: 1px solid #f3e8ea;
-    }
-
-    .ecosystem-content {
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-
-    .ecosystem-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.25rem;
-      margin-top: 2.5rem;
-    }
-
-    .eco-card {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-      padding: 1.5rem;
-      background: var(--bg-light);
-      border: 1px solid #f3e8ea;
-      border-radius: 14px;
-      text-decoration: none;
-      color: inherit;
-      transition: all 0.25s;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .eco-card:hover {
-      transform: translateY(-3px);
-      box-shadow: var(--shadow-lg);
-      border-color: var(--primary-light);
-    }
-
-    .eco-card.is-soon {
-      opacity: 0.7;
-      cursor: not-allowed;
-    }
-
-    .eco-card.is-soon:hover {
-      transform: none;
-      box-shadow: var(--shadow-sm);
-      border-color: #f3e8ea;
-    }
-
-    .eco-card-head {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .eco-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 10px;
-      background: var(--bg-gradient);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.4rem;
-      color: white;
-      flex-shrink: 0;
-    }
-
-    .eco-card.is-soon .eco-icon {
-      background: #d4d4d8;
-    }
-
-    .eco-card h3 {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: var(--text-dark);
-      margin: 0;
-    }
-
-    .eco-domain {
-      font-size: 0.78rem;
-      color: var(--primary);
-      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-      letter-spacing: 0.02em;
-    }
-
-    .eco-card.is-soon .eco-domain {
-      color: var(--text-muted);
-    }
-
-    .eco-card p {
-      font-size: 0.88rem;
-      color: var(--text-light);
-      line-height: 1.55;
-      margin: 0;
-      flex-grow: 1;
-    }
-
-    .eco-badge {
-      align-self: flex-start;
-      font-size: 0.72rem;
-      font-weight: 600;
-      padding: 0.2rem 0.55rem;
-      border-radius: 999px;
-      letter-spacing: 0.03em;
-    }
-
-    .eco-badge.ready {
-      background: #ecfdf5;
-      color: #047857;
-    }
-
-    .eco-badge.soon {
-      background: #f1f5f9;
-      color: #64748b;
-    }
-
     /* Features Section */
     .features {
       padding: 5rem 2rem;
@@ -955,32 +836,12 @@
     
     /* Responsive */
     @media (max-width: 900px) {
-      .features-grid, .testimonials-grid, .ecosystem-grid {
+      .features-grid, .testimonials-grid {
         grid-template-columns: repeat(2, 1fr);
       }
     }
-    
-    @media (max-width: 768px) {
-      .ecosystem {
-        padding: 2.5rem 1rem;
-      }
-      .ecosystem-grid {
-        margin-top: 1.75rem;
-        gap: 1rem;
-      }
-      .eco-card {
-        padding: 1.1rem;
-        gap: 0.6rem;
-      }
-      .eco-icon {
-        width: 38px;
-        height: 38px;
-        font-size: 1.2rem;
-      }
-      .eco-card h3 { font-size: 1rem; }
-      .eco-card p { font-size: 0.85rem; }
-      .eco-domain { font-size: 0.72rem; }
 
+    @media (max-width: 768px) {
       .navbar {
         padding: 0.5rem 1rem;
       }
@@ -1084,7 +945,7 @@
     }
     
     @media (max-width: 600px) {
-      .features-grid, .testimonials-grid, .ecosystem-grid {
+      .features-grid, .testimonials-grid {
         grid-template-columns: 1fr;
       }
       
@@ -1118,7 +979,7 @@
         ntnu.cc
       </a>
       <div class="nav-links">
-        <a href="#ecosystem" data-i18n="nav.ecosystem">服務生態</a>
+        <a href="https://tools.ntnu.cc" target="_blank" rel="noopener" data-i18n="nav.tools">工具箱</a>
         <a href="#features" data-i18n="nav.features">功能特色</a>
         <a href="#testimonials" data-i18n="nav.cases">使用案例</a>
         <button class="btn btn-secondary disclaimer-btn" onclick="openDisclaimer()" data-i18n="nav.disclaimer">免責聲明</button>
@@ -1205,50 +1066,6 @@
     </div>
   </section>
   
-  <!-- Ecosystem Section - 師大服務生態 -->
-  <section class="ecosystem" id="ecosystem">
-    <div class="ecosystem-content">
-      <div class="section-header">
-        <h2 data-i18n="ecosystem.title">師大服務生態</h2>
-        <p data-i18n="ecosystem.subtitle">不只是短網址,ntnu.cc 正在打造更完整的師大數位工具集</p>
-      </div>
-      <div class="ecosystem-grid">
-        <a href="https://tools.ntnu.cc" class="eco-card" target="_blank" rel="noopener">
-          <div class="eco-card-head">
-            <div class="eco-icon">🎴</div>
-            <div>
-              <h3 data-i18n="ecosystem.tools.title">視覺工具箱</h3>
-              <div class="eco-domain">tools.ntnu.cc</div>
-            </div>
-          </div>
-          <p data-i18n="ecosystem.tools.desc">桌牌、證書、徽章等場合用素材一鍵生成,沿用師大識別系統。</p>
-          <span class="eco-badge ready" data-i18n="ecosystem.ready">立即使用</span>
-        </a>
-        <div class="eco-card is-soon" aria-disabled="true">
-          <div class="eco-card-head">
-            <div class="eco-icon">📄</div>
-            <div>
-              <h3 data-i18n="ecosystem.docs.title">文件中心</h3>
-              <div class="eco-domain">docs.ntnu.cc</div>
-            </div>
-          </div>
-          <p data-i18n="ecosystem.docs.desc">公文、簽呈、活動企劃等範本與表格集中索引,可線上預覽下載。</p>
-          <span class="eco-badge soon" data-i18n="ecosystem.soon">即將推出</span>
-        </div>
-        <div class="eco-card is-soon" aria-disabled="true">
-          <div class="eco-card-head">
-            <div class="eco-icon">📚</div>
-            <div>
-              <h3 data-i18n="ecosystem.links.title">資源索引</h3>
-              <div class="eco-domain">links.ntnu.cc</div>
-            </div>
-          </div>
-          <p data-i18n="ecosystem.links.desc">校內系統、學術資源、活動入口整合導覽,一站找到師大所有東西。</p>
-          <span class="eco-badge soon" data-i18n="ecosystem.soon">即將推出</span>
-        </div>
-      </div>
-    </div>
-  </section>
 
   <!-- Features Section -->
   <section class="features" id="features">
@@ -1359,7 +1176,7 @@
           <div class="footer-links-col">
             <h4 data-i18n="footer.services">服務</h4>
             <ul>
-              <li><a href="https://tools.ntnu.cc" target="_blank" rel="noopener" data-i18n="ecosystem.tools.title">視覺工具箱</a></li>
+              <li><a href="https://tools.ntnu.cc" target="_blank" rel="noopener" data-i18n="nav.tools">工具箱</a></li>
               <li><a href="#features" data-i18n="nav.features">功能特色</a></li>
             </ul>
           </div>
@@ -1409,30 +1226,12 @@
         nav: {
           features: '功能特色',
           cases: '使用案例',
-          ecosystem: '服務生態',
+          tools: '工具箱',
           disclaimer: '免責聲明'
         },
         hero: {
           title: '師大短網址服務',
           subtitle: '快速、安全、專為師大師生打造的短網址服務'
-        },
-        ecosystem: {
-          title: '師大服務生態',
-          subtitle: '不只是短網址,ntnu.cc 正在打造更完整的師大數位工具集',
-          ready: '立即使用',
-          soon: '即將推出',
-          tools: {
-            title: '視覺工具箱',
-            desc: '桌牌、證書、徽章等場合用素材一鍵生成,沿用師大識別系統。'
-          },
-          docs: {
-            title: '文件中心',
-            desc: '公文、簽呈、活動企劃等範本與表格集中索引,可線上預覽下載。'
-          },
-          links: {
-            title: '資源索引',
-            desc: '校內系統、學術資源、活動入口整合導覽,一站找到師大所有東西。'
-          }
         },
         modal: {
           title: '免責聲明',
@@ -1520,30 +1319,12 @@
         nav: {
           features: 'Features',
           cases: 'Use Cases',
-          ecosystem: 'Ecosystem',
+          tools: 'Toolbox',
           disclaimer: 'Disclaimer'
         },
         hero: {
           title: 'NTNU URL Shortener',
           subtitle: 'Fast, secure, and designed for NTNU faculty and students'
-        },
-        ecosystem: {
-          title: 'NTNU Service Ecosystem',
-          subtitle: 'More than a URL shortener — ntnu.cc is building a complete digital toolkit for NTNU',
-          ready: 'Available',
-          soon: 'Coming Soon',
-          tools: {
-            title: 'Visual Toolbox',
-            desc: 'One-click generators for desk cards, certificates, and badges — following the NTNU visual identity.'
-          },
-          docs: {
-            title: 'Document Hub',
-            desc: 'Indexed templates and forms for memos, requests, and event proposals — preview and download online.'
-          },
-          links: {
-            title: 'Resource Index',
-            desc: 'A unified gateway to campus systems, academic resources, and event portals.'
-          }
         },
         modal: {
           title: 'Disclaimer',
