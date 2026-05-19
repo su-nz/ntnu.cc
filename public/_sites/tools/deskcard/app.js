@@ -1,5 +1,5 @@
 /* A4 桌牌產生器 — 純前端
-   依 SPEC2 §5:雙面反轉、auto-fit、批次匯入、pdfmake 直出。
+   依 SPEC2 §5:雙面反轉、auto-fit、批次匯入、html2canvas + jsPDF 直出。
    不收集、不上傳任何資料。 */
 (function () {
   'use strict';
@@ -39,32 +39,40 @@
       title: inTitle.value || '助理教授',
       org: inOrg.value || '資訊工程學系',
     };
-    canvas.querySelectorAll('[data-role="name"]').forEach(el => {
-      el.textContent = rec.name || '';
-      autoFit(el, rec.name || '', 56, 22); // px @ A4 比例
-    });
-    canvas.querySelectorAll('[data-role="title"]').forEach(el => {
-      el.textContent = rec.title || '';
-      autoFit(el, rec.title || '', 26, 14);
-    });
-    canvas.querySelectorAll('[data-role="org"]').forEach(el => {
-      el.textContent = rec.org || '';
-      autoFit(el, rec.org || '', 22, 12);
-    });
+    applyToCanvas(canvas, rec);
     curIdx.textContent = records.length ? (currentIdx + 1) : '-';
     totalIdx.textContent = records.length;
   }
 
-  // 簡易 auto-fit:依字數線性收斂到下限
-  function autoFit(el, text, maxPx, minPx) {
+  /** 把一筆 rec 套到指定 .a4 容器(預覽或離線渲染共用) */
+  function applyToCanvas(el, rec) {
+    // 以容器當前寬度為基準計算字級,讓預覽與 PDF 輸出公式一致
+    const w = el.clientWidth || el.getBoundingClientRect().width || 700;
+    const base = w / 700; // 700px 為設計基準寬
+
+    el.querySelectorAll('[data-role="name"]').forEach(node => {
+      node.textContent = rec.name || '';
+      node.style.fontSize = fitPx(rec.name, 56, 22, base) + 'px';
+    });
+    el.querySelectorAll('[data-role="title"]').forEach(node => {
+      node.textContent = rec.title || '';
+      node.style.fontSize = fitPx(rec.title, 26, 14, base) + 'px';
+    });
+    el.querySelectorAll('[data-role="org"]').forEach(node => {
+      node.textContent = rec.org || '';
+      node.style.fontSize = fitPx(rec.org, 22, 12, base) + 'px';
+    });
+  }
+
+  // 統一 auto-fit:字數超過 threshold 後線性遞減,輸出 px (乘上比例)
+  function fitPx(text, maxPx, minPx, scale = 1) {
     const len = (text || '').length;
-    const threshold = 5; // 5 字內維持最大
+    const threshold = 5;
     let size = maxPx;
     if (len > threshold) {
-      const overflow = len - threshold;
-      size = Math.max(minPx, maxPx - overflow * 2.5);
+      size = Math.max(minPx, maxPx - (len - threshold) * 2.5);
     }
-    el.style.fontSize = size + 'px';
+    return Math.round(size * scale);
   }
 
   // --- 名單渲染 -------------------------------------------------
@@ -232,85 +240,70 @@
     renderList(); renderPreview();
   });
 
-  // --- PDF 輸出 -------------------------------------------------
-  // A4 橫式 mm:297 × 210。pdfmake 預設使用 pt (1mm ≈ 2.8346pt)
-  const MM = 2.834645669;
-  const A4_W = 297 * MM;
-  const A4_H = 210 * MM;
+  // --- PDF 輸出(html2canvas + jsPDF) ---------------------------
+  // 採離線複製預覽 DOM 渲染,中文走瀏覽器系統字體,雙面反轉直接沿用 CSS rotate
+  const RENDER_W_PX = 1684;        // 200 DPI 下 A4 橫式 297mm 寬約 2339,壓到 1684 ≈ 144 DPI,平衡清晰與檔案大小
 
-  btnPdf.addEventListener('click', () => {
+  /** 建立離線複本 .a4,複用同一份 CSS 規則 */
+  function buildOffscreenCard() {
+    const ratio = 297 / 210;
+    const node = canvas.cloneNode(true);
+    node.style.width = RENDER_W_PX + 'px';
+    node.style.height = Math.round(RENDER_W_PX / ratio) + 'px';
+    node.style.position = 'fixed';
+    node.style.left = '-99999px';
+    node.style.top = '0';
+    node.style.boxShadow = 'none';
+    node.style.borderRadius = '0';
+    document.body.appendChild(node);
+    return node;
+  }
+
+  btnPdf.addEventListener('click', async () => {
     if (!records.length) { T('清單是空的', 'warning'); return; }
-    if (typeof pdfMake === 'undefined') { T('PDF 函式庫尚未載入', 'error'); return; }
+    if (typeof html2canvas === 'undefined' || !window.jspdf) {
+      T('PDF 函式庫尚未載入', 'error');
+      return;
+    }
 
-    const pages = records.map((r, i) => buildPdfPage(r, i === records.length - 1));
-    const docDef = {
-      pageSize: { width: A4_W, height: A4_H },
-      pageMargins: [0, 0, 0, 0],
-      content: pages,
-      defaultStyle: { font: 'Roboto' }, // pdfmake 內建,中文走系統字體無法內嵌會 fallback
-      info: {
-        title: '師大桌牌 (ntnu.cc)',
-        creator: 'tools.ntnu.cc/deskcard'
-      }
-    };
+    const originalText = btnPdf.textContent;
+    btnPdf.disabled = true;
+    btnPdf.textContent = `產生中 0 / ${records.length}`;
+
+    const offscreen = buildOffscreenCard();
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+
     try {
-      pdfMake.createPdf(docDef).download(`deskcard-${Date.now()}.pdf`);
+      for (let i = 0; i < records.length; i++) {
+        applyToCanvas(offscreen, records[i]);
+        // 等一輪 paint,確保 fontSize 與 layout 套用後再 capture
+        await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+        const c = await html2canvas(offscreen, {
+          scale: 1,
+          backgroundColor: '#ffffff',
+          useCORS: true,
+          logging: false,
+        });
+        const img = c.toDataURL('image/jpeg', 0.92);
+        if (i > 0) pdf.addPage('a4', 'landscape');
+        pdf.addImage(img, 'JPEG', 0, 0, 297, 210, undefined, 'FAST');
+
+        btnPdf.textContent = `產生中 ${i + 1} / ${records.length}`;
+      }
+
+      pdf.save(`deskcard-${Date.now()}.pdf`);
       T('PDF 已產生', 'success');
     } catch (err) {
       console.error(err);
       T('PDF 產生失敗:' + err.message, 'error');
+    } finally {
+      offscreen.remove();
+      btnPdf.disabled = false;
+      btnPdf.textContent = originalText;
     }
   });
-
-  // 將姓名長度映射到字級
-  function fitSize(text, max, min) {
-    const len = (text || '').length;
-    if (len <= 5) return max;
-    return Math.max(min, max - (len - 5) * 2);
-  }
-
-  /** 組單一 A4 對折頁 (使用 pdfmake absolute positioning) */
-  function buildPdfPage(rec, isLast) {
-    const halfH = A4_H / 2;
-    const nameSize  = fitSize(rec.name,  44, 18);
-    const titleSize = fitSize(rec.title, 22, 12);
-    const orgSize   = fitSize(rec.org,   18, 10);
-
-    // 正面 (下半,正向)
-    const front = [
-      { text: rec.name || '', alignment: 'center', fontSize: nameSize, bold: true, color: '#9B2335',
-        absolutePosition: { x: 0, y: halfH + halfH * 0.30 } , width: A4_W },
-      { text: rec.title || '', alignment: 'center', fontSize: titleSize, color: '#2d2d2d',
-        absolutePosition: { x: 0, y: halfH + halfH * 0.55 }, width: A4_W },
-      { text: rec.org || '', alignment: 'center', fontSize: orgSize, color: '#555555',
-        absolutePosition: { x: 0, y: halfH + halfH * 0.70 }, width: A4_W }
-    ];
-
-    // 背面 (上半,需要 180° 反轉 — pdfmake 不支援 transform,
-    // 改以反向排列文字位置:把文字從下往上排版,使用者把紙翻轉後即正向)
-    // 視覺等效:上半從「靠近摺線」往「上緣」遞減 → 反折後變為從上而下
-    const back = [
-      { text: rec.org || '', alignment: 'center', fontSize: orgSize, color: '#555555',
-        absolutePosition: { x: 0, y: halfH * 0.18 }, width: A4_W },
-      { text: rec.title || '', alignment: 'center', fontSize: titleSize, color: '#2d2d2d',
-        absolutePosition: { x: 0, y: halfH * 0.30 }, width: A4_W },
-      { text: rec.name || '', alignment: 'center', fontSize: nameSize, bold: true, color: '#9B2335',
-        absolutePosition: { x: 0, y: halfH * 0.55 }, width: A4_W }
-    ];
-
-    // 摺線指示 (細點線)
-    const fold = {
-      canvas: [{
-        type: 'line',
-        x1: 8 * MM, y1: halfH, x2: A4_W - 8 * MM, y2: halfH,
-        lineWidth: 0.4, dash: { length: 3, space: 3 }, lineColor: '#cccccc'
-      }]
-    };
-
-    const page = [...back, fold, ...front];
-    if (!isLast) page[page.length - 1].pageBreak = 'after';
-    return page;
-  }
 
   // --- 初始 -----------------------------------------------------
   renderList();

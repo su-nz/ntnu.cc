@@ -23,16 +23,26 @@
 - [x] **桌牌產生器 MVP 檔案**:
   - [public/_sites/tools/deskcard/index.html](public/_sites/tools/deskcard/index.html)
   - [public/_sites/tools/deskcard/app.js](public/_sites/tools/deskcard/app.js)
+- [x] **SPEC2 §3 主域名首頁升級**:[public/index.html](public/index.html)
+  - hero 與 features 之間新增 `#ecosystem` 區塊,三張卡片(視覺工具箱 ready / 文件中心 soon / 資源索引 soon)
+  - navbar 第一個錨點 + footer 服務欄連到 `tools.ntnu.cc`
+  - i18n 中英文補齊 `ecosystem.*` / `nav.ecosystem`
+  - ⚠️ 純前端改動,**尚未在瀏覽器中視覺驗證**,行動裝置斷點要再看一眼
 
 ---
 
 ## 🟡 未驗證 / 已知風險(下次優先處理)
 
-### 1. 桌牌 PDF 中文字體 — 八成會壞
-pdfmake 用內建 Roboto VFS,中文很可能變方塊或退回不同機器各異的系統字體。
-- **選項 A**:把 Noto Sans TC subset 轉 Base64 注進 pdfmake VFS
-- **選項 B**:改用 jsPDF + html2canvas(SPEC2 §4.3 的備援方案)
-- **驗收**:在 Windows / Mac 各跑一次 PDF 下載,中文姓名能正常顯示
+### 1. ~~桌牌 PDF 中文字體~~ → 改用 html2canvas + jsPDF
+2026-05-19 重寫 [public/_sites/tools/deskcard/app.js](public/_sites/tools/deskcard/app.js):
+- CDN 換掉 pdfmake,改為 `html2canvas@1.4.1` + `jspdf@2.5.1`(CSP 已涵蓋 cdnjs)
+- 離線複製 `.a4` DOM(寬 1684px)→ html2canvas rasterize → jsPDF addImage(JPEG 0.92, FAST)
+- 一次解決三件事:
+  1. **中文字體** → 用瀏覽器系統字直接畫
+  2. **雙面反轉** → 預覽的 `transform: rotate(180deg)` 直接被擷取
+  3. **預覽/PDF auto-fit** → 同一個 `fitPx()` 公式,只差 scale
+- ⚠️ **尚未瀏覽器實測**:html2canvas 對 `aspect-ratio` 的支援、200 筆批次的記憶體峰值、不同 OS 預設中文字差異
+- ⚠️ **檔案大小**:每張 A4 jpeg 約 150-300KB,200 筆約 30-60MB,可能需要分批下載
 
 ### 2. `next(url)` rewrite 相容性
 本機 wrangler 與線上 Cloudflare Pages 對 `next()` 吃 URL 字串的行為偶有不一致。
@@ -54,27 +64,17 @@ pdfmake 用內建 Roboto VFS,中文很可能變方塊或退回不同機器各異
 - **還是修 SPEC2 描述以符合現況?**
 - 需要使用者拍板
 
-### 5. 桌牌雙面反轉的實際效果
-pdfmake 不支援 transform rotate,目前是「把背面文字從下往上排」來模擬反轉視覺。
-- **必須列印實測**:對折後翻過來看,姓名/職稱方向是否正確
-- 若不正確,需改用 jsPDF 或在 SVG layer 做真正的 180° rotate
+### 5. 桌牌雙面反轉 — 仍需列印實測
+雖然 html2canvas 已可正確擷取 `rotate(180deg)`,但**對折立桌時翻過來看的方向**仍需印一張驗證。
 
-### 6. 預覽 vs PDF auto-fit 公式不一致
-預覽用 px、PDF 用 pt,字級上下限各寫各的。
-- 長姓名(>10 字)可能畫面看起來剛好、PDF 卻溢出,反之亦然
-- 應該抽成同一個公式
+### 6. templates.js inline CSS sibling 同步
+[functions/lib/templates.js](functions/lib/templates.js) baseTemplate 的 inline CSS 與 [public/assets/ntnu-theme.css](public/assets/ntnu-theme.css) 是 sibling 複本,改動其一要手動同步。
 
 ---
 
 ## 🔴 還沒動的 SPEC2 項目
 
-### SPEC2 §3:主域名首頁升級
-[public/index.html](public/index.html) 還是純短網址介紹頁,需要加入「師大服務生態」卡片區塊:
-- 🎴 視覺工具箱 → `tools.ntnu.cc`(已可連)
-- 📄 文件中心 → `docs.ntnu.cc`(未來)
-- 📚 資源索引 → `links.ntnu.cc`(未來)
-
-配色/字型/陰影沿用既有 CSS 變數,不引入新設計語言。
+(目前 SPEC2 列表已全部至少有一版產出,後續工作以「驗證 + 修缺陷」為主,見上方 🟡 區。)
 
 ---
 
@@ -82,6 +82,7 @@ pdfmake 不支援 transform rotate,目前是「把背面文字從下往上排」
 
 1. [ ] `wrangler pages dev` 起本機,Host header 模擬測 `tools.ntnu.cc` rewrite
 2. [ ] 短網址路徑回歸測試(`/abc`、`/api/*`、`/admin/*`)
-3. [ ] 桌牌 PDF 跑一次中文姓名(預期會壞)
+3. [ ] 桌牌 PDF 跑一次中文姓名(html2canvas 版,**預期可正常顯示**)
 4. [ ] 列印實測對折桌牌雙面方向
-5. [ ] CSP([public/_headers](public/_headers))確認:cdnjs + jsdelivr 已涵蓋,**若補中文字體 from jsdelivr**,要同步加 `style-src` 與 `font-src` 白名單
+5. [ ] 主域名 `/` 三張 ecosystem 卡片在桌機 / 平板 / 手機的視覺平衡
+6. [ ] CSP([public/_headers](public/_headers))確認:cdnjs 已涵蓋 html2canvas + jspdf,**不需改動**
