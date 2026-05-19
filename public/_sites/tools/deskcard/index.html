@@ -84,36 +84,56 @@
     }
     .page-label { font-size: 0.85rem; color: var(--text-muted); }
     .a4 {
-      /* A4 橫式 1:√2 ≈ 297:210 */
-      width: min(100%, 700px);
-      aspect-ratio: 297 / 210;
+      /* A4 直式 210 × 297mm。三等份 (92.33mm) × 3 + 2cm 黏貼條 = 297mm */
+      width: min(100%, 450px);
+      aspect-ratio: 210 / 297;
       background: #fff;
       box-shadow: 0 4px 12px rgba(0,0,0,0.12);
       position: relative;
       border-radius: 4px;
       overflow: hidden;
+      display: grid;
+      grid-template-rows: 92.33fr 92.33fr 92.33fr 20fr;
     }
     .a4 .fold-line {
-      position: absolute; left: 0; right: 0; top: 50%;
+      position: absolute; left: 0; right: 0;
       border-top: 1.5px dashed #d1d5db;
       pointer-events: none;
+      z-index: 2;
     }
-    .a4 .half {
-      position: absolute; left: 0; right: 0; height: 50%;
+    .a4 .face {
+      position: relative;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      padding: 6%;
+      padding: 4% 6%;
       text-align: center;
       box-sizing: border-box;
+      overflow: hidden;
     }
-    .a4 .half.back  { top: 0; transform: rotate(180deg); }
-    .a4 .half.front { bottom: 0; }
+    .a4 .face.back  { transform: rotate(180deg); }
+    .a4 .face.bottom { background: #fafafa; }
+    .a4 .face.bottom .bottom-label {
+      font-size: 0.7rem;
+      color: #9ca3af;
+      letter-spacing: 0.15em;
+    }
+    .a4 .glue-tab {
+      position: relative;
+      background: repeating-linear-gradient(-45deg, #ffffff, #ffffff 5px, #f3f4f6 5px, #f3f4f6 10px);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .a4 .glue-tab .glue-label {
+      font-size: 0.65rem;
+      color: #9ca3af;
+      letter-spacing: 0.15em;
+    }
     .a4 .logo {
       position: absolute;
-      width: 8%;
+      width: 12%;
       opacity: 0.95;
+      z-index: 1;
     }
-    .a4 .half.back .logo  { top: 5%; left: 5%; }
-    .a4 .half.front .logo { bottom: 5%; right: 5%; }
+    .a4 .face.back  .logo { top: 5%; left: 5%; }
+    .a4 .face.front .logo { top: 5%; left: 5%; }
 
     .name {
       font-weight: 800;
@@ -251,6 +271,9 @@
             <button class="btn btn-secondary btn-sm" id="btnPick">選擇檔案</button>
           </div>
         </div>
+        <p class="tip" style="margin-top:0.5rem;">
+          不確定格式? <a href="./sample.csv" download>下載範例 CSV</a>(欄位:姓名 / 職稱 / 單位)
+        </p>
         <div id="mapping" style="display:none; margin-top:0.85rem;">
           <div class="mapping-grid">
             <label>姓名</label><select id="mapName"></select>
@@ -268,27 +291,35 @@
           <button class="btn" id="btnPdf">下載 PDF</button>
           <button class="btn btn-secondary btn-sm" id="btnClear">清空清單</button>
         </div>
-        <p class="tip">A4 橫式對折桌牌:上半為背面 (180° 反轉),下半為正面,沿中央虛線對折即可立起。</p>
+        <p class="tip">A4 直式三角柱桌牌:由上到下為背面 (180° 反轉)、底面、正面,最下方 2cm 為黏貼條。沿三條虛線折成三角柱後,將黏貼條塗膠貼到背面後方。</p>
       </section>
     </aside>
 
     <!-- Center: Preview -->
     <main class="preview-area">
-      <div class="page-label">A4 橫式 · 對折桌牌預覽 (第 <span id="curIdx">-</span> / <span id="totalIdx">0</span> 筆)</div>
+      <div class="page-label">A4 直式 · 三角柱桌牌預覽 (第 <span id="curIdx">-</span> / <span id="totalIdx">0</span> 筆)</div>
       <div class="a4" id="canvas">
-        <div class="half back">
+        <div class="face back">
           <img src="/NTNU_Red.png" alt="" class="logo">
           <div class="name" data-role="name">王小明</div>
           <div class="title" data-role="title">助理教授</div>
           <div class="org" data-role="org">資訊工程學系</div>
         </div>
-        <div class="fold-line"></div>
-        <div class="half front">
+        <div class="face bottom">
+          <span class="bottom-label">底面 · 朝下放置</span>
+        </div>
+        <div class="face front">
           <img src="/NTNU_Red.png" alt="" class="logo">
           <div class="name" data-role="name">王小明</div>
           <div class="title" data-role="title">助理教授</div>
           <div class="org" data-role="org">資訊工程學系</div>
         </div>
+        <div class="glue-tab">
+          <span class="glue-label">↑ 黏貼處 2cm</span>
+        </div>
+        <div class="fold-line" style="top: 31.09%;"></div>
+        <div class="fold-line" style="top: 62.17%;"></div>
+        <div class="fold-line" style="top: 93.26%;"></div>
       </div>
     </main>
 

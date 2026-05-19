@@ -85,8 +85,8 @@
   /** 把一筆 rec 套到指定 .a4 容器(預覽或離線渲染共用) */
   function applyToCanvas(el, rec) {
     // 以容器當前寬度為基準計算字級,讓預覽與 PDF 輸出公式一致
-    const w = el.clientWidth || el.getBoundingClientRect().width || 700;
-    const base = w / 700; // 700px 為設計基準寬
+    const w = el.clientWidth || el.getBoundingClientRect().width || 450;
+    const base = w / 450; // 450px 為設計基準寬 (A4 直式預覽寬)
 
     el.querySelectorAll('[data-role="name"]').forEach(node => {
       node.textContent = rec.name || '';
@@ -287,11 +287,11 @@
 
   // --- PDF 輸出(html2canvas + jsPDF) ---------------------------
   // 採離線複製預覽 DOM 渲染,中文走瀏覽器系統字體,雙面反轉直接沿用 CSS rotate
-  const RENDER_W_PX = 1684;        // 200 DPI 下 A4 橫式 297mm 寬約 2339,壓到 1684 ≈ 144 DPI,平衡清晰與檔案大小
+  const RENDER_W_PX = 1190;        // A4 直式 210mm 寬 ≈ 144 DPI = 1190px,平衡清晰與檔案大小
 
   /** 建立離線複本 .a4,複用同一份 CSS 規則 */
   function buildOffscreenCard() {
-    const ratio = 297 / 210;
+    const ratio = 210 / 297;
     const node = canvas.cloneNode(true);
     node.style.width = RENDER_W_PX + 'px';
     node.style.height = Math.round(RENDER_W_PX / ratio) + 'px';
@@ -317,7 +317,7 @@
 
     const offscreen = buildOffscreenCard();
     const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
     try {
       for (let i = 0; i < records.length; i++) {
@@ -332,8 +332,8 @@
           logging: false,
         });
         const img = c.toDataURL('image/jpeg', 0.92);
-        if (i > 0) pdf.addPage('a4', 'landscape');
-        pdf.addImage(img, 'JPEG', 0, 0, 297, 210, undefined, 'FAST');
+        if (i > 0) pdf.addPage('a4', 'portrait');
+        pdf.addImage(img, 'JPEG', 0, 0, 210, 297, undefined, 'FAST');
 
         btnPdf.textContent = `產生中 ${i + 1} / ${records.length}`;
       }
