@@ -336,7 +336,7 @@ Content-Security-Policy: default-src 'self'; script-src 'self' https://challenge
 - **Cloudflare WAF 規則**（第一道防線）：
   - 設定 Rate Limiting Rule 於 Dashboard。
   - 動作：Block 或 Challenge（顯示 CAPTCHA）。
-- **應用層計數器**（精細控制）：
+- **應用層計數器**（精細控 制）：
   - 使用 KV 儲存：`ratelimit:{ip}:{endpoint}` → `{count, reset_at}`
   - TTL 設為時間窗口長度（如 60 秒）。
 
