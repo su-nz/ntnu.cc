@@ -184,29 +184,45 @@ async function handleDelete(context) {
     return createErrorResponse('Invalid request', 'INVALID_REQUEST', 400);
   }
   
-  const { ids } = body;
-  
+  const { ids, silent } = body;
+
   if (!Array.isArray(ids) || ids.length === 0) {
     return createErrorResponse('No IDs provided', 'INVALID_REQUEST', 400);
   }
-  
+
+  // 單一請求最多刪除 100 筆，避免超出 Workers 子請求上限
+  if (ids.length > 100) {
+    return createErrorResponse('Too many IDs. Maximum 100 per request.', 'TOO_MANY_IDS', 400);
+  }
+
   // 刪除短網址
   const results = [];
   for (const id of ids) {
     try {
+      // 靜默模式（批量清理）：直接刪除，不逐筆讀取或發送 Discord 通知，
+      // 避免一次刪除大量項目時轟炸 webhook 並超出子請求上限。
+      if (silent) {
+        await env.LINKS_KV.delete(`link:${id}`);
+        await env.LINKS_KV.delete(`stats:${id}`);
+        await env.LINKS_KV.delete(`disabled:${id}`);
+        results.push({ id, success: true });
+        continue;
+      }
+
       const targetUrl = await env.LINKS_KV.get(`link:${id}`);
-      
+
       if (targetUrl) {
         await env.LINKS_KV.delete(`link:${id}`);
         await env.LINKS_KV.delete(`stats:${id}`);
-        
+        await env.LINKS_KV.delete(`disabled:${id}`);
+
         // 發送通知
         await notifyLinkDeleted(env.DISCORD_WEBHOOK_URL, {
           id,
           targetUrl,
           deletedBy: 'Admin',
         });
-        
+
         results.push({ id, success: true });
       } else {
         results.push({ id, success: false, error: 'NOT_FOUND' });
@@ -215,7 +231,19 @@ async function handleDelete(context) {
       results.push({ id, success: false, error: 'DELETE_FAILED' });
     }
   }
-  
+
+  // 批量清理模式：只發送一則彙總通知
+  if (silent) {
+    const successCount = results.filter(r => r.success).length;
+    if (successCount > 0) {
+      await notifyLinkDeleted(env.DISCORD_WEBHOOK_URL, {
+        id: `批量清理 ${successCount} 筆`,
+        targetUrl: `(管理員批量清理，本次請求共 ${ids.length} 筆)`,
+        deletedBy: 'Admin (批量清理)',
+      });
+    }
+  }
+
   return createResponse({ results });
 }
 
@@ -496,6 +524,7 @@ function generateAdminHtml(links, pagination) {
         </div>
         <div class="admin-actions">
           <a href="/admin/analytics" class="btn btn-secondary">📊 分析儀表板</a>
+          <a href="/admin/cleanup" class="btn btn-secondary">🧹 批量清理</a>
           <button class="btn" onclick="exportData()">📥 匯出資料</button>
           <a href="/" class="btn logout-link" onclick="logout(); return false;">登出</a>
         </div>
