@@ -262,7 +262,9 @@ function generateCleanupHtml() {
       // 顯示上限：避免一次渲染數萬列造成瀏覽器卡頓。
       // 選取與刪除都以「全部符合篩選的資料」為準，不受此上限影響。
       const RENDER_LIMIT = 1000;
-      const DELETE_BATCH = 100;
+      const SERVER_MAX = 200;   // 與後端單次上限一致
+      const MIN_BATCH = 10;     // 遇到子請求上限時自動縮小的下限
+      const CONCURRENCY = 3;    // 同時進行的刪除請求數
 
       let allLinks = [];          // 全部載入的資料
       let filtered = [];          // 目前符合篩選的資料
@@ -427,6 +429,43 @@ function generateCleanupHtml() {
       }
 
       // ---- 刪除 ----
+      // 刪除單一批次；若請求失敗（例如超出子請求上限），自動對半拆分重試，
+      // 直到批次小於 MIN_BATCH 才判定失敗。回傳成功刪除的 id 陣列。
+      async function deleteOneBatch(batch, okSet, failedSet, onProgress) {
+        let resp;
+        try {
+          resp = await fetch('/admin', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ids: batch, silent: true }),
+          });
+        } catch (e) {
+          resp = null;
+        }
+
+        if (resp && resp.ok) {
+          let data;
+          try { data = await resp.json(); } catch (e) { data = { results: [] }; }
+          (data.results || []).forEach(function (r) {
+            if (r.success) okSet.add(r.id);
+            else failedSet.add(r.id);
+          });
+          onProgress(batch.length);
+          return;
+        }
+
+        // 請求失敗：拆半重試以避開子請求 / 逾時上限
+        if (batch.length > MIN_BATCH) {
+          const mid = Math.floor(batch.length / 2);
+          await deleteOneBatch(batch.slice(0, mid), okSet, failedSet, onProgress);
+          await deleteOneBatch(batch.slice(mid), okSet, failedSet, onProgress);
+          return;
+        }
+
+        batch.forEach(function (id) { failedSet.add(id); });
+        onProgress(batch.length);
+      }
+
       async function deleteSelected() {
         const ids = Array.from(selected);
         if (ids.length === 0) return;
@@ -436,36 +475,48 @@ function generateCleanupHtml() {
         btn.disabled = true;
         const statusEl = document.getElementById('loadStatus');
 
-        let deleted = 0;
-        const failedIds = [];
-        for (let i = 0; i < ids.length; i += DELETE_BATCH) {
-          const batch = ids.slice(i, i + DELETE_BATCH);
-          statusEl.textContent = '刪除中… ' + deleted + ' / ' + ids.length;
-          try {
-            const resp = await fetch('/admin', {
-              method: 'DELETE',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ ids: batch, silent: true }),
-            });
-            if (!resp.ok) { failedIds.push.apply(failedIds, batch); continue; }
-            const data = await resp.json();
-            (data.results || []).forEach(function (r) {
-              if (r.success) { deleted++; selected.delete(r.id); }
-              else failedIds.push(r.id);
-            });
-          } catch (e) {
-            failedIds.push.apply(failedIds, batch);
-          }
+        const okSet = new Set();
+        const failedSet = new Set();
+        const total = ids.length;
+        let processed = 0;
+        function onProgress(n) {
+          processed += n;
+          statusEl.textContent = '刪除中… ' + processed + ' / ' + total
+            + '（成功 ' + okSet.size + (failedSet.size ? '，失敗 ' + failedSet.size : '') + '）';
         }
 
-        // 從本地資料移除已刪除項目
-        const deletedSet = new Set(ids.filter(function (id) { return !failedIds.includes(id) && !selected.has(id); }));
-        allLinks = allLinks.filter(function (l) { return !deletedSet.has(l.id); });
+        // 切成 SERVER_MAX 大小的 chunk
+        const chunks = [];
+        for (let i = 0; i < ids.length; i += SERVER_MAX) {
+          chunks.push(ids.slice(i, i + SERVER_MAX));
+        }
+
+        // 以有限並行度處理多個 chunk，加快大量刪除
+        let idx = 0;
+        async function worker() {
+          while (idx < chunks.length) {
+            const my = chunks[idx++];
+            await deleteOneBatch(my, okSet, failedSet, onProgress);
+          }
+        }
+        const workers = [];
+        for (let i = 0; i < Math.min(CONCURRENCY, chunks.length); i++) {
+          workers.push(worker());
+        }
+        await Promise.all(workers);
+
+        // 從本地資料與選取集移除已刪除項目（用 Set，避免 O(n^2) 卡頓）
+        okSet.forEach(function (id) { selected.delete(id); });
+        allLinks = allLinks.filter(function (l) { return !okSet.has(l.id); });
         document.getElementById('loadedCount').textContent = allLinks.length;
 
-        statusEl.textContent = '✅ 已刪除 ' + deleted + ' 筆' + (failedIds.length ? '，失敗 ' + failedIds.length + ' 筆' : '');
-        if (failedIds.length) alert('有 ' + failedIds.length + ' 筆刪除失敗，請稍後重試。');
+        statusEl.textContent = '✅ 已刪除 ' + okSet.size + ' 筆'
+          + (failedSet.size ? '，失敗 ' + failedSet.size + ' 筆（已保留，可再次刪除）' : '');
+        if (failedSet.size) {
+          alert('有 ' + failedSet.size + ' 筆刪除失敗，已保留在清單中，可再按一次刪除重試。');
+        }
         applyFilters();
+        updateSelectedCount();
       }
 
       // 啟動
