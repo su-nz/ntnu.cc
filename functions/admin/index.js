@@ -190,31 +190,51 @@ async function handleDelete(context) {
     return createErrorResponse('No IDs provided', 'INVALID_REQUEST', 400);
   }
 
-  // 單一請求最多刪除 100 筆，避免超出 Workers 子請求上限
-  if (ids.length > 100) {
-    return createErrorResponse('Too many IDs. Maximum 100 per request.', 'TOO_MANY_IDS', 400);
+  // 單一請求最多刪除 200 筆，避免超出 Workers 子請求上限
+  // （靜默模式每筆 2 個子請求 → 200 筆約 400 個，仍在付費方案 1000 上限內）
+  if (ids.length > 200) {
+    return createErrorResponse('Too many IDs. Maximum 200 per request.', 'TOO_MANY_IDS', 400);
   }
 
-  // 刪除短網址
+  // 靜默批量模式（清理用）：平行刪除、不逐筆讀取或發送 Discord 通知，
+  // 避免一次刪除大量項目時拖慢請求、轟炸 webhook 或超出子請求上限。
+  // 注意：本專案從未寫入 disabled:${id} 鍵（停用狀態存於 link metadata），
+  //       因此只需刪 link: 與 stats:，可省下 1/3 子請求。
+  if (silent) {
+    const results = await Promise.all(ids.map(async (id) => {
+      try {
+        await Promise.all([
+          env.LINKS_KV.delete(`link:${id}`),
+          env.LINKS_KV.delete(`stats:${id}`),
+        ]);
+        return { id, success: true };
+      } catch (error) {
+        return { id, success: false, error: 'DELETE_FAILED' };
+      }
+    }));
+
+    // 只發送一則彙總通知
+    const successCount = results.filter(r => r.success).length;
+    if (successCount > 0) {
+      await notifyLinkDeleted(env.DISCORD_WEBHOOK_URL, {
+        id: `批量清理 ${successCount} 筆`,
+        targetUrl: `(管理員批量清理，本次請求共 ${ids.length} 筆)`,
+        deletedBy: 'Admin (批量清理)',
+      });
+    }
+
+    return createResponse({ results });
+  }
+
+  // 一般模式：逐筆刪除並發送通知（供後台單筆 / 少量刪除使用）
   const results = [];
   for (const id of ids) {
     try {
-      // 靜默模式（批量清理）：直接刪除，不逐筆讀取或發送 Discord 通知，
-      // 避免一次刪除大量項目時轟炸 webhook 並超出子請求上限。
-      if (silent) {
-        await env.LINKS_KV.delete(`link:${id}`);
-        await env.LINKS_KV.delete(`stats:${id}`);
-        await env.LINKS_KV.delete(`disabled:${id}`);
-        results.push({ id, success: true });
-        continue;
-      }
-
       const targetUrl = await env.LINKS_KV.get(`link:${id}`);
 
       if (targetUrl) {
         await env.LINKS_KV.delete(`link:${id}`);
         await env.LINKS_KV.delete(`stats:${id}`);
-        await env.LINKS_KV.delete(`disabled:${id}`);
 
         // 發送通知
         await notifyLinkDeleted(env.DISCORD_WEBHOOK_URL, {
@@ -229,18 +249,6 @@ async function handleDelete(context) {
       }
     } catch (error) {
       results.push({ id, success: false, error: 'DELETE_FAILED' });
-    }
-  }
-
-  // 批量清理模式：只發送一則彙總通知
-  if (silent) {
-    const successCount = results.filter(r => r.success).length;
-    if (successCount > 0) {
-      await notifyLinkDeleted(env.DISCORD_WEBHOOK_URL, {
-        id: `批量清理 ${successCount} 筆`,
-        targetUrl: `(管理員批量清理，本次請求共 ${ids.length} 筆)`,
-        deletedBy: 'Admin (批量清理)',
-      });
     }
   }
 
