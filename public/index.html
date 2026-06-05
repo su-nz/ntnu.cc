@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
+  <script>
+    (function() {
+      var t = localStorage.getItem('theme') || 'auto';
+      var r = t === 'auto'
+        ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+        : t;
+      document.documentElement.setAttribute('data-theme', r);
+    })();
+  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ntnu.cc - 師大短網址服務 | NTNU URL Shortener</title>
@@ -29,11 +38,11 @@
   <meta name="twitter:image" content="https://ntnu.cc/og-image.png">
   
   <!-- Favicon - Google 建議 48px 倍數的正方形圖示 -->
-  <link rel="shortcut icon" href="/NTNU_Red.png">
-  <link rel="icon" type="image/png" sizes="48x48" href="/NTNU_Red.png">
-  <link rel="icon" type="image/png" sizes="96x96" href="/NTNU_Red.png">
-  <link rel="icon" type="image/png" sizes="144x144" href="/NTNU_Red.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="/NTNU_Red.png">
+  <link rel="shortcut icon" href="/NTNU_Blue.png">
+  <link rel="icon" type="image/png" sizes="48x48" href="/NTNU_Blue.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/NTNU_Blue.png">
+  <link rel="icon" type="image/png" sizes="144x144" href="/NTNU_Blue.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/NTNU_Blue.png">
   
   <!-- JSON-LD Structured Data -->
   <script type="application/ld+json">
@@ -60,21 +69,185 @@
   
   <style>
     :root {
-      --primary: #9B2335;
-      --primary-dark: #7A1C2A;
-      --primary-light: #C94C5C;
-      --secondary: #D4646F;
+      --primary: #2E3192;
+      --primary-dark: #1A1D5C;
+      --primary-light: #5255B0;
+      --secondary: #7A7DC4;
       --accent: #10b981;
-      --text-dark: #2d2d2d;
-      --text-light: #555555;
-      --text-muted: #777777;
+      --text-dark: #1a1a2e;
+      --text-light: #4a5568;
+      --text-muted: #718096;
       --bg-white: #ffffff;
-      --bg-light: #fff9f9;
-      --bg-gradient: linear-gradient(135deg, #9B2335 0%, #B83A4B 50%, #C94C5C 100%);
-      --shadow-sm: 0 1px 2px rgba(155, 35, 53, 0.08);
-      --shadow-md: 0 4px 6px -1px rgba(155, 35, 53, 0.12);
-      --shadow-lg: 0 10px 15px -3px rgba(155, 35, 53, 0.12);
-      --shadow-xl: 0 20px 25px -5px rgba(155, 35, 53, 0.12);
+      --bg-light: #F2F3FB;
+      --bg-gradient: linear-gradient(135deg, #2E3192 0%, #3D40A0 50%, #5255B0 100%);
+      --shadow-sm: 0 1px 2px rgba(46, 49, 146, 0.08);
+      --shadow-md: 0 4px 6px -1px rgba(46, 49, 146, 0.12);
+      --shadow-lg: 0 10px 15px -3px rgba(46, 49, 146, 0.12);
+      --shadow-xl: 0 20px 25px -5px rgba(46, 49, 146, 0.12);
+    }
+
+    [data-theme="dark"] {
+      --primary: #7A7DC4;
+      --primary-dark: #5255B0;
+      --primary-light: #9B9EE0;
+      --secondary: #9B9EE0;
+      --accent: #3ecf8e;
+      --text-dark: #e8eaed;
+      --text-light: #b4b7bd;
+      --text-muted: #8a8d93;
+      --bg-white: #1a1f2e;
+      --bg-light: #0f1420;
+      --bg-gradient: linear-gradient(135deg, #0a0f1a 0%, #111827 50%, #1a2332 100%);
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+      --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+      --border: #2d3340;
+    }
+
+    /* Dark Mode Overrides */
+    [data-theme="dark"] body {
+      background: var(--bg-white);
+      color: var(--text-dark);
+    }
+
+    [data-theme="dark"] .navbar {
+      background: rgba(26, 31, 46, 0.95);
+    }
+
+    [data-theme="dark"] .navbar-content .logo {
+      color: var(--primary);
+    }
+
+    [data-theme="dark"] .nav-links a {
+      color: var(--text-light);
+    }
+
+    [data-theme="dark"] .nav-links a:hover {
+      color: var(--primary);
+    }
+
+    [data-theme="dark"] .shortener-box {
+      background: var(--bg-white);
+    }
+
+    [data-theme="dark"] .form-group input,
+    [data-theme="dark"] .form-group select {
+      background: var(--bg-light);
+      color: var(--text-dark);
+      border-color: var(--border);
+    }
+
+    [data-theme="dark"] .form-group label {
+      color: var(--text-dark);
+    }
+
+    [data-theme="dark"] .btn-secondary {
+      background: var(--bg-light);
+      color: var(--primary);
+      border-color: var(--border);
+    }
+
+    [data-theme="dark"] .btn-random {
+      background: var(--bg-light);
+      color: var(--text-dark);
+      border-color: var(--border);
+    }
+
+    [data-theme="dark"] .feature-card {
+      background: var(--bg-white);
+      border-color: var(--border);
+    }
+
+    [data-theme="dark"] .feature-card h3 {
+      color: var(--text-dark);
+    }
+
+    [data-theme="dark"] .feature-card p {
+      color: var(--text-light);
+    }
+
+    [data-theme="dark"] .testimonial-card {
+      background: var(--bg-light);
+    }
+
+    [data-theme="dark"] .testimonial-text {
+      color: var(--text-dark);
+    }
+
+    [data-theme="dark"] .testimonial-author h4 {
+      color: var(--text-dark);
+    }
+
+    [data-theme="dark"] .footer {
+      background: #0a0f1a;
+    }
+
+    [data-theme="dark"] .footer-brand h3 {
+      color: var(--text-dark);
+    }
+
+    [data-theme="dark"] .section-header h2 {
+      color: var(--text-dark);
+    }
+
+    [data-theme="dark"] .section-header p {
+      color: var(--text-light);
+    }
+
+    [data-theme="dark"] .modal-card {
+      background: var(--bg-white);
+    }
+
+    [data-theme="dark"] .modal-header {
+      border-bottom-color: var(--border);
+    }
+
+    [data-theme="dark"] .modal-header h3 {
+      color: var(--text-dark);
+    }
+
+    [data-theme="dark"] .modal-body p {
+      color: var(--text-light);
+    }
+
+    [data-theme="dark"] .modal-body strong {
+      color: var(--text-dark);
+    }
+
+    [data-theme="dark"] .result-box {
+      background: rgba(62, 207, 142, 0.1);
+      border-color: var(--success);
+    }
+
+    [data-theme="dark"] .result-box.error {
+      background: rgba(245, 101, 101, 0.1);
+      border-color: var(--error);
+    }
+
+    [data-theme="dark"] .result-url-display {
+      background: rgba(77, 163, 217, 0.1);
+    }
+
+    [data-theme="dark"] .result-url-display a {
+      color: var(--primary);
+    }
+
+    [data-theme="dark"] .btn-copy {
+      background: var(--primary);
+      color: white;
+    }
+
+    [data-theme="dark"] .announcement-banner {
+      background: linear-gradient(90deg, var(--primary-dark) 0%, var(--primary) 100%);
+    }
+
+    [data-theme="dark"] .testimonials {
+      background: var(--bg-white);
+    }
+
+    [data-theme="dark"] .stats-banner {
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
     }
     
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -852,6 +1025,42 @@
       text-decoration: none;
     }
     
+    /* Theme Toggle */
+    .theme-toggle-wrapper {
+      display: inline-flex;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-right: 0.5rem;
+    }
+
+    .theme-toggle-btn {
+      padding: 0.4rem 0.5rem;
+      font-size: 0.8rem;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      color: var(--text-light);
+      transition: all 0.2s;
+    }
+
+    .theme-toggle-btn:hover {
+      color: var(--primary);
+    }
+
+    .theme-toggle-btn.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    [data-theme="dark"] .theme-toggle-wrapper {
+      border-color: var(--border);
+    }
+
+    [data-theme="dark"] .theme-toggle-btn {
+      color: var(--text-light);
+    }
+
     /* Responsive */
     @media (max-width: 900px) {
       .features-grid, .testimonials-grid {
@@ -860,6 +1069,11 @@
     }
     
     @media (max-width: 768px) {
+      .theme-toggle-btn {
+        padding: 0.3rem 0.35rem;
+        font-size: 0.7rem;
+      }
+      
       .announcement-banner {
         padding: 0.4rem 0.75rem;
       }
@@ -1010,7 +1224,7 @@
   <nav class="navbar">
     <div class="navbar-content">
       <a href="/" class="logo">
-        <img src="/NTNU_Red.png" alt="" class="logo-img">
+        <img src="/NTNU_Blue.png" alt="" class="logo-img">
         ntnu.cc
       </a>
       <div class="nav-links">
@@ -1023,6 +1237,11 @@
           </svg>
           GitHub
         </a>
+        <div class="theme-toggle-wrapper">
+          <button class="theme-toggle-btn" data-theme-option="light" title="Light">☀️</button>
+          <button class="theme-toggle-btn" data-theme-option="auto" title="Auto">🖥️</button>
+          <button class="theme-toggle-btn" data-theme-option="dark" title="Dark">🌙</button>
+        </div>
         <button class="btn btn-secondary lang-toggle" id="langToggle" onclick="toggleLanguage()">EN</button>
       </div>
     </div>
@@ -1200,7 +1419,7 @@
       <div class="footer-main">
         <div class="footer-brand">
           <h3>
-            <img src="/NTNU_Red.png" alt="" class="footer-logo">
+            <img src="/NTNU_Blue.png" alt="" class="footer-logo">
             ntnu.cc
           </h3>
           <p data-i18n="footer.desc">專為國立臺灣師範大學設計的短網址服務平台</p>
@@ -1496,6 +1715,47 @@
       return getNestedValue(i18n[currentLang], key) || key;
     }
     
+    // ============ 主題切換系統 ============
+    function getResolvedTheme(theme) {
+      if (theme === 'auto') {
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      return theme;
+    }
+
+    function setTheme(theme) {
+      localStorage.setItem('theme', theme);
+      document.documentElement.setAttribute('data-theme', getResolvedTheme(theme));
+      updateThemeToggleUI();
+    }
+
+    function updateThemeToggleUI() {
+      const currentTheme = localStorage.getItem('theme') || 'auto';
+      document.querySelectorAll('.theme-toggle-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.themeOption === currentTheme);
+      });
+    }
+
+    // Initialize theme toggle state
+    document.addEventListener('DOMContentLoaded', function() {
+      updateThemeToggleUI();
+      
+      // Add click handlers
+      document.querySelectorAll('.theme-toggle-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          setTheme(this.dataset.themeOption);
+        });
+      });
+      
+      // Listen for system theme changes
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
+        const theme = localStorage.getItem('theme') || 'auto';
+        if (theme === 'auto') {
+          document.documentElement.setAttribute('data-theme', getResolvedTheme('auto'));
+        }
+      });
+    });
+
     // ============ 免責聲明彈出視窗 ============
     function openDisclaimer() {
       document.getElementById('disclaimerModal').classList.add('show');
@@ -1682,7 +1942,7 @@
           text: url,
           width: 200,
           height: 200,
-          colorDark: '#9B2335',
+          colorDark: '#2E3192',
           colorLight: '#ffffff',
           correctLevel: QRCode.CorrectLevel.H
         });

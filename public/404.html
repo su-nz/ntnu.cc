@@ -4,37 +4,57 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>404 - 找不到頁面 | ntnu.cc</title>
+  <script>
+    (function() {
+      var t = localStorage.getItem('theme') || 'auto';
+      var r = t === 'auto'
+        ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+        : t;
+      document.documentElement.setAttribute('data-theme', r);
+    })();
+  </script>
   <style>
     :root {
-      --bg-primary: #1a1a2e;
-      --bg-secondary: #16213e;
-      --text-primary: #eaeaea;
-      --text-secondary: #a0a0a0;
-      --accent: #e94560;
-      --border: #333;
+      --bg-primary: #F2F3FB;
+      --bg-secondary: #ffffff;
+      --text-primary: #1a1a2e;
+      --text-secondary: #4a5568;
+      --accent: #2E3192;
+      --accent-hover: #5255B0;
+      --border: #e2e8f0;
     }
-    
+
+    [data-theme="dark"] {
+      --bg-primary: #0a0f1a;
+      --bg-secondary: #1a1f2e;
+      --text-primary: #e8eaed;
+      --text-secondary: #b4b7bd;
+      --accent: #7A7DC4;
+      --accent-hover: #9B9EE0;
+      --border: #2d3340;
+    }
+
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
-    
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+      background: var(--bg-primary);
       color: var(--text-primary);
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
     }
-    
+
     .container {
       text-align: center;
       padding: 2rem;
     }
-    
+
     .error-code {
       font-size: 8rem;
       font-weight: bold;
@@ -42,17 +62,18 @@
       line-height: 1;
       margin-bottom: 1rem;
     }
-    
+
     h1 {
       font-size: 1.5rem;
       margin-bottom: 1rem;
+      color: var(--text-primary);
     }
-    
+
     p {
       color: var(--text-secondary);
       margin-bottom: 2rem;
     }
-    
+
     .btn {
       display: inline-block;
       padding: 0.75rem 1.5rem;
@@ -60,11 +81,12 @@
       color: white;
       border-radius: 8px;
       text-decoration: none;
-      transition: opacity 0.2s;
+      transition: all 0.2s;
     }
-    
+
     .btn:hover {
-      opacity: 0.9;
+      background: var(--accent-hover);
+      transform: translateY(-2px);
     }
   </style>
 </head>
