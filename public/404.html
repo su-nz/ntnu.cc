@@ -11,10 +11,12 @@
         ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
         : t;
       document.documentElement.setAttribute('data-theme', r);
+      var c = localStorage.getItem('color') || 'blue';
+      document.documentElement.setAttribute('data-color', c);
     })();
   </script>
   <style>
-    :root {
+    :root, [data-color="blue"] {
       --bg-primary: #F2F3FB;
       --bg-secondary: #ffffff;
       --text-primary: #1a1a2e;
@@ -24,13 +26,27 @@
       --border: #e2e8f0;
     }
 
+    [data-color="red"] {
+      --bg-primary: #FBF2F4;
+      --accent: #9B2335;
+      --accent-hover: #C94C5C;
+    }
+
+    [data-color="blue"][data-theme="dark"] {
+      --accent: #7A7DC4;
+      --accent-hover: #9B9EE0;
+    }
+
+    [data-color="red"][data-theme="dark"] {
+      --accent: #D67485;
+      --accent-hover: #E59DA8;
+    }
+
     [data-theme="dark"] {
       --bg-primary: #0a0f1a;
       --bg-secondary: #1a1f2e;
       --text-primary: #e8eaed;
       --text-secondary: #b4b7bd;
-      --accent: #7A7DC4;
-      --accent-hover: #9B9EE0;
       --border: #2d3340;
     }
 

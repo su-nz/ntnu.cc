@@ -8,6 +8,8 @@
         ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
         : t;
       document.documentElement.setAttribute('data-theme', r);
+      var c = localStorage.getItem('color') || 'blue';
+      document.documentElement.setAttribute('data-color', c);
     })();
   </script>
   <meta charset="UTF-8">
@@ -68,7 +70,7 @@
   </script>
   
   <style>
-    :root {
+    :root, [data-color="blue"] {
       --primary: #2E3192;
       --primary-dark: #1A1D5C;
       --primary-light: #5255B0;
@@ -86,11 +88,34 @@
       --shadow-xl: 0 20px 25px -5px rgba(46, 49, 146, 0.12);
     }
 
-    [data-theme="dark"] {
+    [data-color="red"] {
+      --primary: #9B2335;
+      --primary-dark: #7A1C2A;
+      --primary-light: #C94C5C;
+      --secondary: #C94C5C;
+      --bg-gradient: linear-gradient(135deg, #9B2335 0%, #B83A4B 50%, #C94C5C 100%);
+      --shadow-sm: 0 1px 2px rgba(155, 35, 53, 0.08);
+      --shadow-md: 0 4px 6px -1px rgba(155, 35, 53, 0.12);
+      --shadow-lg: 0 10px 15px -3px rgba(155, 35, 53, 0.12);
+      --shadow-xl: 0 20px 25px -5px rgba(155, 35, 53, 0.12);
+    }
+
+    /* Color-aware primary overrides for dark mode */
+    [data-color="blue"][data-theme="dark"] {
       --primary: #7A7DC4;
       --primary-dark: #5255B0;
       --primary-light: #9B9EE0;
       --secondary: #9B9EE0;
+    }
+
+    [data-color="red"][data-theme="dark"] {
+      --primary: #D67485;
+      --primary-dark: #C94C5C;
+      --primary-light: #E59DA8;
+      --secondary: #E59DA8;
+    }
+
+    [data-theme="dark"] {
       --accent: #3ecf8e;
       --text-dark: #e8eaed;
       --text-light: #b4b7bd;
@@ -236,6 +261,13 @@
     [data-theme="dark"] .btn-copy {
       background: var(--primary);
       color: white;
+    }
+
+    [data-theme="dark"] .btn-primary,
+    [data-theme="dark"] .btn-submit,
+    [data-theme="dark"] .feature-icon,
+    [data-theme="dark"] .author-avatar {
+      background: var(--primary);
     }
 
     [data-theme="dark"] .announcement-banner {
@@ -1061,6 +1093,48 @@
       color: var(--text-light);
     }
 
+    .color-toggle-wrapper {
+      display: inline-flex;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-right: 0.5rem;
+    }
+
+    .color-toggle-btn {
+      padding: 0.4rem 0.5rem;
+      font-size: 0.8rem;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      color: var(--text-light);
+      transition: all 0.2s;
+    }
+
+    .color-toggle-btn:hover {
+      color: var(--primary);
+    }
+
+    .color-toggle-btn.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    [data-theme="dark"] .color-toggle-wrapper {
+      border-color: var(--border);
+    }
+
+    [data-theme="dark"] .color-toggle-btn {
+      color: var(--text-light);
+    }
+
+    @media (max-width: 768px) {
+      .color-toggle-btn {
+        padding: 0.3rem 0.35rem;
+        font-size: 0.7rem;
+      }
+    }
+
     /* Responsive */
     @media (max-width: 900px) {
       .features-grid, .testimonials-grid {
@@ -1237,6 +1311,10 @@
           </svg>
           GitHub
         </a>
+        <div class="color-toggle-wrapper">
+          <button class="color-toggle-btn" data-color-option="blue" title="NTNU Blue">🔵</button>
+          <button class="color-toggle-btn" data-color-option="red" title="NTNU Red">🔴</button>
+        </div>
         <div class="theme-toggle-wrapper">
           <button class="theme-toggle-btn" data-theme-option="light" title="Light">☀️</button>
           <button class="theme-toggle-btn" data-theme-option="auto" title="Auto">🖥️</button>
@@ -1736,17 +1814,36 @@
       });
     }
 
+    function setColor(color) {
+      localStorage.setItem('color', color);
+      document.documentElement.setAttribute('data-color', color);
+      updateColorToggleUI();
+    }
+
+    function updateColorToggleUI() {
+      const currentColor = localStorage.getItem('color') || 'blue';
+      document.querySelectorAll('.color-toggle-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.colorOption === currentColor);
+      });
+    }
+
     // Initialize theme toggle state
     document.addEventListener('DOMContentLoaded', function() {
       updateThemeToggleUI();
-      
+      updateColorToggleUI();
+
       // Add click handlers
       document.querySelectorAll('.theme-toggle-btn').forEach(btn => {
         btn.addEventListener('click', function() {
           setTheme(this.dataset.themeOption);
         });
       });
-      
+      document.querySelectorAll('.color-toggle-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          setColor(this.dataset.colorOption);
+        });
+      });
+
       // Listen for system theme changes
       window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
         const theme = localStorage.getItem('theme') || 'auto';

@@ -31,13 +31,24 @@ export function baseTemplate({ title, content, styles = '', scripts = '', meta =
   return `<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
+  <script>
+    (function() {
+      var t = localStorage.getItem('theme') || 'auto';
+      var r = t === 'auto'
+        ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+        : t;
+      document.documentElement.setAttribute('data-theme', r);
+      var c = localStorage.getItem('color') || 'blue';
+      document.documentElement.setAttribute('data-color', c);
+    })();
+  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${escapeHtml(title)} - ntnu.cc</title>
   ${ogTags}
   <link rel="icon" type="image/png" href="/NTNU_Blue.png">
   <style>
-    :root {
+    :root, [data-color="blue"] {
       --primary: #2E3192;
       --primary-dark: #1A1D5C;
       --primary-light: #5255B0;
@@ -58,18 +69,41 @@ export function baseTemplate({ title, content, styles = '', scripts = '', meta =
       --shadow-lg: 0 10px 15px -3px rgba(46, 49, 146, 0.12);
     }
 
-    [data-theme="dark"] {
+    [data-color="red"] {
+      --primary: #9B2335;
+      --primary-dark: #7A1C2A;
+      --primary-light: #C94C5C;
+      --bg-gradient: linear-gradient(135deg, #9B2335 0%, #B83A4B 50%, #C94C5C 100%);
+      --accent: #9B2335;
+      --accent-hover: #C94C5C;
+      --shadow-sm: 0 1px 2px rgba(155, 35, 53, 0.08);
+      --shadow-md: 0 4px 6px -1px rgba(155, 35, 53, 0.12);
+      --shadow-lg: 0 10px 15px -3px rgba(155, 35, 53, 0.12);
+    }
+
+    [data-color="blue"][data-theme="dark"] {
       --primary: #7A7DC4;
       --primary-dark: #5255B0;
       --primary-light: #9B9EE0;
+      --accent: #7A7DC4;
+      --accent-hover: #9B9EE0;
+    }
+
+    [data-color="red"][data-theme="dark"] {
+      --primary: #D67485;
+      --primary-dark: #C94C5C;
+      --primary-light: #E59DA8;
+      --accent: #D67485;
+      --accent-hover: #E59DA8;
+    }
+
+    [data-theme="dark"] {
       --bg-gradient: linear-gradient(135deg, #0a0f1a 0%, #111827 50%, #1a2332 100%);
       --bg-white: #1a1f2e;
       --bg-light: #0f1420;
       --text-primary: #e8eaed;
       --text-secondary: #b4b7bd;
       --text-muted: #8a8d93;
-      --accent: #7A7DC4;
-      --accent-hover: #9B9EE0;
       --success: #3ecf8e;
       --warning: #f5b342;
       --error: #f56565;
@@ -479,6 +513,44 @@ export function redirectPreviewPage({ id, targetUrl }) {
       background: rgba(26, 31, 46, 0.9);
       border-color: var(--border);
     }
+
+    .color-toggle {
+      position: fixed;
+      top: 1rem;
+      right: 11.5rem;
+      display: flex;
+      gap: 0;
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .color-toggle button {
+      padding: 0.5rem 0.6rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .color-toggle button:hover {
+      color: var(--primary);
+    }
+
+    .color-toggle button.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    [data-theme="dark"] .color-toggle {
+      background: rgba(26, 31, 46, 0.9);
+      border-color: var(--border);
+    }
     
     @media (max-width: 600px) {
       .preview-card {
@@ -496,6 +568,10 @@ export function redirectPreviewPage({ id, targetUrl }) {
   `;
   
   const content = `
+    <div class="color-toggle">
+      <button data-color-option="blue" title="NTNU Blue" onclick="setColor('blue')">🔵</button>
+      <button data-color-option="red" title="NTNU Red" onclick="setColor('red')">🔴</button>
+    </div>
     <div class="theme-toggle">
       <button data-theme-option="light" title="Light" onclick="setTheme('light')">☀️</button>
       <button data-theme-option="auto" title="Auto" onclick="setTheme('auto')">🖥️</button>
@@ -598,7 +674,19 @@ export function redirectPreviewPage({ id, targetUrl }) {
         document.querySelectorAll('[data-theme-option]').forEach(function(btn) {
           btn.classList.toggle('active', btn.getAttribute('data-theme-option') === currentTheme);
         });
+        var currentColor = localStorage.getItem('color') || 'blue';
+        document.querySelectorAll('[data-color-option]').forEach(function(btn) {
+          btn.classList.toggle('active', btn.getAttribute('data-color-option') === currentColor);
+        });
       })();
+
+      function setColor(color) {
+        localStorage.setItem('color', color);
+        document.documentElement.setAttribute('data-color', color);
+        document.querySelectorAll('[data-color-option]').forEach(function(btn) {
+          btn.classList.toggle('active', btn.getAttribute('data-color-option') === color);
+        });
+      }
 
       // Listen for system theme changes
       window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
