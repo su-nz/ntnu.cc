@@ -69,235 +69,26 @@
   }
   </script>
   
+  <link rel="stylesheet" href="/theme.css">
+  <script src="/theme.js" defer></script>
+  
   <style>
-    :root, [data-color="blue"] {
-      --primary: #2E3192;
-      --primary-dark: #1A1D5C;
-      --primary-light: #5255B0;
-      --secondary: #7A7DC4;
-      --accent: #10b981;
-      --text-dark: #1a1a2e;
-      --text-light: #4a5568;
-      --text-muted: #718096;
-      --bg-white: #ffffff;
-      --bg-light: #F2F3FB;
-      --bg-gradient: linear-gradient(135deg, #2E3192 0%, #3D40A0 50%, #5255B0 100%);
-      --shadow-sm: 0 1px 2px rgba(46, 49, 146, 0.08);
-      --shadow-md: 0 4px 6px -1px rgba(46, 49, 146, 0.12);
-      --shadow-lg: 0 10px 15px -3px rgba(46, 49, 146, 0.12);
-      --shadow-xl: 0 20px 25px -5px rgba(46, 49, 146, 0.12);
-    }
-
-    [data-color="red"] {
-      --primary: #9B2335;
-      --primary-dark: #7A1C2A;
-      --primary-light: #C94C5C;
-      --secondary: #C94C5C;
-      --bg-gradient: linear-gradient(135deg, #9B2335 0%, #B83A4B 50%, #C94C5C 100%);
-      --shadow-sm: 0 1px 2px rgba(155, 35, 53, 0.08);
-      --shadow-md: 0 4px 6px -1px rgba(155, 35, 53, 0.12);
-      --shadow-lg: 0 10px 15px -3px rgba(155, 35, 53, 0.12);
-      --shadow-xl: 0 20px 25px -5px rgba(155, 35, 53, 0.12);
-    }
-
-    /* Color-aware primary overrides for dark mode */
-    [data-color="blue"][data-theme="dark"] {
-      --primary: #7A7DC4;
-      --primary-dark: #5255B0;
-      --primary-light: #9B9EE0;
-      --secondary: #9B9EE0;
-    }
-
-    [data-color="red"][data-theme="dark"] {
-      --primary: #D67485;
-      --primary-dark: #C94C5C;
-      --primary-light: #E59DA8;
-      --secondary: #E59DA8;
-    }
-
-    [data-theme="dark"] {
-      --accent: #3ecf8e;
-      --text-dark: #e8eaed;
-      --text-light: #b4b7bd;
-      --text-muted: #8a8d93;
-      --bg-white: #1a1f2e;
-      --bg-light: #0f1420;
-      --bg-gradient: linear-gradient(135deg, #0a0f1a 0%, #111827 50%, #1a2332 100%);
-      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
-      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
-      --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
-      --border: #2d3340;
-    }
-
-    /* Dark Mode Overrides */
-    [data-theme="dark"] body {
-      background: var(--bg-white);
-      color: var(--text-dark);
-    }
-
-    [data-theme="dark"] .navbar {
-      background: rgba(26, 31, 46, 0.95);
-    }
-
-    [data-theme="dark"] .navbar-content .logo {
-      color: var(--primary);
-    }
-
-    [data-theme="dark"] .nav-links a {
-      color: var(--text-light);
-    }
-
-    [data-theme="dark"] .nav-links a:hover {
-      color: var(--primary);
-    }
-
-    [data-theme="dark"] .shortener-box {
-      background: var(--bg-white);
-    }
-
-    [data-theme="dark"] .form-group input,
-    [data-theme="dark"] .form-group select {
-      background: var(--bg-light);
-      color: var(--text-dark);
-      border-color: var(--border);
-    }
-
-    [data-theme="dark"] .form-group label {
-      color: var(--text-dark);
-    }
-
-    [data-theme="dark"] .btn-secondary {
-      background: var(--bg-light);
-      color: var(--primary);
-      border-color: var(--border);
-    }
-
-    [data-theme="dark"] .btn-random {
-      background: var(--bg-light);
-      color: var(--text-dark);
-      border-color: var(--border);
-    }
-
-    [data-theme="dark"] .feature-card {
-      background: var(--bg-white);
-      border-color: var(--border);
-    }
-
-    [data-theme="dark"] .feature-card h3 {
-      color: var(--text-dark);
-    }
-
-    [data-theme="dark"] .feature-card p {
-      color: var(--text-light);
-    }
-
-    [data-theme="dark"] .testimonial-card {
-      background: var(--bg-light);
-    }
-
-    [data-theme="dark"] .testimonial-text {
-      color: var(--text-dark);
-    }
-
-    [data-theme="dark"] .testimonial-author h4 {
-      color: var(--text-dark);
-    }
-
-    [data-theme="dark"] .footer {
-      background: #0a0f1a;
-    }
-
-    [data-theme="dark"] .footer-brand h3 {
-      color: var(--text-dark);
-    }
-
-    [data-theme="dark"] .section-header h2 {
-      color: var(--text-dark);
-    }
-
-    [data-theme="dark"] .section-header p {
-      color: var(--text-light);
-    }
-
-    [data-theme="dark"] .modal-card {
-      background: var(--bg-white);
-    }
-
-    [data-theme="dark"] .modal-header {
-      border-bottom-color: var(--border);
-    }
-
-    [data-theme="dark"] .modal-header h3 {
-      color: var(--text-dark);
-    }
-
-    [data-theme="dark"] .modal-body p {
-      color: var(--text-light);
-    }
-
-    [data-theme="dark"] .modal-body strong {
-      color: var(--text-dark);
-    }
-
-    [data-theme="dark"] .result-box {
-      background: rgba(62, 207, 142, 0.1);
-      border-color: var(--success);
-    }
-
-    [data-theme="dark"] .result-box.error {
-      background: rgba(245, 101, 101, 0.1);
-      border-color: var(--error);
-    }
-
-    [data-theme="dark"] .result-url-display {
-      background: rgba(77, 163, 217, 0.1);
-    }
-
-    [data-theme="dark"] .result-url-display a {
-      color: var(--primary);
-    }
-
-    [data-theme="dark"] .btn-copy {
-      background: var(--primary);
-      color: white;
-    }
-
-    [data-theme="dark"] .btn-primary,
-    [data-theme="dark"] .btn-submit,
-    [data-theme="dark"] .feature-icon,
-    [data-theme="dark"] .author-avatar {
-      background: var(--primary);
-    }
-
-    [data-theme="dark"] .announcement-banner {
-      background: linear-gradient(90deg, var(--primary-dark) 0%, var(--primary) 100%);
-    }
-
-    [data-theme="dark"] .testimonials {
-      background: var(--bg-white);
-    }
-
-    [data-theme="dark"] .stats-banner {
-      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
-    }
-    
     * { margin: 0; padding: 0; box-sizing: border-box; }
     
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
       color: var(--text-dark);
       line-height: 1.6;
-      background: var(--bg-white);
+      background: var(--bg-page);
     }
-    
+
     /* Announcement Banner */
     .announcement-banner {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
-      background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+      background: var(--bg-banner);
       color: white;
       padding: 0.5rem 1rem;
       z-index: 1001;
@@ -323,7 +114,7 @@
       top: 32px;
       left: 0;
       right: 0;
-      background: rgba(255, 255, 255, 0.95);
+      background: var(--bg-nav);
       backdrop-filter: blur(10px);
       box-shadow: var(--shadow-sm);
       z-index: 1000;
@@ -357,18 +148,6 @@
       object-fit: contain;
     }
 
-    /* Show only the logo that matches the current color */
-    [data-color="red"] .logo-blue,
-    [data-color="red"] .footer-logo.logo-blue {
-      display: none;
-    }
-    [data-color="blue"] .logo-red,
-    [data-color="blue"] .footer-logo.logo-red,
-    :root:not([data-color="red"]) .logo-red,
-    :root:not([data-color="red"]) .footer-logo.logo-red {
-      display: none;
-    }
-    
     .nav-links {
       display: flex;
       gap: 1.5rem;
@@ -419,7 +198,7 @@
     }
     
     .modal-card {
-      background: white;
+      background: var(--bg-card);
       border-radius: 16px;
       max-width: 500px;
       width: 100%;
@@ -430,7 +209,7 @@
     
     .modal-header {
       padding: 1.25rem 1.5rem;
-      border-bottom: 1px solid #eee;
+      border-bottom: 1px solid var(--border-modal-header);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -489,7 +268,7 @@
     }
     
     .btn-primary {
-      background: var(--bg-gradient);
+      background: var(--bg-action);
       color: #ffffff !important;
       box-shadow: var(--shadow-sm);
     }
@@ -501,9 +280,9 @@
     }
     
     .btn-secondary {
-      background: white;
+      background: var(--bg-card);
       color: var(--primary);
-      border: 1px solid #e5e7eb;
+      border: 1px solid var(--border-card);
     }
     
     .btn-secondary:hover {
@@ -554,7 +333,7 @@
     
     /* URL Shortener Form */
     .shortener-box {
-      background: white;
+      background: var(--bg-card);
       border-radius: 16px;
       padding: 1.5rem;
       box-shadow: var(--shadow-xl);
@@ -584,12 +363,12 @@
     .form-group input,
     .form-group select {
       padding: 0.65rem 0.875rem;
-      border: 2px solid #e5e7eb;
+      border: 2px solid var(--border-input);
       border-radius: 8px;
       font-size: 0.95rem;
       outline: none;
       transition: border-color 0.2s;
-      background: white;
+      background: var(--bg-input);
     }
     
     .form-group input:focus,
@@ -626,7 +405,7 @@
     .btn-submit {
       flex: 1;
       padding: 0.75rem 1.5rem;
-      background: var(--bg-gradient);
+      background: var(--bg-action);
       color: white;
       border: none;
       border-radius: 8px;
@@ -649,9 +428,9 @@
     
     .btn-random {
       padding: 0.75rem 1.25rem;
-      background: white;
+      background: var(--bg-input);
       color: var(--text-dark);
-      border: 2px solid #e5e7eb;
+      border: 2px solid var(--border-input);
       border-radius: 8px;
       font-size: 0.95rem;
       font-weight: 500;
@@ -666,8 +445,8 @@
     
     .result-box {
       display: none;
-      background: #f0fdf4;
-      border: 1px solid #86efac;
+      background: var(--bg-result-success);
+      border: 1px solid var(--success-border);
       border-radius: 10px;
       padding: 1.25rem;
       margin-top: 1.5rem;
@@ -679,8 +458,8 @@
     }
     
     .result-box.error {
-      background: #fef2f2;
-      border-color: #fca5a5;
+      background: var(--bg-result-error);
+      border-color: var(--error-border);
     }
     
     .result-title {
@@ -694,7 +473,7 @@
       align-items: center;
       justify-content: center;
       gap: 1rem;
-      background: #e8f5e9;
+      background: var(--bg-result-url);
       padding: 0.75rem 1rem;
       border-radius: 8px;
       margin-bottom: 0.5rem;
@@ -846,12 +625,12 @@
     }
     
     .feature-card {
-      background: white;
+      background: var(--bg-card);
       border-radius: 12px;
       padding: 1.5rem;
       text-align: center;
       transition: all 0.3s;
-      border: 1px solid #f0f0f0;
+      border: 1px solid var(--border-card);
     }
     
     .feature-card:hover {
@@ -862,7 +641,7 @@
     .feature-icon {
       width: 50px;
       height: 50px;
-      background: var(--bg-gradient);
+      background: var(--bg-action);
       border-radius: 10px;
       display: flex;
       align-items: center;
@@ -886,7 +665,7 @@
     
     /* Stats Banner */
     .stats-banner {
-      background: var(--bg-gradient);
+      background: var(--bg-stats);
       padding: 3rem 2rem;
     }
     
@@ -919,7 +698,7 @@
     /* Testimonials */
     .testimonials {
       padding: 5rem 2rem;
-      background: white;
+      background: var(--bg-testimonials);
     }
     
     .testimonials-content {
@@ -934,7 +713,7 @@
     }
     
     .testimonial-card {
-      background: var(--bg-light);
+      background: var(--bg-card-alt);
       border-radius: 12px;
       padding: 1.5rem;
     }
@@ -961,7 +740,7 @@
     .author-avatar {
       width: 40px;
       height: 40px;
-      background: var(--bg-gradient);
+      background: var(--bg-action);
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -983,7 +762,7 @@
     
     /* Footer */
     .footer {
-      background: #2d2d2d;
+      background: var(--bg-footer);
       color: white;
       padding: 3rem 2rem 1.5rem;
     }
@@ -1069,84 +848,6 @@
       text-decoration: none;
     }
     
-    /* Theme Toggle */
-    .theme-toggle-wrapper {
-      display: inline-flex;
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
-      overflow: hidden;
-      margin-right: 0.5rem;
-    }
-
-    .theme-toggle-btn {
-      padding: 0.4rem 0.5rem;
-      font-size: 0.8rem;
-      cursor: pointer;
-      background: transparent;
-      border: none;
-      color: var(--text-light);
-      transition: all 0.2s;
-    }
-
-    .theme-toggle-btn:hover {
-      color: var(--primary);
-    }
-
-    .theme-toggle-btn.active {
-      background: var(--primary);
-      color: white;
-    }
-
-    [data-theme="dark"] .theme-toggle-wrapper {
-      border-color: var(--border);
-    }
-
-    [data-theme="dark"] .theme-toggle-btn {
-      color: var(--text-light);
-    }
-
-    .color-toggle-wrapper {
-      display: inline-flex;
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
-      overflow: hidden;
-      margin-right: 0.5rem;
-    }
-
-    .color-toggle-btn {
-      padding: 0.4rem 0.5rem;
-      font-size: 0.8rem;
-      cursor: pointer;
-      background: transparent;
-      border: none;
-      color: var(--text-light);
-      transition: all 0.2s;
-    }
-
-    .color-toggle-btn:hover {
-      color: var(--primary);
-    }
-
-    .color-toggle-btn.active {
-      background: var(--primary);
-      color: white;
-    }
-
-    [data-theme="dark"] .color-toggle-wrapper {
-      border-color: var(--border);
-    }
-
-    [data-theme="dark"] .color-toggle-btn {
-      color: var(--text-light);
-    }
-
-    @media (max-width: 768px) {
-      .color-toggle-btn {
-        padding: 0.3rem 0.35rem;
-        font-size: 0.7rem;
-      }
-    }
-
     /* Responsive */
     @media (max-width: 900px) {
       .features-grid, .testimonials-grid {
@@ -1155,11 +856,6 @@
     }
     
     @media (max-width: 768px) {
-      .theme-toggle-btn {
-        padding: 0.3rem 0.35rem;
-        font-size: 0.7rem;
-      }
-      
       .announcement-banner {
         padding: 0.4rem 0.75rem;
       }
@@ -1324,14 +1020,14 @@
           </svg>
           GitHub
         </a>
-        <div class="color-toggle-wrapper">
-          <button class="color-toggle-btn" data-color-option="blue" title="NTNU Blue">🔵</button>
-          <button class="color-toggle-btn" data-color-option="red" title="NTNU Red">🔴</button>
+        <div class="ntnu-toggle-wrap" style="margin-right: 0.5rem;">
+          <button class="ntnu-toggle-btn" data-color-option="blue" title="NTNU Blue">🔵</button>
+          <button class="ntnu-toggle-btn" data-color-option="red" title="NTNU Red">🔴</button>
         </div>
-        <div class="theme-toggle-wrapper">
-          <button class="theme-toggle-btn" data-theme-option="light" title="Light">☀️</button>
-          <button class="theme-toggle-btn" data-theme-option="auto" title="Auto">🖥️</button>
-          <button class="theme-toggle-btn" data-theme-option="dark" title="Dark">🌙</button>
+        <div class="ntnu-toggle-wrap" style="margin-right: 0.5rem;">
+          <button class="ntnu-toggle-btn" data-theme-option="light" title="Light">☀️</button>
+          <button class="ntnu-toggle-btn" data-theme-option="auto" title="Auto">🖥️</button>
+          <button class="ntnu-toggle-btn" data-theme-option="dark" title="Dark">🌙</button>
         </div>
         <button class="btn btn-secondary lang-toggle" id="langToggle" onclick="toggleLanguage()">EN</button>
       </div>
@@ -1807,66 +1503,6 @@
       return getNestedValue(i18n[currentLang], key) || key;
     }
     
-    // ============ 主題切換系統 ============
-    function getResolvedTheme(theme) {
-      if (theme === 'auto') {
-        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-      }
-      return theme;
-    }
-
-    function setTheme(theme) {
-      localStorage.setItem('theme', theme);
-      document.documentElement.setAttribute('data-theme', getResolvedTheme(theme));
-      updateThemeToggleUI();
-    }
-
-    function updateThemeToggleUI() {
-      const currentTheme = localStorage.getItem('theme') || 'auto';
-      document.querySelectorAll('.theme-toggle-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.themeOption === currentTheme);
-      });
-    }
-
-    function setColor(color) {
-      localStorage.setItem('color', color);
-      document.documentElement.setAttribute('data-color', color);
-      updateColorToggleUI();
-    }
-
-    function updateColorToggleUI() {
-      const currentColor = localStorage.getItem('color') || 'blue';
-      document.querySelectorAll('.color-toggle-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.colorOption === currentColor);
-      });
-    }
-
-    // Initialize theme toggle state
-    document.addEventListener('DOMContentLoaded', function() {
-      updateThemeToggleUI();
-      updateColorToggleUI();
-
-      // Add click handlers
-      document.querySelectorAll('.theme-toggle-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-          setTheme(this.dataset.themeOption);
-        });
-      });
-      document.querySelectorAll('.color-toggle-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-          setColor(this.dataset.colorOption);
-        });
-      });
-
-      // Listen for system theme changes
-      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
-        const theme = localStorage.getItem('theme') || 'auto';
-        if (theme === 'auto') {
-          document.documentElement.setAttribute('data-theme', getResolvedTheme('auto'));
-        }
-      });
-    });
-
     // ============ 免責聲明彈出視窗 ============
     function openDisclaimer() {
       document.getElementById('disclaimerModal').classList.add('show');

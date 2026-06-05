@@ -47,137 +47,16 @@ export function baseTemplate({ title, content, styles = '', scripts = '', meta =
   <title>${escapeHtml(title)} - ntnu.cc</title>
   ${ogTags}
   <link rel="icon" type="image/png" href="/NTNU_Blue.png">
+  <link rel="stylesheet" href="/theme.css">
+  <script src="/theme.js" defer></script>
   <style>
-    :root, [data-color="blue"] {
-      --primary: #2E3192;
-      --primary-dark: #1A1D5C;
-      --primary-light: #5255B0;
-      --bg-gradient: linear-gradient(135deg, #2E3192 0%, #3D40A0 50%, #5255B0 100%);
-      --bg-white: #ffffff;
-      --bg-light: #F2F3FB;
-      --text-primary: #1a1a2e;
-      --text-secondary: #4a5568;
-      --text-muted: #718096;
-      --accent: #2E3192;
-      --accent-hover: #5255B0;
-      --success: #10b981;
-      --warning: #f59e0b;
-      --error: #ef4444;
-      --border: #e2e8f0;
-      --shadow-sm: 0 1px 2px rgba(46, 49, 146, 0.08);
-      --shadow-md: 0 4px 6px -1px rgba(46, 49, 146, 0.12);
-      --shadow-lg: 0 10px 15px -3px rgba(46, 49, 146, 0.12);
+    :root, [data-color="blue"], [data-color="red"], [data-theme="dark"] {
+      --accent: var(--primary);
+      --accent-hover: var(--primary-light);
+      --text-primary: var(--text-dark);
+      --text-secondary: var(--text-light);
     }
 
-    [data-color="red"] {
-      --primary: #9B2335;
-      --primary-dark: #7A1C2A;
-      --primary-light: #C94C5C;
-      --bg-gradient: linear-gradient(135deg, #9B2335 0%, #B83A4B 50%, #C94C5C 100%);
-      --accent: #9B2335;
-      --accent-hover: #C94C5C;
-      --shadow-sm: 0 1px 2px rgba(155, 35, 53, 0.08);
-      --shadow-md: 0 4px 6px -1px rgba(155, 35, 53, 0.12);
-      --shadow-lg: 0 10px 15px -3px rgba(155, 35, 53, 0.12);
-    }
-
-    [data-color="blue"][data-theme="dark"] {
-      --primary: #7A7DC4;
-      --primary-dark: #5255B0;
-      --primary-light: #9B9EE0;
-      --accent: #7A7DC4;
-      --accent-hover: #9B9EE0;
-    }
-
-    [data-color="red"][data-theme="dark"] {
-      --primary: #D67485;
-      --primary-dark: #C94C5C;
-      --primary-light: #E59DA8;
-      --accent: #D67485;
-      --accent-hover: #E59DA8;
-    }
-
-    [data-theme="dark"] {
-      --bg-gradient: linear-gradient(135deg, #0a0f1a 0%, #111827 50%, #1a2332 100%);
-      --bg-white: #1a1f2e;
-      --bg-light: #0f1420;
-      --text-primary: #e8eaed;
-      --text-secondary: #b4b7bd;
-      --text-muted: #8a8d93;
-      --success: #3ecf8e;
-      --warning: #f5b342;
-      --error: #f56565;
-      --border: #2d3340;
-      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
-      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
-    }
-
-    [data-theme="dark"] body {
-      background: var(--bg-light);
-      color: var(--text-primary);
-    }
-
-    [data-theme="dark"] .preview-card,
-    [data-theme="dark"] .card {
-      background: var(--bg-white);
-      color: var(--text-primary);
-    }
-
-    [data-theme="dark"] .target-url-box {
-      background: var(--bg-light);
-      border-color: var(--border);
-    }
-
-    [data-theme="dark"] .target-url-box a,
-    [data-theme="dark"] .preview-card h1,
-    [data-theme="dark"] .preview-card > p strong,
-    [data-theme="dark"] .countdown strong {
-      color: var(--primary);
-    }
-
-    [data-theme="dark"] .lang-switch {
-      background: rgba(26, 31, 46, 0.9);
-      border-color: var(--border);
-      color: var(--text-secondary);
-    }
-
-    [data-theme="dark"] .lang-switch:hover {
-      border-color: var(--primary);
-      color: var(--primary);
-    }
-
-    [data-theme="dark"] .btn-secondary {
-      background: var(--bg-white);
-      color: var(--text-secondary);
-      border-color: var(--border);
-    }
-
-    [data-theme="dark"] .btn {
-      background: var(--accent);
-    }
-
-    [data-theme="dark"] .btn:hover {
-      background: var(--accent-hover);
-    }
-
-    [data-theme="dark"] input,
-    [data-theme="dark"] textarea,
-    [data-theme="dark"] select {
-      background: var(--bg-white);
-      color: var(--text-primary);
-      border-color: var(--border);
-    }
-
-    [data-theme="dark"] .notice {
-      color: var(--text-muted);
-    }
-
-    /* Dark mode for redirect page background */
-    [data-theme="dark"] body {
-      background: var(--bg-gradient);
-    }
-    
     * {
       margin: 0;
       padding: 0;
@@ -236,7 +115,7 @@ export function baseTemplate({ title, content, styles = '', scripts = '', meta =
     .btn {
       display: inline-block;
       padding: 0.75rem 1.5rem;
-      background: var(--bg-gradient);
+      background: var(--bg-action);
       color: white;
       border: none;
       border-radius: 8px;
@@ -337,15 +216,6 @@ export function baseTemplate({ title, content, styles = '', scripts = '', meta =
     
     ${styles}
   </style>
-  <script>
-    (function() {
-      var t = localStorage.getItem('theme') || 'auto';
-      var r = t === 'auto' 
-        ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
-        : t;
-      document.documentElement.setAttribute('data-theme', r);
-    })();
-  </script>
 </head>
 <body>
   ${content}
@@ -397,14 +267,6 @@ export function redirectPreviewPage({ id, targetUrl }) {
       height: 36px;
     }
 
-    [data-color="red"] .preview-card h1 img.logo-blue {
-      display: none;
-    }
-    [data-color="blue"] .preview-card h1 img.logo-red,
-    :root:not([data-color="red"]) .preview-card h1 img.logo-red {
-      display: none;
-    }
-    
     .preview-card > p {
       color: var(--text-secondary);
       margin-bottom: 0;
@@ -491,83 +353,22 @@ export function redirectPreviewPage({ id, targetUrl }) {
       border-color: var(--primary);
       color: var(--primary);
     }
-    
-    .theme-toggle {
+
+    .redirect-toggle-wrap {
       position: fixed;
       top: 1rem;
-      right: 4.5rem;
       display: flex;
       gap: 0;
-      background: rgba(255,255,255,0.9);
+      background: var(--toggle-bg);
       backdrop-filter: blur(10px);
-      border: 1px solid var(--border);
+      border: 1px solid var(--toggle-border);
       border-radius: 8px;
       overflow: hidden;
     }
 
-    .theme-toggle button {
-      padding: 0.5rem 0.6rem;
-      font-size: 0.85rem;
-      cursor: pointer;
-      background: transparent;
-      border: none;
-      color: var(--text-secondary);
-      font-weight: 600;
-      transition: all 0.2s;
-    }
+    .redirect-toggle-wrap.color { right: 11.5rem; }
+    .redirect-toggle-wrap.theme { right: 4.5rem; }
 
-    .theme-toggle button:hover {
-      color: var(--primary);
-    }
-
-    .theme-toggle button.active {
-      background: var(--primary);
-      color: white;
-    }
-
-    [data-theme="dark"] .theme-toggle {
-      background: rgba(26, 31, 46, 0.9);
-      border-color: var(--border);
-    }
-
-    .color-toggle {
-      position: fixed;
-      top: 1rem;
-      right: 11.5rem;
-      display: flex;
-      gap: 0;
-      background: rgba(255,255,255,0.9);
-      backdrop-filter: blur(10px);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      overflow: hidden;
-    }
-
-    .color-toggle button {
-      padding: 0.5rem 0.6rem;
-      font-size: 0.85rem;
-      cursor: pointer;
-      background: transparent;
-      border: none;
-      color: var(--text-secondary);
-      font-weight: 600;
-      transition: all 0.2s;
-    }
-
-    .color-toggle button:hover {
-      color: var(--primary);
-    }
-
-    .color-toggle button.active {
-      background: var(--primary);
-      color: white;
-    }
-
-    [data-theme="dark"] .color-toggle {
-      background: rgba(26, 31, 46, 0.9);
-      border-color: var(--border);
-    }
-    
     @media (max-width: 600px) {
       .preview-card {
         padding: 1.5rem;
@@ -584,14 +385,14 @@ export function redirectPreviewPage({ id, targetUrl }) {
   `;
   
   const content = `
-    <div class="color-toggle">
-      <button data-color-option="blue" title="NTNU Blue" onclick="setColor('blue')">🔵</button>
-      <button data-color-option="red" title="NTNU Red" onclick="setColor('red')">🔴</button>
+    <div class="redirect-toggle-wrap color ntnu-toggle-wrap">
+      <button class="ntnu-toggle-btn" data-color-option="blue" title="NTNU Blue">🔵</button>
+      <button class="ntnu-toggle-btn" data-color-option="red" title="NTNU Red">🔴</button>
     </div>
-    <div class="theme-toggle">
-      <button data-theme-option="light" title="Light" onclick="setTheme('light')">☀️</button>
-      <button data-theme-option="auto" title="Auto" onclick="setTheme('auto')">🖥️</button>
-      <button data-theme-option="dark" title="Dark" onclick="setTheme('dark')">🌙</button>
+    <div class="redirect-toggle-wrap theme ntnu-toggle-wrap">
+      <button class="ntnu-toggle-btn" data-theme-option="light" title="Light">☀️</button>
+      <button class="ntnu-toggle-btn" data-theme-option="auto" title="Auto">🖥️</button>
+      <button class="ntnu-toggle-btn" data-theme-option="dark" title="Dark">🌙</button>
     </div>
     <button class="lang-switch" onclick="toggleLang()" id="langBtn">EN</button>
     <div class="preview-container">
@@ -667,50 +468,6 @@ export function redirectPreviewPage({ id, targetUrl }) {
           window.location.href = targetUrl;
         }
       }, 1000);
-
-      // Theme toggle
-      function getResolvedTheme(theme) {
-        if (theme === 'auto') {
-          return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        }
-        return theme;
-      }
-
-      function setTheme(theme) {
-        localStorage.setItem('theme', theme);
-        document.documentElement.setAttribute('data-theme', getResolvedTheme(theme));
-        document.querySelectorAll('[data-theme-option]').forEach(function(btn) {
-          btn.classList.toggle('active', btn.getAttribute('data-theme-option') === theme);
-        });
-      }
-
-      // Init theme toggle state
-      (function() {
-        var currentTheme = localStorage.getItem('theme') || 'auto';
-        document.querySelectorAll('[data-theme-option]').forEach(function(btn) {
-          btn.classList.toggle('active', btn.getAttribute('data-theme-option') === currentTheme);
-        });
-        var currentColor = localStorage.getItem('color') || 'blue';
-        document.querySelectorAll('[data-color-option]').forEach(function(btn) {
-          btn.classList.toggle('active', btn.getAttribute('data-color-option') === currentColor);
-        });
-      })();
-
-      function setColor(color) {
-        localStorage.setItem('color', color);
-        document.documentElement.setAttribute('data-color', color);
-        document.querySelectorAll('[data-color-option]').forEach(function(btn) {
-          btn.classList.toggle('active', btn.getAttribute('data-color-option') === color);
-        });
-      }
-
-      // Listen for system theme changes
-      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
-        var theme = localStorage.getItem('theme') || 'auto';
-        if (theme === 'auto') {
-          document.documentElement.setAttribute('data-theme', getResolvedTheme('auto'));
-        }
-      });
     </script>
   `;
   

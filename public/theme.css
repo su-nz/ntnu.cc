@@ -1,0 +1,160 @@
+:root, [data-color="blue"] {
+  --primary: #2E3192;
+  --primary-dark: #1A1D5C;
+  --primary-light: #5255B0;
+  --secondary: #7A7DC4;
+
+  --text-dark: #1a1a2e;
+  --text-light: #4a5568;
+  --text-muted: #718096;
+
+  --bg-page: var(--bg-light);
+  --bg-white: var(--bg-card);
+  --bg-light: var(--bg-card-alt);
+  --bg-nav: rgba(255, 255, 255, 0.95);
+  --bg-card: #ffffff;
+  --bg-card-alt: #F2F3FB;
+  --bg-input: #ffffff;
+  --bg-footer: #2d2d2d;
+  --bg-result-success: #f0fdf4;
+  --bg-result-error: #fef2f2;
+  --bg-result-url: #f0f9ff;
+  --bg-testimonials: transparent;
+
+  --bg-gradient: linear-gradient(135deg, #2E3192 0%, #3D40A0 50%, #5255B0 100%);
+  --bg-banner: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+  --bg-stats: var(--bg-gradient);
+  --bg-action: var(--bg-gradient);
+
+  --border-card: #f0f0f0;
+  --border-input: #e2e8f0;
+  --border-modal-header: #e5e7eb;
+  --border: #e2e8f0;
+
+  --success: #10b981;
+  --success-border: #86efac;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --error-border: #fca5a5;
+
+  --shadow-sm: 0 1px 2px rgba(46, 49, 146, 0.08);
+  --shadow-md: 0 4px 6px -1px rgba(46, 49, 146, 0.12);
+  --shadow-lg: 0 10px 15px -3px rgba(46, 49, 146, 0.12);
+  --shadow-xl: 0 20px 25px -5px rgba(46, 49, 146, 0.12);
+
+  --toggle-bg: rgba(255, 255, 255, 0.9);
+  --toggle-border: #e5e7eb;
+}
+
+[data-color="red"] {
+  --primary: #9B2335;
+  --primary-dark: #7A1C2A;
+  --primary-light: #C94C5C;
+  --secondary: #C94C5C;
+
+  --bg-card-alt: #fff9f9;
+  --bg-gradient: linear-gradient(135deg, #9B2335 0%, #B83A4B 50%, #C94C5C 100%);
+
+  --shadow-sm: 0 1px 2px rgba(155, 35, 53, 0.08);
+  --shadow-md: 0 4px 6px -1px rgba(155, 35, 53, 0.12);
+  --shadow-lg: 0 10px 15px -3px rgba(155, 35, 53, 0.12);
+  --shadow-xl: 0 20px 25px -5px rgba(155, 35, 53, 0.12);
+}
+
+[data-color="blue"][data-theme="dark"] {
+  --primary: #7A7DC4;
+  --primary-dark: #5255B0;
+  --primary-light: #9B9EE0;
+  --secondary: #9B9EE0;
+}
+
+[data-color="red"][data-theme="dark"] {
+  --primary: #D67485;
+  --primary-dark: #C94C5C;
+  --primary-light: #E59DA8;
+  --secondary: #E59DA8;
+}
+
+[data-theme="dark"] {
+  --text-dark: #e8eaed;
+  --text-light: #b4b7bd;
+  --text-muted: #8a8d93;
+
+  --bg-page: var(--bg-card);
+  --bg-nav: rgba(26, 31, 46, 0.95);
+  --bg-card: #1a1f2e;
+  --bg-card-alt: #0f1420;
+  --bg-input: #0f1420;
+  --bg-footer: #0a0f1a;
+  --bg-result-success: rgba(62, 207, 142, 0.1);
+  --bg-result-error: rgba(245, 101, 101, 0.1);
+  --bg-result-url: rgba(77, 163, 217, 0.1);
+  --bg-testimonials: var(--bg-card);
+
+  --bg-gradient: linear-gradient(135deg, #0a0f1a 0%, #111827 50%, #1a2332 100%);
+  --bg-banner: linear-gradient(90deg, var(--primary-dark) 0%, var(--primary) 100%);
+  --bg-stats: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+  --bg-action: var(--primary);
+
+  --border-card: #2d3340;
+  --border-input: #2d3340;
+  --border-modal-header: #2d3340;
+  --border: #2d3340;
+
+  --success: #3ecf8e;
+  --warning: #f5b342;
+  --error: #f56565;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+
+  --toggle-bg: rgba(26, 31, 46, 0.9);
+  --toggle-border: #2d3340;
+}
+
+[data-color="red"] .logo-blue,
+[data-color="red"] .footer-logo.logo-blue {
+  display: none;
+}
+[data-color="blue"] .logo-red,
+[data-color="blue"] .footer-logo.logo-red,
+:root:not([data-color="red"]) .logo-red,
+:root:not([data-color="red"]) .footer-logo.logo-red {
+  display: none;
+}
+
+.ntnu-toggle-wrap {
+  display: inline-flex;
+  border: 1px solid var(--toggle-border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.ntnu-toggle-btn {
+  padding: 0.4rem 0.5rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  color: var(--text-light);
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.ntnu-toggle-btn:hover {
+  color: var(--primary);
+}
+
+.ntnu-toggle-btn.active {
+  background: var(--primary);
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .ntnu-toggle-btn {
+    padding: 0.3rem 0.35rem;
+    font-size: 0.7rem;
+  }
+}
