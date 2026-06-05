@@ -356,6 +356,18 @@
       height: 32px;
       object-fit: contain;
     }
+
+    /* Show only the logo that matches the current color */
+    [data-color="red"] .logo-blue,
+    [data-color="red"] .footer-logo.logo-blue {
+      display: none;
+    }
+    [data-color="blue"] .logo-red,
+    [data-color="blue"] .footer-logo.logo-red,
+    :root:not([data-color="red"]) .logo-red,
+    :root:not([data-color="red"]) .footer-logo.logo-red {
+      display: none;
+    }
     
     .nav-links {
       display: flex;
@@ -1298,7 +1310,8 @@
   <nav class="navbar">
     <div class="navbar-content">
       <a href="/" class="logo">
-        <img src="/NTNU_Blue.png" alt="" class="logo-img">
+        <img src="/NTNU_Blue.png" alt="" class="logo-img logo-blue">
+        <img src="/NTNU_Red.png" alt="" class="logo-img logo-red">
         ntnu.cc
       </a>
       <div class="nav-links">
@@ -1497,7 +1510,8 @@
       <div class="footer-main">
         <div class="footer-brand">
           <h3>
-            <img src="/NTNU_Blue.png" alt="" class="footer-logo">
+            <img src="/NTNU_Blue.png" alt="" class="footer-logo logo-blue">
+            <img src="/NTNU_Red.png" alt="" class="footer-logo logo-red">
             ntnu.cc
           </h3>
           <p data-i18n="footer.desc">專為國立臺灣師範大學設計的短網址服務平台</p>

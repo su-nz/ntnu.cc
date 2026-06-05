@@ -388,6 +388,14 @@ export function redirectPreviewPage({ id, targetUrl }) {
       width: 36px;
       height: 36px;
     }
+
+    [data-color="red"] .preview-card h1 img.logo-blue {
+      display: none;
+    }
+    [data-color="blue"] .preview-card h1 img.logo-red,
+    :root:not([data-color="red"]) .preview-card h1 img.logo-red {
+      display: none;
+    }
     
     .preview-card > p {
       color: var(--text-secondary);
@@ -580,7 +588,7 @@ export function redirectPreviewPage({ id, targetUrl }) {
     <button class="lang-switch" onclick="toggleLang()" id="langBtn">EN</button>
     <div class="preview-container">
       <div class="preview-card">
-        <h1><img src="/NTNU_Blue.png" alt=""> ntnu.cc</h1>
+        <h1><img src="/NTNU_Blue.png" alt="" class="logo-blue"><img src="/NTNU_Red.png" alt="" class="logo-red"> ntnu.cc</h1>
         <p><span data-i18n="desc">短網址</span> <strong>${escapeHtml(id)}</strong> <span data-i18n="redirectTo">即將帶您前往：</span></p>
         
         <div class="target-url-box">
