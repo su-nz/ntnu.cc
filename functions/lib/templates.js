@@ -153,6 +153,14 @@ export function baseTemplate({ title, content, styles = '', scripts = '', meta =
       border-color: var(--border);
     }
 
+    [data-theme="dark"] .btn {
+      background: var(--accent);
+    }
+
+    [data-theme="dark"] .btn:hover {
+      background: var(--accent-hover);
+    }
+
     [data-theme="dark"] input,
     [data-theme="dark"] textarea,
     [data-theme="dark"] select {
