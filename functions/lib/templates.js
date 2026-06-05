@@ -31,33 +31,32 @@ export function baseTemplate({ title, content, styles = '', scripts = '', meta =
   return `<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
+  <script>
+    (function() {
+      var t = localStorage.getItem('theme') || 'auto';
+      var r = t === 'auto'
+        ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+        : t;
+      document.documentElement.setAttribute('data-theme', r);
+      var c = localStorage.getItem('color') || 'blue';
+      document.documentElement.setAttribute('data-color', c);
+    })();
+  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${escapeHtml(title)} - ntnu.cc</title>
   ${ogTags}
-  <link rel="icon" type="image/png" href="/NTNU_Red.png">
+  <link rel="icon" type="image/png" href="/NTNU_Blue.png">
+  <link rel="stylesheet" href="/theme.css">
+  <script src="/theme.js" defer></script>
   <style>
-    :root {
-      --primary: #9B2335;
-      --primary-dark: #7A1C2A;
-      --primary-light: #C94C5C;
-      --bg-gradient: linear-gradient(135deg, #9B2335 0%, #B83A4B 50%, #C94C5C 100%);
-      --bg-white: #ffffff;
-      --bg-light: #fff9f9;
-      --text-primary: #2d2d2d;
-      --text-secondary: #555555;
-      --text-muted: #777777;
-      --accent: #9B2335;
-      --accent-hover: #C94C5C;
-      --success: #10b981;
-      --warning: #f59e0b;
-      --error: #ef4444;
-      --border: #e5e7eb;
-      --shadow-sm: 0 1px 2px rgba(155, 35, 53, 0.08);
-      --shadow-md: 0 4px 6px -1px rgba(155, 35, 53, 0.12);
-      --shadow-lg: 0 10px 15px -3px rgba(155, 35, 53, 0.12);
+    :root, [data-color="blue"], [data-color="red"], [data-theme="dark"] {
+      --accent: var(--primary);
+      --accent-hover: var(--primary-light);
+      --text-primary: var(--text-dark);
+      --text-secondary: var(--text-light);
     }
-    
+
     * {
       margin: 0;
       padding: 0;
@@ -116,7 +115,7 @@ export function baseTemplate({ title, content, styles = '', scripts = '', meta =
     .btn {
       display: inline-block;
       padding: 0.75rem 1.5rem;
-      background: var(--bg-gradient);
+      background: var(--bg-action);
       color: white;
       border: none;
       border-radius: 8px;
@@ -267,7 +266,7 @@ export function redirectPreviewPage({ id, targetUrl }) {
       width: 36px;
       height: 36px;
     }
-    
+
     .preview-card > p {
       color: var(--text-secondary);
       margin-bottom: 0;
@@ -354,7 +353,22 @@ export function redirectPreviewPage({ id, targetUrl }) {
       border-color: var(--primary);
       color: var(--primary);
     }
-    
+
+    .redirect-toggle-wrap {
+      position: fixed;
+      top: 1rem;
+      display: flex;
+      gap: 0;
+      background: var(--toggle-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--toggle-border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .redirect-toggle-wrap.color { right: 11.5rem; }
+    .redirect-toggle-wrap.theme { right: 4.5rem; }
+
     @media (max-width: 600px) {
       .preview-card {
         padding: 1.5rem;
@@ -371,10 +385,19 @@ export function redirectPreviewPage({ id, targetUrl }) {
   `;
   
   const content = `
+    <div class="redirect-toggle-wrap color ntnu-toggle-wrap">
+      <button class="ntnu-toggle-btn" data-color-option="blue" title="NTNU Blue">🔵</button>
+      <button class="ntnu-toggle-btn" data-color-option="red" title="NTNU Red">🔴</button>
+    </div>
+    <div class="redirect-toggle-wrap theme ntnu-toggle-wrap">
+      <button class="ntnu-toggle-btn" data-theme-option="light" title="Light">☀️</button>
+      <button class="ntnu-toggle-btn" data-theme-option="auto" title="Auto">🖥️</button>
+      <button class="ntnu-toggle-btn" data-theme-option="dark" title="Dark">🌙</button>
+    </div>
     <button class="lang-switch" onclick="toggleLang()" id="langBtn">EN</button>
     <div class="preview-container">
       <div class="preview-card">
-        <h1><img src="/NTNU_Red.png" alt=""> ntnu.cc</h1>
+        <h1><img src="/NTNU_Blue.png" alt="" class="logo-blue"><img src="/NTNU_Red.png" alt="" class="logo-red"> ntnu.cc</h1>
         <p><span data-i18n="desc">短網址</span> <strong>${escapeHtml(id)}</strong> <span data-i18n="redirectTo">即將帶您前往：</span></p>
         
         <div class="target-url-box">

@@ -1,6 +1,17 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
+  <script>
+    (function() {
+      var t = localStorage.getItem('theme') || 'auto';
+      var r = t === 'auto'
+        ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+        : t;
+      document.documentElement.setAttribute('data-theme', r);
+      var c = localStorage.getItem('color') || 'blue';
+      document.documentElement.setAttribute('data-color', c);
+    })();
+  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ntnu.cc - 師大短網址服務 | NTNU URL Shortener</title>
@@ -29,11 +40,11 @@
   <meta name="twitter:image" content="https://ntnu.cc/og-image.png">
   
   <!-- Favicon - Google 建議 48px 倍數的正方形圖示 -->
-  <link rel="shortcut icon" href="/NTNU_Red.png">
-  <link rel="icon" type="image/png" sizes="48x48" href="/NTNU_Red.png">
-  <link rel="icon" type="image/png" sizes="96x96" href="/NTNU_Red.png">
-  <link rel="icon" type="image/png" sizes="144x144" href="/NTNU_Red.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="/NTNU_Red.png">
+  <link rel="shortcut icon" href="/NTNU_Blue.png">
+  <link rel="icon" type="image/png" sizes="48x48" href="/NTNU_Blue.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/NTNU_Blue.png">
+  <link rel="icon" type="image/png" sizes="144x144" href="/NTNU_Blue.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/NTNU_Blue.png">
   
   <!-- JSON-LD Structured Data -->
   <script type="application/ld+json">
@@ -58,41 +69,26 @@
   }
   </script>
   
+  <link rel="stylesheet" href="/theme.css">
+  <script src="/theme.js" defer></script>
+  
   <style>
-    :root {
-      --primary: #9B2335;
-      --primary-dark: #7A1C2A;
-      --primary-light: #C94C5C;
-      --secondary: #D4646F;
-      --accent: #10b981;
-      --text-dark: #2d2d2d;
-      --text-light: #555555;
-      --text-muted: #777777;
-      --bg-white: #ffffff;
-      --bg-light: #fff9f9;
-      --bg-gradient: linear-gradient(135deg, #9B2335 0%, #B83A4B 50%, #C94C5C 100%);
-      --shadow-sm: 0 1px 2px rgba(155, 35, 53, 0.08);
-      --shadow-md: 0 4px 6px -1px rgba(155, 35, 53, 0.12);
-      --shadow-lg: 0 10px 15px -3px rgba(155, 35, 53, 0.12);
-      --shadow-xl: 0 20px 25px -5px rgba(155, 35, 53, 0.12);
-    }
-    
     * { margin: 0; padding: 0; box-sizing: border-box; }
     
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
       color: var(--text-dark);
       line-height: 1.6;
-      background: var(--bg-white);
+      background: var(--bg-page);
     }
-    
+
     /* Announcement Banner */
     .announcement-banner {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
-      background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+      background: var(--bg-banner);
       color: white;
       padding: 0.5rem 1rem;
       z-index: 1001;
@@ -118,7 +114,7 @@
       top: 32px;
       left: 0;
       right: 0;
-      background: rgba(255, 255, 255, 0.95);
+      background: var(--bg-nav);
       backdrop-filter: blur(10px);
       box-shadow: var(--shadow-sm);
       z-index: 1000;
@@ -151,7 +147,7 @@
       height: 32px;
       object-fit: contain;
     }
-    
+
     .nav-links {
       display: flex;
       gap: 1.5rem;
@@ -202,7 +198,7 @@
     }
     
     .modal-card {
-      background: white;
+      background: var(--bg-card);
       border-radius: 16px;
       max-width: 500px;
       width: 100%;
@@ -213,7 +209,7 @@
     
     .modal-header {
       padding: 1.25rem 1.5rem;
-      border-bottom: 1px solid #eee;
+      border-bottom: 1px solid var(--border-modal-header);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -272,7 +268,7 @@
     }
     
     .btn-primary {
-      background: var(--bg-gradient);
+      background: var(--bg-action);
       color: #ffffff !important;
       box-shadow: var(--shadow-sm);
     }
@@ -284,9 +280,9 @@
     }
     
     .btn-secondary {
-      background: white;
+      background: var(--bg-card);
       color: var(--primary);
-      border: 1px solid #e5e7eb;
+      border: 1px solid var(--border-card);
     }
     
     .btn-secondary:hover {
@@ -337,7 +333,7 @@
     
     /* URL Shortener Form */
     .shortener-box {
-      background: white;
+      background: var(--bg-card);
       border-radius: 16px;
       padding: 1.5rem;
       box-shadow: var(--shadow-xl);
@@ -367,12 +363,12 @@
     .form-group input,
     .form-group select {
       padding: 0.65rem 0.875rem;
-      border: 2px solid #e5e7eb;
+      border: 2px solid var(--border-input);
       border-radius: 8px;
       font-size: 0.95rem;
       outline: none;
       transition: border-color 0.2s;
-      background: white;
+      background: var(--bg-input);
     }
     
     .form-group input:focus,
@@ -409,7 +405,7 @@
     .btn-submit {
       flex: 1;
       padding: 0.75rem 1.5rem;
-      background: var(--bg-gradient);
+      background: var(--bg-action);
       color: white;
       border: none;
       border-radius: 8px;
@@ -432,9 +428,9 @@
     
     .btn-random {
       padding: 0.75rem 1.25rem;
-      background: white;
+      background: var(--bg-input);
       color: var(--text-dark);
-      border: 2px solid #e5e7eb;
+      border: 2px solid var(--border-input);
       border-radius: 8px;
       font-size: 0.95rem;
       font-weight: 500;
@@ -449,8 +445,8 @@
     
     .result-box {
       display: none;
-      background: #f0fdf4;
-      border: 1px solid #86efac;
+      background: var(--bg-result-success);
+      border: 1px solid var(--success-border);
       border-radius: 10px;
       padding: 1.25rem;
       margin-top: 1.5rem;
@@ -462,8 +458,8 @@
     }
     
     .result-box.error {
-      background: #fef2f2;
-      border-color: #fca5a5;
+      background: var(--bg-result-error);
+      border-color: var(--error-border);
     }
     
     .result-title {
@@ -477,7 +473,7 @@
       align-items: center;
       justify-content: center;
       gap: 1rem;
-      background: #e8f5e9;
+      background: var(--bg-result-url);
       padding: 0.75rem 1rem;
       border-radius: 8px;
       margin-bottom: 0.5rem;
@@ -629,12 +625,12 @@
     }
     
     .feature-card {
-      background: white;
+      background: var(--bg-card);
       border-radius: 12px;
       padding: 1.5rem;
       text-align: center;
       transition: all 0.3s;
-      border: 1px solid #f0f0f0;
+      border: 1px solid var(--border-card);
     }
     
     .feature-card:hover {
@@ -645,7 +641,7 @@
     .feature-icon {
       width: 50px;
       height: 50px;
-      background: var(--bg-gradient);
+      background: var(--bg-action);
       border-radius: 10px;
       display: flex;
       align-items: center;
@@ -669,7 +665,7 @@
     
     /* Stats Banner */
     .stats-banner {
-      background: var(--bg-gradient);
+      background: var(--bg-stats);
       padding: 3rem 2rem;
     }
     
@@ -702,7 +698,7 @@
     /* Testimonials */
     .testimonials {
       padding: 5rem 2rem;
-      background: white;
+      background: var(--bg-testimonials);
     }
     
     .testimonials-content {
@@ -717,7 +713,7 @@
     }
     
     .testimonial-card {
-      background: var(--bg-light);
+      background: var(--bg-card-alt);
       border-radius: 12px;
       padding: 1.5rem;
     }
@@ -744,7 +740,7 @@
     .author-avatar {
       width: 40px;
       height: 40px;
-      background: var(--bg-gradient);
+      background: var(--bg-action);
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -766,7 +762,7 @@
     
     /* Footer */
     .footer {
-      background: #2d2d2d;
+      background: var(--bg-footer);
       color: white;
       padding: 3rem 2rem 1.5rem;
     }
@@ -1010,7 +1006,8 @@
   <nav class="navbar">
     <div class="navbar-content">
       <a href="/" class="logo">
-        <img src="/NTNU_Red.png" alt="" class="logo-img">
+        <img src="/NTNU_Blue.png" alt="" class="logo-img logo-blue">
+        <img src="/NTNU_Red.png" alt="" class="logo-img logo-red">
         ntnu.cc
       </a>
       <div class="nav-links">
@@ -1023,6 +1020,15 @@
           </svg>
           GitHub
         </a>
+        <div class="ntnu-toggle-wrap" style="margin-right: 0.5rem;">
+          <button class="ntnu-toggle-btn" data-color-option="blue" title="NTNU Blue">🔵</button>
+          <button class="ntnu-toggle-btn" data-color-option="red" title="NTNU Red">🔴</button>
+        </div>
+        <div class="ntnu-toggle-wrap" style="margin-right: 0.5rem;">
+          <button class="ntnu-toggle-btn" data-theme-option="light" title="Light">☀️</button>
+          <button class="ntnu-toggle-btn" data-theme-option="auto" title="Auto">🖥️</button>
+          <button class="ntnu-toggle-btn" data-theme-option="dark" title="Dark">🌙</button>
+        </div>
         <button class="btn btn-secondary lang-toggle" id="langToggle" onclick="toggleLanguage()">EN</button>
       </div>
     </div>
@@ -1200,7 +1206,8 @@
       <div class="footer-main">
         <div class="footer-brand">
           <h3>
-            <img src="/NTNU_Red.png" alt="" class="footer-logo">
+            <img src="/NTNU_Blue.png" alt="" class="footer-logo logo-blue">
+            <img src="/NTNU_Red.png" alt="" class="footer-logo logo-red">
             ntnu.cc
           </h3>
           <p data-i18n="footer.desc">專為國立臺灣師範大學設計的短網址服務平台</p>
@@ -1682,7 +1689,7 @@
           text: url,
           width: 200,
           height: 200,
-          colorDark: '#9B2335',
+          colorDark: '#2E3192',
           colorLight: '#ffffff',
           correctLevel: QRCode.CorrectLevel.H
         });
