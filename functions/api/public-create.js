@@ -5,9 +5,9 @@
  */
 
 import { createResponse, createErrorResponse, generateRandomId, isIpAllowed, getClientInfo } from '../lib/utils.js';
-import { validateUrl, validateId, isBlockedDomain } from '../lib/validation.js';
+import { validateUrl, validateId, isBlockedDomain, verifyTurnstile } from '../lib/validation.js';
 import { checkRateLimit } from '../lib/security.js';
-import { notifyLinkCreated, notifyBlockedDomain } from '../lib/discord.js';
+import { notifyLinkCreated, notifyBlockedDomain, notifyAccessDenied } from '../lib/discord.js';
 
 // 師大 IP 範圍 (CIDR 格式)
 const NTNU_IP_RANGES = [
@@ -48,6 +48,40 @@ export async function onRequestPost(context) {
     );
   }
   
+  // 解析請求 Body（先解析，才能在做任何 KV 寫入前驗證 CAPTCHA）
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return createErrorResponse('無效的請求格式', 'INVALID_REQUEST', 400);
+  }
+
+  const { url, customId, expiry = '30d', turnstileToken } = body;
+
+  // CAPTCHA 驗證（Cloudflare Turnstile）
+  // 重要：必須在伺服器端強制驗證，前端的 Turnstile 只是 UX，無法防止
+  //      攻擊者直接呼叫 API。此處驗證失敗即拒絕，且在任何 KV 寫入之前執行，
+  //      避免攻擊流量污染資料庫或灌爆速率限制計數。
+  // 開發模式（DEV_MODE=true）可略過，方便本機測試。
+  if (env.DEV_MODE !== 'true') {
+    const turnstileResult = await verifyTurnstile(turnstileToken, env.TURNSTILE_SECRET, ip);
+    if (!turnstileResult.success) {
+      await notifyAccessDenied(env.DISCORD_WEBHOOK_URL, {
+        reason: `Turnstile 驗證失敗 (${turnstileResult.error})`,
+        ip,
+        country,
+        userAgent,
+        path: '/api/public-create',
+      });
+
+      return createErrorResponse(
+        '人機驗證失敗，請重新整理頁面後再試一次',
+        turnstileResult.error || 'CAPTCHA_FAILED',
+        403
+      );
+    }
+  }
+
   // 速率限制：每 IP 每分鐘最多 5 次
   const rateLimit = await checkRateLimit(env.LINKS_KV, ip, 'public-create', 5, 60);
   if (!rateLimit.allowed) {
@@ -58,16 +92,6 @@ export async function onRequestPost(context) {
       429
     );
   }
-  
-  // 解析請求 Body
-  let body;
-  try {
-    body = await request.json();
-  } catch {
-    return createErrorResponse('無效的請求格式', 'INVALID_REQUEST', 400);
-  }
-  
-  const { url, customId, expiry = '30d' } = body;
   
   // URL 驗證
   if (!url) {
