@@ -7,11 +7,11 @@ import { createHtmlResponse, createErrorResponse, isIpAllowed, getClientInfo } f
 import { validateId } from './lib/validation.js';
 import { checkRateLimit, updateStats } from './lib/security.js';
 import { notifyAccessDenied } from './lib/discord.js';
-import { 
+import {
   redirectPreviewPage,
-  ipRestrictedPage, 
-  notFoundPage, 
-  rateLimitedPage 
+  ipRestrictedPage,
+  notFoundPage,
+  rateLimitedPage
 } from './lib/templates.js';
 
 // 靜態檔案副檔名，不應該被此路由處理
@@ -20,7 +20,13 @@ const STATIC_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico', '.we
 export async function onRequest(context) {
   const { request, env, params, next } = context;
   const id = params.id;
-  
+
+  // 若 _middleware 已將子網域請求改寫為 /_sites/... 資產路徑(例如 tools.ntnu.cc/deskcard),
+  // 這不是短碼 → 直接放行給靜態資產,否則會被當成短碼查詢而 404。
+  if (new URL(request.url).pathname.startsWith('/_sites/')) {
+    return next();
+  }
+
   // 跳過靜態檔案，讓 Cloudflare Pages 處理
   if (STATIC_EXTENSIONS.some(ext => id.toLowerCase().endsWith(ext))) {
     return next();

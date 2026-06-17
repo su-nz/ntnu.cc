@@ -1,0 +1,424 @@
+<!--
+NTNU Style — unofficial, community-maintained brand reference. NOT affiliated
+with or endorsed by National Taiwan Normal University. "NTNU", 國立臺灣師範大學,
+the 校徽 emblem, the calligraphic standard wordmark, and the lion mascot are
+trademarks / copyright of National Taiwan Normal University; all rights remain
+with NTNU. This document licenses only its original descriptive text (MIT).
+See LICENSE and README.md.
+-->
+
+## Overview
+
+NTNU (國立臺灣師範大學 / National Taiwan Normal University) reads like a century-old academic institution rendered with restrained, ceremonial precision. The whole system sits on **pure white** (`{colors.canvas}` — `#ffffff`) with warm cool-gray bands (`{colors.cloud}` / `{colors.fog}`) for alternating section rhythm. There is one chromatic identity color — **NTNU Maroon** (`{colors.primary}` — `#93272c`, Pantone 7622 C) — and one ink color (`{colors.ink}` — `#2d2926`, Pantone Black C); together they carry ninety percent of the system. The Latin voice is a single family — **Helvetica Neue** (bespoke-feeling neo-grotesque, official substitute Arial) — paired with **Minion Pro** for ceremonial serif moments and a CJK Gothic (黑體 / Source Han Sans) for Traditional Chinese body. Headings run Bold/Medium; body runs Regular/Light — clean, institutional, quietly authoritative.
+
+The signature gesture is the **woven pixel-mosaic band** (`mosaic-band`) — a blocky lattice of maroon and cool-gray square tiles derived from a traditional textile/window-lattice weave, built on a modular X-grid. It anchors the bottom edge of every stationery surface, runs vertically down folder spines, skirts the campus shuttle bus, and tips every street banner. Outside that decorative weave, every surface is rectilinear with **soft 8–12px corners** on cards/tiles and a 4px corner on buttons.
+
+The second irreplaceable artifact is the **circular 校徽 emblem** — a maroon medallion of six radiating 木鐸-bell petals around a central 師大 roundel — locked to the **brush-calligraphy wordmark** 國立臺灣師範大學 and the **Helvetica Neue Condensed Bold** English wordmark NATIONAL TAIWAN NORMAL UNIVERSITY. The emblem and the calligraphic wordmark are fixed, hand-drawn assets governed by an X-unit construction grid — they are placed, never redrawn.
+
+The system breaks into three voice modes: a **white academic body** for browsing (news cards, college tiles, feature rows); a **maroon slab** (`{colors.primary}`) for the masthead header bar, hero banners, and ceremonial bands; and a **charcoal / cool-gray utility band** (`{colors.charcoal-band}` / `{colors.fog}`) for wayfinding, directories, and footers. The maroon appears as the header bar, filled CTAs, link text, the mosaic weave, and the emblem — reserved and deliberate, never as a generic decorative wash.
+
+**Key Characteristics:**
+- Pure white canvas (`{colors.canvas}`) with warm near-black ink (`{colors.ink}`, Pantone Black C); cool-gray bands (`{colors.cloud}`, `{colors.fog}`) alternate for section rhythm
+- NTNU Maroon (`{colors.primary}`, Pantone 7622 C) is the lone identity color — masthead bar, CTA fill, link color, mosaic weave, emblem; NTNU Navy (`{colors.navy}`, Pantone 2955 C) is the approved secondary
+- Helvetica Neue across every Latin surface (display, body, button, caption); Minion Pro for ceremonial serif; brush-calligraphy wordmark is fixed artwork, never a live font
+- Cards/tiles round at `{rounded.lg}`–`{rounded.xl}` (8–12px); buttons sit at `{rounded.sm}` (4px); the 校徽 emblem alone is circular (`{rounded.full}`)
+- The woven pixel-mosaic band (`mosaic-band`) is the hero motif — a maroon/cool-gray lattice on a modular X-grid that anchors page edges, spines, and banner tips
+- Maroon masthead bar and charcoal footer slab bracket every page; ceremonial gold/silver are reserved for certificates and embossing
+- Section rhythm: utility-strip → maroon masthead → white body → cloud band → charcoal/maroon slab → cloud band → charcoal footer
+
+## Colors
+
+> **No Interaction sub-section.** Hover colors are silently filtered. Allowed sub-sections: Brand & Accent, Surface, Text, Semantic.
+
+### Brand & Accent
+- **NTNU Maroon** (`{colors.primary}` — `#93272c`, Pantone 7622 C / C45 M97 Y91 K13 / RGB 146 36 42): the system's lone signal — masthead bar, primary CTA fill, link color, mosaic-weave fill, emblem color, active sub-nav indicator. Reserved.
+- **Maroon Deep** (`{colors.primary-deep}` — `#6e1d22`): pressed state for the primary CTA and the visited-link color; the darker edge of the mosaic gradient.
+- **Bright Red** (`{colors.primary-bright}` — `#ba0c2f`, Pantone 200 C / C30 M100 Y85): the gradient partner that lets the mosaic weave fade from maroon into a brighter red; also the accent CTA tone inside maroon slabs where the deep maroon would muddy.
+- **Maroon Soft** (`{colors.primary-soft}` — `#f4e3e4`): pale maroon tint surface for selected rows, quote cards, and selection chips.
+- **NTNU Navy** (`{colors.navy}` — `#003865`, Pantone 2955 C / C100 M86 Y52 K13): the approved secondary brand color — the navy emblem variant, secondary banners, the navy folder colorway, and chart/data accents.
+
+### Surface
+- **Canvas** (`{colors.canvas}` — `#ffffff`): the universal page background. White, full opacity.
+- **Paper** (`{colors.paper}` — `#ffffff`): card surfaces — same white as canvas, lifted by hairline borders or soft shadow.
+- **Cloud** (`{colors.cloud}` — `#f5f5f4`, Cool Gray 1 C): the lightest warm-gray band, used for alternating section backgrounds and feature-card groups.
+- **Fog** (`{colors.fog}` — `#e6e6e3`, Cool Gray 2–3 C): a slightly deeper gray band, used for directory panels, FAQ outers, and utility strips.
+- **Mist** (`{colors.mist}` — `#c8c9c7`, Cool Gray 3 C): the cool-gray tile color woven into the maroon mosaic band and used for tone-on-tone pattern fields.
+- **Steel** (`{colors.steel}` — `#a7a8aa`, Cool Gray 6 C): hairline border for outlined elements, dividers, and table cell rules.
+- **Charcoal Band** (`{colors.charcoal-band}` — `#53565a`, Cool Gray 11 C): the dark neutral slab used for wayfinding signage bodies, directory boards, and the page footer.
+- **Gold / Silver** (`{colors.gold}` / `{colors.silver}` — `#86754e` Pantone 874 C / `#8a8d8f` Pantone 877 C): ceremonial metallic spot tones reserved for certificates, diplomas, embossing, and the metallic emblem variants — never for screen body.
+
+### Text
+- **Ink** (`{colors.ink}` — `#2d2926`, Pantone Black C): the universal text color on white surfaces — headlines, body, button labels, navigation. A warm near-black, not pure black.
+- **Ink Deep** (`{colors.ink-deep}` — `#000000`): pure black reserved for the English wordmark, 1px hairline strokes, and certificate keylines.
+- **On Primary** (`{colors.on-primary}` — `#ffffff`): pure white used for headline and body text on the maroon masthead and maroon slabs.
+- **On Ink** (`{colors.on-ink}` — `#ffffff`): pure white used on charcoal footers and dark signage bodies.
+- **Charcoal** (`{colors.charcoal}` — `#53565a`, Cool Gray 11 C): muted body color on white surfaces — secondary descriptions, captions, sub-headings.
+- **Graphite** (`{colors.graphite}` — `#75787b`, Cool Gray 9 C): smaller-print color, used for legal lines, timestamps, and metadata.
+
+### Semantic
+- **Maroon / Bright Red** (`{colors.primary}` / `{colors.primary-bright}` — `#93272c` / `#ba0c2f`): emphasis and alert color. The deeper maroon reads as institutional emphasis; the brighter Pantone 200 C reads as "urgent" or "new" depending on placement.
+- **Navy** (`{colors.navy}` — `#003865`): neutral status / informational accent (e.g., links inside data tables, secondary tags).
+- **Faculty palette** (`{colors.faculty-*}`): a 28-swatch auxiliary palette (greens, blues, oranges, purples, teals) defined in the VIS for **college / sub-brand** color-coding only — e.g. Pantone 7488 C green, 3005 C blue, 165 C orange, 7678 C purple. Never introduce these into the core brand surface; they tag academic units, ID-card types, and infographics exclusively.
+
+## Typography
+
+### Font Family
+
+The Latin voice is **single-family**: Helvetica Neue (official substitute Arial) across every UI surface — display, body, button, caption. The VIS pairs it with **Minion Pro** (substitute Times New Roman) for ceremonial serif settings — certificates, diplomas, formal mastheads — and a **CJK Gothic** (黑體) weight ladder W3 / W5 / W7 (open substitute Source Han Sans TC / Noto Sans TC) for all Traditional Chinese body and UI text.
+
+Two assets stand outside the font system entirely and must be treated as **fixed artwork**: the **brush-calligraphy wordmark** 國立臺灣師範大學 (毛筆字, semi-cursive) and the **circular 校徽 emblem**. Both are hand-drawn, locked to an X-unit construction grid, and placed as supplied vector assets — never re-typed, re-spaced, or substituted with a live font. The **English wordmark** NATIONAL TAIWAN NORMAL UNIVERSITY is set in **Helvetica Neue Condensed Bold**, all-caps, tracked out, at a minimum reproduction size of 25mm.
+
+The 16/14/12-px caption tier carries academic metadata — dates, department names, fine print — at weight 400/Light with a 1.5 line-height. Button and wordmark labels lift to Bold with positive tracking and an uppercase transform for Latin.
+
+### Hierarchy
+
+| Token | Size | Weight | Line Height | Letter Spacing | Use |
+|---|---|---|---|---|---|
+| `{typography.display-xxl}` | 64px | 700 | 1.08 | -0.5px | Hero banner headline (homepage masthead) |
+| `{typography.display-xl}` | 48px | 700 | 1.1 | -0.25px | Section headlines on landing pages |
+| `{typography.display-lg}` | 36px | 700 | 1.15 | 0 | Sub-section headlines, page titles |
+| `{typography.display-md}` | 28px | 500 | 1.2 | 0 | Promo strip headlines, college-row headers |
+| `{typography.display-sm}` | 22px | 500 | 1.25 | 0 | Card titles, news headlines |
+| `{typography.display-xs}` | 18px | 500 | 1.3 | 0 | Inline list headers, accordion labels |
+| `{typography.body-lg}` | 18px | 400 | 1.6 | 0 | Lead paragraphs |
+| `{typography.body-md}` | 16px | 400 | 1.6 | 0 | Default body |
+| `{typography.body-emphasis}` | 16px | 500 | 1.6 | 0 | Bolded run-in copy |
+| `{typography.caption-md}` | 14px | 400 | 1.5 | 0 | Dates, department names, metadata |
+| `{typography.caption-bold}` | 14px | 700 | 1.4 | 0 | Tags, in-card highlights |
+| `{typography.caption-sm}` | 12px | 400 | 1.4 | 0 | Footnotes, legal lines |
+| `{typography.link-md}` | 16px | 500 | 1.6 | 0 | Inline link emphasis |
+| `{typography.button-md}` | 15px | 700 | 1.2 | 0.6px | Primary/secondary button labels (uppercase Latin) |
+| `{typography.button-sm}` | 13px | 700 | 1.2 | 0.4px | Compact button labels |
+| `{typography.wordmark-en}` | — | 700 | 1.0 | 1.0px | English wordmark (Helvetica Neue Condensed Bold, all-caps) |
+| `{typography.serif-display}` | 32px | 600 | 1.3 | 0 | Ceremonial serif headings (Minion Pro) — certificates, formal pages |
+
+### Principles
+
+The typographic decision worth flagging: NTNU runs a **neo-grotesque body voice (Helvetica Neue) against a hand-brushed calligraphic wordmark**. The tension between the engineered sans and the living brush stroke is the brand's core character — modern institution, classical roots. Never let the calligraphy and the Helvetica wordmark compete; the calligraphy is the formal signature, the Helvetica line is its translation.
+
+For Traditional Chinese, default to a Gothic (黑體) for UI and body; reserve any brush or Ming/serif Chinese face for ceremonial display only. Latin emphasis is carried by **weight** (500 → body-emphasis, 700 → caption-bold and display), not italics — italics appear only in legal disclaimers and serif citations.
+
+### Note on Font Substitutes
+
+Helvetica Neue and Minion Pro are proprietary. Closest open-source / system substitutes:
+- **Latin sans** — **Arial** is NTNU's officially sanctioned substitute for Helvetica Neue. For web, **Inter** (weights 400/500/700) is a closer optical match; bump font-size ~2% to compensate for its narrower set width.
+- **Latin serif** — **Times New Roman** is the official Minion Pro substitute; for web, **Source Serif 4** or **Noto Serif** read closer to Minion Pro's humanist contrast.
+- **Traditional Chinese** — **Source Han Sans TC / Noto Sans TC** (思源黑體) at W400/W500/W700 maps directly to the VIS CJK Gothic ladder (W3/W5/W7). Use **Noto Serif TC / Source Han Serif** only for ceremonial display.
+- **Wordmark & emblem** — do NOT substitute a font. The calligraphic 國立臺灣師範大學 wordmark and the 校徽 emblem are supplied vector assets; place them as artwork at no less than 25mm / their minimum legible size.
+
+When swapping, set CJK body line-height to 1.6 and Latin display line-height to ~1.1 explicitly.
+
+## Layout
+
+### Spacing System
+
+- **Base unit**: 8px, with a 4px half-step. The print VIS is governed by a modular **X-unit grid** where every logo, banner, and mosaic proportion is a multiple of X; on screen this maps to an 8px rhythm.
+- **Tokens (front matter)**: `{spacing.xxs}` 4px · `{spacing.xs}` 8px · `{spacing.sm}` 12px · `{spacing.md}` 16px · `{spacing.lg}` 20px · `{spacing.xl}` 24px · `{spacing.xxl}` 32px · `{spacing.section}` 80px
+- **Section padding**: `{spacing.section}` (80px) vertical between major bands on desktop; collapses to ~48px on mobile.
+- **Card internal padding**: `{spacing.xl}` (24px) for news/feature cards; `{spacing.xxl}` (32px) for promo strips; `{spacing.md}` (16px) for compact tiles.
+- **Gutter**: `{spacing.xl}` (24px) between grid columns at desktop; `{spacing.md}` (16px) on tablet/mobile.
+
+The 80px section gap is the universal rhythm constant between major homepage bands. Logo clear-space follows the VIS rule: keep a margin of at least the wordmark's X-height (≈ `{spacing.xl}`) clear of the emblem-and-wordmark lockup on all sides — never crowd the mark.
+
+### Grid & Container
+
+- **Desktop max-width**: 1280px content container with full-bleed-on-canvas section backgrounds (maroon masthead, mosaic bands, and charcoal footer bleed edge-to-edge).
+- **Masthead**: a full-width maroon (`{colors.primary}`) bar carrying the emblem + wordmark lockup flush-left and primary nav / search / language toggle to the right.
+- **Hero**: a full-width carousel of banner images with a headline overlay; a thin mosaic-band or maroon rule may cap the lower edge.
+- **News / highlight grid**: 4 columns at >1200px, 3 at 1024–1199px, 2 at 768–1023px, 1 below 768px.
+- **College / unit tiles**: rounded feature tiles, 4-up at desktop collapsing to 2-up then single column.
+- **Footer**: 4–5-column link grid on charcoal at >1024px, collapsing to 2-column then accordion on mobile.
+
+### Whitespace Philosophy
+
+Whitespace is **institutional-formal** — generous around the masthead lockup and hero, measured around dense news rows. The emblem-and-wordmark lockup always carries its X-unit clear space; nothing crowds the mark. Directory and table regions tighten line-height to 1.4 and shrink type to 12–13px so dense academic listings stay compact, but the body reading column never drops below `{typography.body-md}` (16px) with 1.6 line-height.
+
+## Elevation & Depth
+
+| Level | Treatment | Use |
+|---|---|---|
+| 0 — Flat | No border, no shadow. | Section bands (white, cloud, fog), maroon masthead, mosaic bands, full-bleed photo heroes |
+| 1 — Hairline | 1px solid `{colors.steel}` (`#a7a8aa`) border, no shadow. | Outlined buttons, table cells, directory rows, FAQ accordion outers |
+| 2 — Soft Lift | `0 2px 8px rgba(45, 41, 38, 0.08)`. | News cards, college tiles, feature tiles |
+| 3 — Floating Modal | `0 8px 24px rgba(45, 41, 38, 0.14)`. | Search drawer, mobile-nav sheet, image/lightbox modal |
+
+The system is mostly flat — depth is communicated by **color contrast** (cloud band vs. white card, maroon slab vs. white body) rather than shadow. Soft Lift is the workhorse for cards and tiles; nothing else carries shadow. Modal-floating is rare and reserved for transient overlays.
+
+### Decorative Depth
+
+The system's most distinctive depth gesture is the **woven pixel-mosaic band** (`mosaic-band`) — a flat lattice of maroon (`{colors.primary}`) and cool-gray (`{colors.mist}`) square tiles, built on the modular X-grid with no radius and no shadow. It echoes a traditional textile/window weave and is a literal brand artifact, not generic ornament. It anchors page-bottom bands, runs vertically down folder/sidebar spines, and can dissolve from a dense pixel weave into plain horizontal stripes across large fields. A maroon→`{colors.primary-bright}` (Pantone 200 C) gradient variant exists for hero fields. Treat the mosaic as the NTNU equivalent of a wordmark flourish — reserved, structural, never scattered as noise.
+
+Photography on the homepage and college pages frames imagery inside `{rounded.xl}` (12px) containers with no border. Ceremonial/lifestyle photography sits full-bleed inside maroon or charcoal slabs without rounding.
+
+## Shapes
+
+### Border Radius Scale
+
+| Token | Value | Use |
+|---|---|---|
+| `{rounded.none}` | 0px | Mosaic-band tiles, maroon masthead bar, full-bleed heroes, banner/pennant fields |
+| `{rounded.xs}` | 2px | Secondary chip backgrounds, tag pills |
+| `{rounded.sm}` | 4px | Primary buttons, secondary buttons, text inputs |
+| `{rounded.md}` | 6px | Badge pills, search field, small touch zones |
+| `{rounded.lg}` | 8px | News cards, directory rows, FAQ containers |
+| `{rounded.xl}` | 12px | College/feature tiles, photo frames, customer-story tiles |
+| `{rounded.pill}` | 9999px | Category sub-nav tabs, language toggle, filter chips |
+| `{rounded.full}` | 50% | The 校徽 emblem ONLY — the single circular form in the system |
+
+The system maintains a clear philosophy: **buttons and the mosaic stay sharp** (4px / 0px) while **cards and photo frames stay softly rounded** (8–12px), and **the emblem alone is a full circle**. This three-tier split — rectilinear interactive elements, gently rounded containers, the circular crest — is the visual signature.
+
+### Photography Geometry
+
+Hero photography sits in `{rounded.xl}` (12px) frames or full-bleed at slab scale. News thumbnails are 16:9 inside `{rounded.lg}` frames. College tiles pair a 1:1 or 16:9 image with a label. There are no full-bleed circular photo masks — the only circle in the system is the emblem. Avatar/portrait crops use `{rounded.lg}` (8px) rounded squares, never circles, to avoid competing with the emblem.
+
+## Components
+
+> **No hover states documented.** Every component spec below documents only Default and Active/Pressed states. Variants live as separate front-matter entries.
+
+### Buttons
+
+**`button-primary`** — the lone NTNU Maroon CTA
+- Background `{colors.primary}`, text `{colors.on-primary}`, type `{typography.button-md}` (uppercase Latin, 0.6px tracking), padding `{spacing.sm} {spacing.xl}` (12 × 24), height 44px, rounded `{rounded.sm}`
+- Pressed state `button-primary-pressed` — background `{colors.primary-deep}`, same text
+- Disabled state `button-primary-disabled` — background `{colors.steel}`, white text
+- Used for: "Apply / 報名", "Read more / 更多", primary form submit
+
+**`button-navy`** — secondary brand CTA
+- Background `{colors.navy}`, text `{colors.on-primary}`, padding `{spacing.sm} {spacing.xl}`, height 44px, rounded `{rounded.sm}`, type `{typography.button-md}`
+- Used for: secondary primary actions, informational CTAs where maroon would over-signal
+
+**`button-outline`** — maroon-text outlined CTA
+- Background `{colors.canvas}`, text `{colors.primary}`, 1px `{colors.primary}` border, padding `{spacing.sm} {spacing.xl}`, height 44px, rounded `{rounded.sm}`
+- Used for: "Compare", "Learn more", secondary actions on white surfaces
+
+**`button-on-maroon`** — reversed CTA for maroon slabs
+- Background `{colors.canvas}`, text `{colors.primary}`, no border (or 1px white); on maroon mastheads/slabs. Pressed → `{colors.primary-soft}` background
+- Used for: CTAs sitting inside the maroon masthead or maroon hero slab
+
+**`button-text-link`** — inline maroon link
+- Background `{colors.canvas}`, text `{colors.primary}`, type `{typography.link-md}`, padding `{spacing.xxs} 0`; visited → `{colors.primary-deep}`
+- Used for: "See details", "Read more" inside cards and rows
+
+### Cards & Containers
+
+**`card-news`** — the workhorse news/announcement tile
+- Background `{colors.canvas}`, rounded `{rounded.lg}` (8px), padding `{spacing.xl}` (24px), Soft Lift shadow
+- Layout: 16:9 thumbnail on top, date eyebrow in `{typography.caption-md}` (`{colors.graphite}`), headline in `{typography.display-sm}`, category tag, "Read more" link
+- Used for: 最新消息 / news grids, announcement listings
+
+**`card-college-tile`** — the rounded college / unit feature tile
+- Background `{colors.canvas}` or photographic, rounded `{rounded.xl}` (12px), padding `{spacing.xl}`, Soft Lift shadow
+- Layout: emblem or icon + college name in `{typography.display-xs}` + short descriptor; may carry a `{colors.faculty-*}` accent rule for unit color-coding
+- Used for: 學院 / academic-unit navigation, program tiles, the B815 feature-tile row
+
+**`card-feature-row`** — full-row feature card with photo + copy
+- Background `{colors.cloud}`, rounded `{rounded.xl}`, padding `{spacing.xxl}` (32px)
+- Layout: photo left (50% width), copy right with eyebrow + title + body + CTA pair
+- Used for: highlight features, "綠色大學 / 邁向頂尖" program rows
+
+**`card-quote`** — testimonial / alumni tile
+- Background `{colors.primary-soft}` or `{colors.canvas}`, rounded `{rounded.xl}`, padding `{spacing.xl}`, Soft Lift shadow
+- 16:9 or 1:1 photo in `{rounded.lg}` square frame, quote in `{typography.body-md}`, attribution row at bottom
+
+**`card-stat`** — numeric highlight tile
+- Background `{colors.canvas}`, rounded `{rounded.lg}`, padding `{spacing.xl}`; large numeral in `{typography.display-lg}` `{colors.primary}`, label in `{typography.caption-md}` `{colors.charcoal}`
+- Used for: ranking / enrollment / research stat strips
+
+### Inputs & Forms
+
+**`text-input`** + **`text-input-focused`**
+- Background `{colors.canvas}`, text `{colors.ink}`, rounded `{rounded.sm}`, padding `{spacing.sm} {spacing.md}`, height 44px
+- 1px `{colors.steel}` border in default; gains 1px `{colors.primary}` border on focus (no halo)
+
+**`text-input-search`** — search field in the masthead
+- Background `{colors.canvas}`, rounded `{rounded.md}`, padding `{spacing.sm} {spacing.md}`, height 40px, 1px `{colors.steel}` border, magnifying-glass icon at right; sits reversed on the maroon masthead with a white field
+
+**`badge-tag-maroon`** — filled category tag
+- Background `{colors.primary}`, text `{colors.on-primary}`, rounded `{rounded.md}`, padding 4px 10px, type `{typography.caption-bold}`
+- Used inline next to news titles to mark category / "最新 / NEW"
+
+**`badge-tag-outline`** — outlined tag
+- Background `{colors.canvas}`, text `{colors.charcoal}`, 1px `{colors.steel}` border, rounded `{rounded.md}`, padding 4px 10px
+
+**`badge-faculty`** — college color-coded chip
+- Background a `{colors.faculty-*}` swatch, text `{colors.on-primary}`, rounded `{rounded.pill}`, padding 4px 12px
+- Used ONLY to tag academic units / sub-brands per the auxiliary palette
+
+### Navigation
+
+**`utility-strip`** — the top-of-page utility bar
+- Background `{colors.fog}` (or `{colors.charcoal-band}`), text `{colors.ink}` (or `{colors.on-ink}`), height 36px, padding 0 `{spacing.xl}`, type `{typography.caption-md}`
+- Holds: language toggle (中文 / English), accessibility / sitemap links, quick links (Webmail, 校務系統), search trigger
+
+**`masthead-maroon`** — the primary header bar (the system's anchor)
+- Background `{colors.primary}` (`#93272c`), height 72–88px, padding 0 `{spacing.xxl}`, full-bleed
+- Layout: emblem + wordmark lockup flush-left (per VIS web spec, logo zone ≈ 1.8X emblem : 5.7X wordmark, 0.5X clear space top/bottom) → main category nav center/right → search + language + (mobile) hamburger at the right
+- The wordmark + emblem reverse to **white** on the maroon bar
+
+**`nav-link`**
+- Background transparent on maroon masthead, text `{colors.on-primary}`; on white sub-bars text `{colors.ink}`, type `{typography.body-md}`, padding `{spacing.xs} {spacing.md}`
+- Active page draws a 2px underline — white on the maroon bar, `{colors.primary}` on white bars
+
+**Top Nav (Mobile)**
+- Maroon masthead retained; hamburger replaces the category list; emblem+wordmark and search stay visible
+- Drawer expands as a full-canvas sheet with `{typography.body-lg}` link list and a sticky language toggle at bottom
+
+**`category-tab`** + **`category-tab-active`** — the pill sub-nav
+- Default: background `{colors.canvas}`, text `{colors.ink}`, type `{typography.body-emphasis}`, rounded `{rounded.pill}`, padding `{spacing.xs} {spacing.lg}`, 1px `{colors.steel}` border
+- Active: background `{colors.primary}`, text `{colors.on-primary}`, same rounding
+- Used for filtering news, program lists, and section tabs
+
+### Signature Components
+
+**`mosaic-band`** — the woven pixel-mosaic motif (the system's hero device)
+- A flat lattice of square tiles in `{colors.primary}` + `{colors.mist}` (or maroon→`{colors.primary-bright}` gradient), rounded `{rounded.none}`, no shadow, built on a modular X-grid (base tile ≈ 0.41X)
+- Renders as: a full-width bottom band (≈ 12–24px tall on screen), a vertical spine strip down a sidebar/card edge, a banner-tip field, or a dissolve from dense weave into plain horizontal stripes for large fills
+- Colorways: maroon-on-white, gray-tile-on-maroon (reversed), maroon→bright-red gradient, single-color black
+- Reserved for page edges, section seams, hero fields, and brand surfaces — never scattered as inline decoration
+
+**`emblem-lockup`** — the 校徽 + wordmark signature
+- The circular maroon emblem (`{rounded.full}`) locked to the brush-calligraphy 國立臺灣師範大學 and/or the Helvetica Neue Condensed Bold English wordmark, in fixed horizontal, vertical, stacked, or English-only configurations
+- Standard pairing: maroon emblem + black wordmark on light surfaces; reversed white emblem + white wordmark on maroon/navy/charcoal surfaces (per the A303 background matrix)
+- Proportions, inter-element spacing, and position are FIXED by the X-unit grid — place the supplied asset, never redraw, re-space, or re-stack
+
+**`faq-row`** — the accordion row
+- Background `{colors.canvas}`, rounded `{rounded.lg}`, padding `{spacing.lg} {spacing.xl}`, type `{typography.body-emphasis}`
+- 1px `{colors.steel}` divider between rows; chevron-down icon collapsed, chevron-up expanded; answer renders in `{typography.body-md}` after expansion
+
+**`directory-board`** — wayfinding / listing panel (charcoal voice)
+- Background `{colors.charcoal-band}` (`#53565a`), text `{colors.on-ink}`, with a `{colors.primary}` header cap and reversed-white emblem top-corner
+- White line-icon pictograms (uniform weight) for restroom / elevator / stairs / accessibility / info / parking, etc.; row list of department names (中/En)
+- Used for: campus maps, building directories, listing-heavy utility pages
+
+**`footer-charcoal`**
+- Background `{colors.charcoal-band}` (or `{colors.ink}`), text `{colors.on-ink}`, type `{typography.body-md}`, padding 64px `{spacing.xl}`
+- 4–5-column link grid (關於本校 / 學術單位 / 行政單位 / 招生 / 連絡資訊) with `{typography.body-emphasis}` headers and `{typography.caption-md}` link rows
+- Bottom strip carries the reversed emblem+wordmark, social icons, accessibility badge, and address/legal lines in `{typography.caption-sm}` muted to `{colors.steel}`; may sit above a thin `mosaic-band`
+
+## Do's and Don'ts
+
+### Do
+- Reserve `{colors.primary}` (maroon, Pantone 7622 C) for the masthead bar, primary CTA, link color, the mosaic weave, and the emblem — keep it deliberate
+- Place the emblem and brush-calligraphy wordmark as supplied fixed assets; keep the X-unit clear space (≥ one wordmark X-height) around the lockup
+- Pair maroon emblem + black wordmark on light surfaces; switch to the reversed white lockup on maroon, navy, or charcoal grounds (per the A303 background matrix)
+- Set Latin UI in Helvetica Neue (substitute Arial / Inter); pair with Source Han Sans TC for Traditional Chinese body; reserve Minion Pro for ceremonial serif
+- Use `{rounded.lg}`–`{rounded.xl}` (8–12px) for cards/tiles, `{rounded.sm}` (4px) for buttons/inputs, and `{rounded.full}` for the emblem alone
+- Anchor the `mosaic-band` to a page edge, seam, or hero field; keep its tiles on the modular grid in maroon + cool-gray (or the maroon→bright-red gradient)
+- Bracket pages with the maroon masthead and a charcoal/dark footer slab
+- Use the `{colors.faculty-*}` auxiliary palette only to color-code academic units, ID types, and infographics
+
+### Don't
+- Don't introduce saturated colors outside the maroon family, navy secondary, and the sanctioned faculty palette; no rainbow tinting
+- Don't recolor, distort, stretch, or re-proportion the emblem, or place the maroon emblem on a dark/low-contrast ground (use the reversed white version)
+- Don't re-type, re-space, re-stack, or substitute a font for the calligraphic wordmark; don't enclose the logo lockup in a box or keyline frame
+- Don't place the emblem or wordmark over busy/patterned or wavy-line backgrounds
+- Don't scatter the mosaic weave as inline noise; it is an edge/seam/field device tied to the brand, not a texture fill behind text
+- Don't round buttons above `{rounded.sm}` (4px) or make any non-emblem element a full circle
+- Don't drop ink-text opacity to fake hierarchy — switch surface or shift to `{colors.charcoal}` / `{colors.graphite}`
+- Don't run Helvetica Neue / CJK body below 12px, or set Chinese body line-height tighter than 1.5
+
+## Responsive Behavior
+
+### Breakpoints
+
+| Name | Width | Key Changes |
+|---|---|---|
+| Mobile | < 480px | Single-column stack; hamburger nav on maroon masthead; section padding ~48px; hero headline ~32px |
+| Mobile-Large | 480–767px | Same column count; hero ~40px; tiles stack vertically |
+| Tablet | 768–1023px | 2-column news/tile grid; full category nav may collapse to hamburger; masthead retained |
+| Desktop | 1024–1279px | 3-column grid; full horizontal nav; 1280px content max-width |
+| Desktop-Large | ≥ 1280px | 4-column grid; 1280px content container with full-bleed maroon/charcoal bands |
+
+### Touch Targets
+
+Every interactive element clears 44×44px on mobile. `button-primary` at 44px height + 24px horizontal padding meets WCAG-AAA touch target. `category-tab` bumps to 12px 24px padding on touch screens. Nav-link tap areas extend invisibly to the full row height. Masthead search / language / hamburger glyphs use 44×44 invisible hit boxes around their 24×24 icons.
+
+### Collapsing Strategy
+
+- **Utility strip**: stays visible; secondary links collapse into a single "more" / account icon below 768px
+- **Maroon masthead**: persists at every breakpoint; the category list collapses into a hamburger drawer below 1024px while emblem+wordmark, search, and language toggle stay visible
+- **Hero carousel**: stays single-column; controls shrink; any capping mosaic-band reduces tile size but stays edge-anchored
+- **News / tile grid**: 4 → 3 → 2 → 1 column; cards keep `{rounded.lg}`–`{rounded.xl}` corners at every size
+- **Directory / table**: multi-column listings collapse to stacked rows, then accordion on mobile
+- **Footer**: 4–5-column link grid → 2-column tablet → single-column accordion on mobile; reversed emblem+wordmark stays flush-left; bottom mosaic-band persists full-bleed
+
+### Image Behavior
+
+Hero and news photography use `{rounded.xl}` / `{rounded.lg}` containers at every breakpoint (full-bleed only inside maroon/charcoal slabs). Lifestyle and ceremonial photography maintain 16:9 with horizontal cropping rather than letterboxing on mobile. The `mosaic-band` keeps its tile module proportional — it scales tile size with the viewport but never restyles, and it always hugs the edge or seam it anchors. There are no art-direction crop swaps between desktop and mobile.
+
+## Mascot (吉祥物 — The NTNU Lion)
+
+NTNU's spirit mascot is an **orange-maned cartoon lion** (獅子), used for sports, student life, orientation, and outreach. It is a **separate, warmer sub-brand voice** — it never appears inside the formal academic masthead, beside the `emblem-lockup`, or on ceremonial documents. Treat it the way HP treats lifestyle photography: a distinct register, not part of the core identity lockup.
+
+**Mascot colors** (Pantone + CMYK are the authoritative VIS build; hex ≈ sRGB):
+- **Mane / fur** — Pantone 165 C (M73 Y87) ≈ `#ff671f`; shading uses 165 C at 70% tint and 165 C + Black C 40%
+- **Face / skin** — Pantone 712 C (M30 Y41) ≈ `#fcc89b`
+- **Jersey / accent red** — Pantone 1795 C (C18 M95 Y84) ≈ `#d22730`; shadow = 1795 C + Black C 40%
+- **Graduation gown** — Pantone 7645 C (C67 M87 Y65 K38) ≈ `#6e2639` (a deep wine, kin to `{colors.primary}`)
+- **Linework / eyes** — Pantone Black C `{colors.ink}`; body contour Black C 50% (`#8b8987`); contour shading Black C 40%
+
+**Poses** (supplied artwork): (A) welcoming / presenting; (B) basketball player — red jersey + shorts, dribbling; (C) graduate — maroon cap-and-gown, rolled diploma, thumbs-up.
+
+**Usage rules:**
+- Use only in spirit / sports / student-life / outreach contexts — never in the masthead, academic lockup, or formal stationery
+- Keep the spot-color spec exact; do NOT recolor the mane or skin tones
+- Approved single-color reductions: **Black C** or **Maroon 7622 C** only (`{colors.ink}` / `{colors.primary}`)
+- Do not place the mascot adjacent to or overlapping the `emblem-lockup`
+
+## Auxiliary & Faculty Palette
+
+The VIS defines a large auxiliary palette (manual page A302) for **academic-unit / sub-brand color-coding only** — colleges, departments, ID-card types, infographics, and event sub-brands. These colors **never enter the core brand surface** (body, masthead, CTAs, footer); they tag units. Reference them as `{colors.faculty-*}`.
+
+> Pantone + CMYK are the authoritative VIS builds. The hex below are sRGB conversions of those CMYK values (165 C / 1795 C shown at their Pantone-Bridge values to match the Mascot spec) — **verify against Pantone Color Bridge before production**.
+
+| Token | Pantone | CMYK | Hex (≈) | Reads as |
+|---|---|---|---|---|
+| `{colors.faculty-cream}` | P 1-10 C | Y14 K2 | `#fafad7` | pale cream |
+| `{colors.faculty-sand}` | 7401 C | C5 M15 Y41 | `#f2d996` | sand |
+| `{colors.faculty-peach}` | 712 C | M30 Y41 | `#ffb296` | peach |
+| `{colors.faculty-amber}` | 143 C | C13 M33 Y85 | `#deab26` | amber |
+| `{colors.faculty-orange}` | 165 C | M73 Y87 | `#ff671f` | orange |
+| `{colors.faculty-red}` | 1795 C | C18 M95 Y84 | `#d22730` | red |
+| `{colors.faculty-rose}` | 7607 C | C27 M69 Y57 | `#ba4f6e` | rose |
+| `{colors.faculty-wine}` | 4985 C | C53 M78 Y62 K10 | `#6c3257` | wine-rose |
+| `{colors.faculty-periwinkle}` | 7680 C | C46 M45 Y26 | `#8a8cbd` | periwinkle |
+| `{colors.faculty-violet}` | 7678 C | C71 M81 Y18 | `#4a30d1` | violet |
+| `{colors.faculty-lavender}` | 522 C | C32 M44 Y6 | `#ad8ff0` | lavender |
+| `{colors.faculty-sage}` | 579 C | C32 M12 Y47 | `#ade087` | sage green |
+| `{colors.faculty-lime}` | 7488 C | C57 Y84 | `#6eff29` | lime |
+| `{colors.faculty-olive}` | 105 C | C54 M51 Y100 K4 | `#717800` | olive |
+| `{colors.faculty-mint}` | 7542 C | C33 M14 Y25 | `#abdbbf` | pale mint |
+| `{colors.faculty-turquoise}` | 319 C | C67 Y26 | `#54ffbd` | turquoise |
+| `{colors.faculty-teal}` | 7459 C | C73 M31 Y26 | `#45b0bd` | teal |
+| `{colors.faculty-pine}` | 330 C | C94 M59 Y71 K24 | `#0c4f38` | deep pine |
+| `{colors.faculty-slate}` | 7695 C | C56 M28 Y23 | `#70b8c4` | slate blue |
+| `{colors.faculty-sky}` | 3005 C | C100 M46 Y8 | `#008aeb` | sky blue |
+| `{colors.faculty-royal}` | 647 C | C90 M65 K10 | `#1750e6` | royal blue |
+| `{colors.faculty-navy-deep}` | 302 C | C99 M84 Y51 K20 | `#022164` | deep navy |
+| `{colors.faculty-bordeaux}` | 7645 C | C67 M87 Y65 K38 | `#6e2639` | bordeaux (mascot gown) |
+
+**Neutral & metallic ladder** (the grays already power core surfaces; metallics are ceremonial):
+| Token | Pantone | Hex | Use |
+|---|---|---|---|
+| `{colors.cloud}` | Cool Gray 1 C | `#d9d9d6` | lightest band |
+| `{colors.fog}` | Cool Gray 2–3 C | `#e6e6e3` | section band |
+| `{colors.mist}` | Cool Gray 3 C | `#c8c9c7` | mosaic gray tile |
+| `{colors.steel}` | Cool Gray 6 C | `#a7a8aa` | hairline / border |
+| `{colors.graphite}` | Cool Gray 9 C | `#75787b` | fine print |
+| `{colors.charcoal-band}` | Cool Gray 11 C | `#53565a` | dark slab / footer |
+| `{colors.black6}` | Black 6 C | `#25282a` | richest near-black |
+| `{colors.gold}` | 874 C | `#86754e` | ceremonial gold |
+| `{colors.silver}` | 877 C | `#8a8d8f` | ceremonial silver |
+
+Color-coding rule: assign one faculty hue per academic unit; render the unit's `card-college-tile` accent rule and `badge-faculty` chip in that hue, but keep the unit page's masthead, CTAs, and body on the core maroon/ink system. Never run two faculty hues against each other as a primary scheme.
+
+## Iteration Guide
+
+1. Focus on ONE component at a time; resist refactoring an entire section in one pass
+2. Reference component names and tokens directly (`{colors.primary}`, `{typography.display-xxl}`, `{rounded.xl}`, `mosaic-band`, `emblem-lockup`) — do not paraphrase to hex/px in prose
+3. Run `npx @google/design.md lint DESIGN.md` after edits — `broken-ref`, `contrast-ratio`, and `orphaned-tokens` warnings flag issues automatically
+4. Add new variants as separate component entries (`-pressed`, `-disabled`, `-focused`); never bury state inside prose
+5. Default body to `{typography.body-md}`; reach for `{typography.body-emphasis}` for run-in bolds; keep display sizes for true heading roles
+6. Keep `{colors.primary}` scarce and the emblem/wordmark sacred — the maroon masthead + one CTA + the mosaic seam is enough signal per viewport; the calligraphic wordmark and 校徽 are fixed assets, never redrawn
+7. When introducing a new section band, choose from `{colors.canvas}` / `{colors.cloud}` / `{colors.fog}` / `{colors.charcoal-band}` / `{colors.primary}` — five pre-defined surface modes are the entire surface vocabulary
+8. Treat the `mosaic-band` as a brand artifact, not a texture: anchor it to an edge, seam, banner-tip, or hero field on the modular grid — never tile it behind running text

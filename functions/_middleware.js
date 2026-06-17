@@ -8,20 +8,54 @@ import { notifySystemError } from './lib/discord.js';
 // 靜態檔案副檔名，不需要中間件處理
 const STATIC_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico', '.webp', '.css', '.js', '.woff', '.woff2', '.ttf', '.eot', '.map', '.xml', '.txt', '.json'];
 
+// 子網域 → public/_sites/<bucket>/ 對應表
+// 注意：靜態副檔名請求（如 /assets/foo.css、/NTNU_Red.png）已在上方分支跳出，
+// 不會進入此 rewrite，因此各子網域共用根目錄下的 /assets/* 與圖檔。
+export const SUBDOMAIN_SITES = {
+  'tools.ntnu.cc': 'tools',
+};
+
 export async function onRequest(context) {
   const { request, next, env } = context;
   const url = new URL(request.url);
   const pathname = url.pathname;
-  
-  // 跳過靜態檔案，讓 Cloudflare Pages 直接處理
+  const host = (request.headers.get('host') || url.host || '').toLowerCase();
+
+  // 子網域對應 bucket（靜態檔分支也會用到，故提前取得）。
+  // 已避開短網址轉址（host=ntnu.cc 不會進子網域分支），所以 [id].js 行為不受影響。
+  const siteBucket = SUBDOMAIN_SITES[host];
+
+  // 靜態檔案：原則上交給 Cloudflare Pages 直接處理（子網域共用 apex 的 /assets/* 與根目錄圖檔）。
+  // 但 bucket 子目錄內的靜態檔（例如 tools.ntnu.cc/deskcard/app.js）必須先導入 _sites/<bucket>/，
+  // 否則會被當成 apex 路徑而 404。策略：子網域先試 bucket 內同路徑，找不到再退回共用 apex。
   const isStaticFile = STATIC_EXTENSIONS.some(ext => pathname.toLowerCase().endsWith(ext));
   if (isStaticFile) {
+    // 子網域 bucket 子目錄內的靜態檔（深度 ≥ 2 且非 /assets/，例如 /deskcard/app.js）
+    // 導入 _sites/<bucket>/；根目錄圖檔（/NTNU_Red.png）與 /assets/* 維持共用 apex。
+    if (siteBucket && !pathname.startsWith('/assets/') && pathname.split('/').length > 2) {
+      const rw = new URL(request.url);
+      rw.pathname = `/_sites/${siteBucket}${pathname}`;
+      return next(rw.toString());
+    }
     return next();
   }
-  
+
   try {
-    // 執行後續處理
-    const response = await next();
+    let response;
+    if (siteBucket) {
+      const rewritten = new URL(request.url);
+      // 目錄式 clean URL（無副檔名，如 /deskcard 或根目錄 /）→ 直接導向該目錄的 index.html。
+      const trimmed = pathname.replace(/\/+$/, '');            // '' 代表根目錄
+      const lastSeg = trimmed.split('/').pop();
+      const isDirStyle = trimmed === '' || !lastSeg.includes('.');
+      // 以結尾斜線導向目錄(與根目錄 / → /_sites/tools/ 一致,可避免 /index.html 的正規化 308)。
+      rewritten.pathname = isDirStyle
+        ? `/_sites/${siteBucket}${trimmed}/`
+        : `/_sites/${siteBucket}${trimmed}`;
+      response = await next(rewritten.toString());
+    } else {
+      response = await next();
+    }
     
     // 加入安全標頭
     const securityHeaders = getSecurityHeaders();
