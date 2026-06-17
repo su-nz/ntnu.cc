@@ -63,30 +63,59 @@
   
   <style>
     :root {
-      --primary: #9B2335;
-      --primary-dark: #7A1C2A;
-      --primary-light: #C94C5C;
-      --secondary: #D4646F;
-      --accent: #10b981;
-      --text-dark: #2d2d2d;
-      --text-light: #555555;
-      --text-muted: #777777;
+      /* ===== NTNU 品牌色票(對齊 ntnu.style)===== */
+      /* Brand & Accent */
+      --primary: #93272c;          /* NTNU Maroon, Pantone 7622 C — 唯一識別色 */
+      --primary-dark: #6e1d22;     /* Maroon Deep — 按下 / 已造訪 */
+      --primary-deep: #6e1d22;
+      --primary-bright: #ba0c2f;   /* Bright Red, Pantone 200 C — 漸層夥伴 */
+      --primary-light: #ba0c2f;    /* 舊變數改用 bright red 作亮側 */
+      --primary-soft: #f4e3e4;     /* 淡 maroon 底色 */
+      --navy: #003865;             /* NTNU Navy, Pantone 2955 C — 次要品牌色 */
+      --secondary: #003865;        /* 舊變數改指向 navy */
+      --accent: #10b981;           /* 保留:結果框成功狀態的語意色 */
+      /* Surface(cool-gray 系列)*/
+      --canvas: #ffffff;
       --bg-white: #ffffff;
-      --bg-light: #fff9f9;
-      --bg-gradient: linear-gradient(135deg, #9B2335 0%, #B83A4B 50%, #C94C5C 100%);
-      --shadow-sm: 0 1px 2px rgba(155, 35, 53, 0.08);
-      --shadow-md: 0 4px 6px -1px rgba(155, 35, 53, 0.12);
-      --shadow-lg: 0 10px 15px -3px rgba(155, 35, 53, 0.12);
-      --shadow-xl: 0 20px 25px -5px rgba(155, 35, 53, 0.12);
+      --cloud: #f5f5f4;            /* Cool Gray 1 C — 交替區塊底 */
+      --fog: #e6e6e3;              /* Cool Gray 2–3 C */
+      --mist: #c8c9c7;             /* Cool Gray 3 C — mosaic 灰磚 */
+      --steel: #a7a8aa;            /* Cool Gray 6 C — 髮絲線 / 邊框 */
+      --charcoal-band: #53565a;    /* Cool Gray 11 C — 深色 slab */
+      --bg-light: #f5f5f4;         /* 舊變數改指向 cloud(原為偏粉)*/
+      /* Text */
+      --ink: #2d2926;              /* Pantone Black C — 暖近黑 */
+      --text-dark: #2d2926;
+      --charcoal: #53565a;
+      --text-light: #53565a;
+      --graphite: #75787b;
+      --text-muted: #75787b;
+      --on-primary: #ffffff;
+      /* Gradient(maroon → bright red,取代原粉紅漸層)*/
+      --bg-gradient: linear-gradient(135deg, #93272c 0%, #ba0c2f 100%);
+      /* Elevation(ink 基底,扁平為主)*/
+      --shadow-sm: 0 1px 2px rgba(45, 41, 38, 0.06);
+      --shadow-md: 0 2px 8px rgba(45, 41, 38, 0.08);   /* Soft Lift — 卡片 */
+      --shadow-lg: 0 8px 24px rgba(45, 41, 38, 0.14);  /* Floating Modal */
+      --shadow-xl: 0 8px 24px rgba(45, 41, 38, 0.14);
+      /* Border Radius Scale */
+      --r-sm: 4px;    /* 按鈕 / 輸入框 */
+      --r-md: 6px;    /* 搜尋框 / badge */
+      --r-lg: 8px;    /* 卡片 */
+      --r-xl: 12px;   /* 特色磚 / 圖片框 */
+      --r-pill: 9999px;
     }
     
     * { margin: 0; padding: 0; box-sizing: border-box; }
     
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-      color: var(--text-dark);
+      /* NTNU 拉丁主聲:Helvetica Neue(官方替代 Arial);中文:黑體系統字 */
+      font-family: 'Helvetica Neue', Arial, 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', system-ui, sans-serif;
+      color: var(--ink);
       line-height: 1.6;
       background: var(--bg-white);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
     }
     
     /* Navigation */
@@ -95,11 +124,12 @@
       top: 0;
       left: 0;
       right: 0;
-      background: rgba(255, 255, 255, 0.95);
+      /* NTNU 品牌:maroon masthead 主導覽列 */
+      background: rgba(147, 39, 44, 0.95);
       backdrop-filter: blur(10px);
-      box-shadow: var(--shadow-sm);
+      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.12), 0 2px 8px rgba(45, 41, 38, 0.12);
       z-index: 1000;
-      padding: 1rem 2rem;
+      padding: 0.85rem 2rem;
       display: flex;
       align-items: center;
     }
@@ -116,11 +146,12 @@
     .logo {
       font-size: 1.5rem;
       font-weight: 700;
-      color: var(--primary);
+      color: #ffffff;
       text-decoration: none;
       display: flex;
       align-items: center;
       gap: 0.5rem;
+      letter-spacing: 0.2px;
     }
     
     .logo-img {
@@ -136,16 +167,19 @@
     }
 
     .nav-links a:not(.btn) {
-      color: var(--text-light);
+      color: rgba(255, 255, 255, 0.88);
       text-decoration: none;
       font-weight: 500;
       font-size: 0.9rem;
-      transition: color 0.2s;
+      transition: color 0.2s, border-color 0.2s;
       line-height: 1;
+      padding-bottom: 2px;
+      border-bottom: 2px solid transparent;
     }
 
     .nav-links a:not(.btn):hover {
-      color: var(--primary);
+      color: #ffffff;
+      border-bottom-color: #ffffff;
     }
 
     /* 統一 navbar 內所有按鈕(免責聲明 / GitHub / 語言切換)的尺寸,避免高度不齊 */
@@ -188,7 +222,7 @@
     
     .modal-card {
       background: white;
-      border-radius: 16px;
+      border-radius: 12px;
       max-width: 500px;
       width: 100%;
       max-height: 80vh;
@@ -247,7 +281,7 @@
       align-items: center;
       justify-content: center;
       padding: 0.5rem 1rem;
-      border-radius: 8px;
+      border-radius: 4px;
       font-weight: 500;
       font-size: 0.85rem;
       text-decoration: none;
@@ -271,7 +305,7 @@
     .btn-secondary {
       background: white;
       color: var(--primary);
-      border: 1px solid #e5e7eb;
+      border: 1px solid var(--fog);
     }
     
     .btn-secondary:hover {
@@ -293,11 +327,12 @@
     }
     
     .hero::before {
+      /* 移除偏離品牌的加號紋路;改用極淡的頂部高光增添層次(不在文字後鋪滿紋理)*/
       content: '';
       position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.2'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-      opacity: 0.5; /* Increased opacity for better visibility */
+      inset: 0;
+      background: radial-gradient(120% 80% at 50% 0%, rgba(255, 255, 255, 0.10), transparent 60%);
+      pointer-events: none;
     }
     
     .hero-content {
@@ -323,7 +358,7 @@
     /* URL Shortener Form */
     .shortener-box {
       background: white;
-      border-radius: 16px;
+      border-radius: 12px;
       padding: 1.5rem;
       box-shadow: var(--shadow-xl);
       margin-bottom: 1rem;
@@ -352,8 +387,8 @@
     .form-group input,
     .form-group select {
       padding: 0.65rem 0.875rem;
-      border: 2px solid #e5e7eb;
-      border-radius: 8px;
+      border: 2px solid var(--fog);
+      border-radius: 4px;
       font-size: 0.95rem;
       outline: none;
       transition: border-color 0.2s;
@@ -397,7 +432,7 @@
       background: var(--bg-gradient);
       color: white;
       border: none;
-      border-radius: 8px;
+      border-radius: 4px;
       font-size: 0.95rem;
       font-weight: 600;
       cursor: pointer;
@@ -419,8 +454,8 @@
       padding: 0.75rem 1.25rem;
       background: white;
       color: var(--text-dark);
-      border: 2px solid #e5e7eb;
-      border-radius: 8px;
+      border: 2px solid var(--fog);
+      border-radius: 4px;
       font-size: 0.95rem;
       font-weight: 500;
       cursor: pointer;
@@ -464,7 +499,7 @@
       gap: 1rem;
       background: #e8f5e9;
       padding: 0.75rem 1rem;
-      border-radius: 8px;
+      border-radius: 4px;
       margin-bottom: 0.5rem;
     }
     
@@ -485,7 +520,7 @@
       background: var(--primary);
       color: white;
       border: none;
-      border-radius: 6px;
+      border-radius: 4px;
       font-size: 0.85rem;
       cursor: pointer;
       white-space: nowrap;
@@ -519,7 +554,7 @@
     .qr-container {
       background: white;
       padding: 1rem;
-      border-radius: 8px;
+      border-radius: 4px;
       display: inline-block;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
@@ -533,7 +568,7 @@
       background: var(--primary);
       color: white;
       border: none;
-      border-radius: 6px;
+      border-radius: 4px;
       font-size: 0.85rem;
       cursor: pointer;
       white-space: nowrap;
@@ -575,7 +610,7 @@
     
     @keyframes countPulse {
       0% { transform: scale(1); }
-      50% { transform: scale(1.15); color: #ffd700; }
+      50% { transform: scale(1.12); }
       100% { transform: scale(1); }
     }
     
@@ -619,7 +654,7 @@
       padding: 1.5rem;
       text-align: center;
       transition: all 0.3s;
-      border: 1px solid #f0f0f0;
+      border: 1px solid var(--fog);
     }
     
     .feature-card:hover {
@@ -708,7 +743,7 @@
     }
     
     .testimonial-rating {
-      color: #f59e0b;
+      color: var(--primary);
       font-size: 1rem;
       margin-bottom: 0.75rem;
     }
@@ -751,7 +786,7 @@
     
     /* Footer */
     .footer {
-      background: #2d2d2d;
+      background: var(--ink);
       color: white;
       padding: 3rem 2rem 1.5rem;
     }
@@ -962,6 +997,18 @@
       }
     }
 
+    /* 招牌像素馬賽克帶(ntnu.style mosaic-band)— maroon + cool-gray + bright-red 方磚編織,
+       作為區塊接縫 / 頁緣的品牌印記,只用於邊界,不鋪在文字後方 */
+    .mosaic-band {
+      display: block;
+      width: 100%;
+      height: 16px;
+      background-color: var(--primary);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='16'%3E%3Crect width='80' height='16' fill='%2393272c'/%3E%3Crect x='8' width='8' height='8' fill='%23c8c9c7'/%3E%3Crect x='24' width='8' height='8' fill='%23ba0c2f'/%3E%3Crect x='40' width='8' height='8' fill='%23c8c9c7'/%3E%3Crect x='56' width='8' height='8' fill='%23ba0c2f'/%3E%3Crect x='72' width='8' height='8' fill='%23c8c9c7'/%3E%3Crect y='8' width='8' height='8' fill='%23c8c9c7'/%3E%3Crect x='16' y='8' width='8' height='8' fill='%23ba0c2f'/%3E%3Crect x='32' y='8' width='8' height='8' fill='%23c8c9c7'/%3E%3Crect x='48' y='8' width='8' height='8' fill='%23ba0c2f'/%3E%3Crect x='64' y='8' width='8' height='8' fill='%23c8c9c7'/%3E%3C/svg%3E");
+      background-size: 80px 16px;
+      background-repeat: repeat-x;
+    }
+
     /* ===== GSAP 進場/滾動顯現:預隱藏(僅 opacity,位移交給 GSAP) =====
        只有在 JS 啟用(html.gsap-anim)時才預隱藏;GSAP 載入失敗時的後備
        會移除 .gsap-anim,內容即恢復可見。 */
@@ -1034,7 +1081,7 @@
             <div class="form-group">
               <label for="customIdInput" data-i18n="form.customId">自訂短碼（可留空自動）</label>
               <div style="display: flex; gap: 0.5rem; align-items: stretch;">
-                <input type="text" id="customIdInput" data-i18n-placeholder="form.customIdPlaceholder" placeholder="例如：course-info" pattern="[a-zA-Z0-9\-_]+" maxlength="32" style="flex: 1; padding: 0.65rem 0.875rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 0.95rem; outline: none;">
+                <input type="text" id="customIdInput" data-i18n-placeholder="form.customIdPlaceholder" placeholder="例如：course-info" pattern="[a-zA-Z0-9\-_]+" maxlength="32" style="flex: 1; padding: 0.65rem 0.875rem; border: 2px solid var(--fog); border-radius: 4px; font-size: 0.95rem; outline: none;">
                 <button type="button" class="btn-random" id="randomBtn" data-i18n="form.random" style="white-space: nowrap; padding: 0.65rem 1rem; font-size: 0.95rem;">隨機短碼</button>
               </div>
               <p class="form-hint" data-i18n="form.customIdHint">留空會自動產生隨機短碼</p>
@@ -1086,6 +1133,9 @@
     </div>
   </section>
   
+
+  <!-- 品牌接縫:maroon hero → 白色內文 -->
+  <div class="mosaic-band" aria-hidden="true"></div>
 
   <!-- Features Section -->
   <section class="features" id="features">
@@ -1181,6 +1231,9 @@
     </div>
   </section>
   
+  <!-- 品牌接縫:mosaic-band 置於 footer 上緣 -->
+  <div class="mosaic-band" aria-hidden="true"></div>
+
   <!-- Footer -->
   <footer class="footer">
     <div class="footer-content">
@@ -1696,7 +1749,7 @@
           text: url,
           width: 200,
           height: 200,
-          colorDark: '#9B2335',
+          colorDark: '#93272c',
           colorLight: '#ffffff',
           correctLevel: QRCode.CorrectLevel.H
         });
