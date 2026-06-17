@@ -198,6 +198,46 @@ export function isIpAllowed(ip, allowedCidrs) {
 }
 
 /**
+ * 由絕對到期時間（ISO 字串）判斷連結是否已過期。
+ * 無到期時間（永久）或無法解析者一律視為未過期。
+ * @param {string|null|undefined} expiresAt - ISO 8601 字串
+ * @returns {boolean}
+ */
+export function isExpired(expiresAt) {
+  if (!expiresAt) return false;
+  const ms = Date.parse(expiresAt);
+  if (Number.isNaN(ms)) return false;
+  return Date.now() >= ms;
+}
+
+/**
+ * 將絕對到期時間（ISO 字串）換算成 KV put 用的過期設定。
+ *
+ * 重要：Cloudflare KV 的過期時間是「每次寫入各自獨立」的——重新 put 而未帶
+ * expiration / expirationTtl，會清掉先前設定的 TTL，使 key 變成永久。因此凡是
+ * 重寫既有的 link / stats key（例如更新點擊統計），都必須用本函式還原其過期時間，
+ * 否則連結被點過一次後就再也不會過期。
+ *
+ * 回傳：
+ *  - { mode: 'permanent' }            無到期時間或無法解析 → 不設過期
+ *  - { mode: 'active', expiration }   仍有效，expiration 為絕對 Unix 秒（給 KV 的 expiration）
+ *  - { mode: 'expired' }              已過期或剩餘不足 KV 下限（60 秒）→ 呼叫端不應重寫
+ *
+ * @param {string|null|undefined} expiresAt - ISO 8601 字串
+ * @returns {{ mode: 'permanent' } | { mode: 'active', expiration: number } | { mode: 'expired' }}
+ */
+export function kvExpiration(expiresAt) {
+  if (!expiresAt) return { mode: 'permanent' };
+  const ms = Date.parse(expiresAt);
+  if (Number.isNaN(ms)) return { mode: 'permanent' };
+  const expSec = Math.floor(ms / 1000);
+  const nowSec = Math.floor(Date.now() / 1000);
+  // KV 要求 expiration 至少需比現在多 60 秒，否則 put 會失敗
+  if (expSec <= nowSec + 60) return { mode: 'expired' };
+  return { mode: 'active', expiration: expSec };
+}
+
+/**
  * 取得客戶端資訊（IP 和國家）
  * 優先使用 Cloudflare Headers，備選使用 request.cf 對象
  * @param {Request} request 

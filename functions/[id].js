@@ -3,7 +3,7 @@
  * 路由：GET/POST /{id}
  */
 
-import { createHtmlResponse, createErrorResponse, isIpAllowed, getClientInfo } from './lib/utils.js';
+import { createHtmlResponse, createErrorResponse, isIpAllowed, getClientInfo, isExpired } from './lib/utils.js';
 import { validateId } from './lib/validation.js';
 import { checkRateLimit, updateStats } from './lib/security.js';
 import { notifyAccessDenied } from './lib/discord.js';
@@ -81,42 +81,59 @@ async function handleGet(context, id, ip, country) {
     return createHtmlResponse(rateLimitedPage(retryAfter), 429);
   }
   
-  // 嘗試從 Cache API 讀取（快取 5 分鐘）
+  // 嘗試從 Cache API 讀取（最多 5 分鐘，且不超過連結剩餘有效時間）
   const cacheKey = new URL(`https://cache.ntnu.cc/link/${id}`, request.url);
   const cache = caches.default;
   let cachedResponse = await cache.match(cacheKey);
-  
+
   let targetUrl;
   let disabled = false;
-  
+  let expiresAt = null;
+
   if (cachedResponse) {
     // 從快取讀取
     const cachedData = await cachedResponse.json();
     targetUrl = cachedData.targetUrl;
     disabled = cachedData.disabled || false;
+    expiresAt = cachedData.expiresAt || null;
   } else {
     // 從 KV 讀取（使用 getWithMetadata 一次讀取）
     const { value, metadata } = await env.LINKS_KV.getWithMetadata(`link:${id}`);
     targetUrl = value;
     disabled = metadata?.disabled || false;
-    
+    expiresAt = metadata?.expiresAt || null;
+
     if (targetUrl) {
-      // 快取結果（5 分鐘）
-      const cacheData = { targetUrl, disabled };
-      const cacheResponse = new Response(JSON.stringify(cacheData), {
-        headers: {
-          'Content-Type': 'application/json',
-          'Cache-Control': 'public, max-age=300', // 5 分鐘
-        },
-      });
-      context.waitUntil(cache.put(cacheKey, cacheResponse));
+      // 快取時間取「5 分鐘」與「連結剩餘有效時間」的較小值，
+      // 避免連結到期後仍從快取轉址。
+      let maxAge = 300; // 5 分鐘
+      if (expiresAt) {
+        const remaining = Math.floor((Date.parse(expiresAt) - Date.now()) / 1000);
+        maxAge = Math.min(maxAge, remaining);
+      }
+      if (maxAge > 0) {
+        const cacheData = { targetUrl, disabled, expiresAt };
+        const cacheResponse = new Response(JSON.stringify(cacheData), {
+          headers: {
+            'Content-Type': 'application/json',
+            'Cache-Control': `public, max-age=${maxAge}`,
+          },
+        });
+        context.waitUntil(cache.put(cacheKey, cacheResponse));
+      }
     }
   }
-  
+
   if (!targetUrl || disabled) {
     return createHtmlResponse(notFoundPage(id), 404);
   }
-  
+
+  // 已過期 → 視為不存在（防呆：即使 KV 尚未實際清除，或來自舊快取）
+  if (isExpired(expiresAt)) {
+    context.waitUntil(cache.delete(cacheKey));
+    return createHtmlResponse(notFoundPage(id), 404);
+  }
+
   // 更新統計資料（非同步，不阻塞回應）
   context.waitUntil(updateStats(env.LINKS_KV, id, country));
   

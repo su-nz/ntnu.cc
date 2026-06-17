@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "師大短網址服務 - 基於 Cloudflare Pages Functions",
   "private": true,
+  "type": "module",
   "scripts": {
+    "test": "node test/expiry.test.mjs",
     "dev": "wrangler pages dev ./public --kv=LINKS_KV --binding ADMIN_API_KEY=dev-key-change-me",
     "deploy": "wrangler pages deploy ./public",
     "preview": "wrangler pages dev ./public --kv=LINKS_KV"

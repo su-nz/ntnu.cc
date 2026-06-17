@@ -2,6 +2,8 @@
  * 安全相關模組
  */
 
+import { kvExpiration } from './utils.js';
+
 /**
  * 速率限制檢查（使用 Durable Objects 模式減少讀寫）
  * @param {Object} kv - KV namespace
@@ -167,22 +169,49 @@ export async function updateStats(kv, id, country) {
       data.countries[country] = (data.countries[country] || 0) + 1;
     }
     
-    // 儲存完整統計到 stats key
-    await kv.put(key, JSON.stringify(data));
-    
-    // 同時將基本統計存入 link metadata（讓 list API 減少讀取）
+    // 儲存完整統計到 stats key。
+    // 重要：KV 在 put 時不會保留前一次的 TTL，未帶 expiration 會讓 key 變永久。
+    // 因此用資料中保存的 expiresAt 還原過期時間（仍有效才設絕對到期）。
+    const statsExpiry = kvExpiration(data.expiresAt);
+    await kv.put(
+      key,
+      JSON.stringify(data),
+      statsExpiry.mode === 'active' ? { expiration: statsExpiry.expiration } : {}
+    );
+
+    // 同時將基本統計併入 link metadata（讓 list / cleanup API 少讀一次）。
     const linkKey = `link:${id}`;
-    const linkValue = await kv.get(linkKey);
-    if (linkValue) {
-      await kv.put(linkKey, linkValue, {
-        metadata: {
+    const { value: linkValue, metadata: existingMeta } = await kv.getWithMetadata(linkKey);
+    if (linkValue !== null) {
+      // link 的過期時間以「它自身 metadata 的 expiresAt」為唯一依據——
+      // 不可退回 stats 的 expiresAt，否則舊資料殘留的過期時間會誤判（既有永久連結
+      // 會被舊統計的過期時間影響）。沒有 expiresAt 即代表永久。
+      const linkExpiry = kvExpiration(existingMeta && existingMeta.expiresAt);
+
+      // 已到期 / 剩不到 60 秒就不重寫，避免把即將自然消失的 key 重置成永久；
+      // 交給 KV 既有 TTL 完成清除，轉址端也會依 expiresAt 視為不存在。
+      if (linkExpiry.mode !== 'expired') {
+        // 合併既有 metadata，保留 url / createdAt / createdBy / expiresAt 等欄位，
+        // 只覆寫 stats，避免把建立時寫入的資訊洗掉。
+        const metadata = {
+          ...(existingMeta || {}),
           stats: {
             clicks: data.clicks,
             lastAccess: data.lastAccess,
-            createdAt: data.createdAt,
-          }
-        }
-      });
+            createdAt:
+              (existingMeta && existingMeta.stats && existingMeta.stats.createdAt) ||
+              (existingMeta && existingMeta.createdAt) ||
+              data.createdAt,
+          },
+        };
+        await kv.put(
+          linkKey,
+          linkValue,
+          linkExpiry.mode === 'active'
+            ? { metadata, expiration: linkExpiry.expiration }
+            : { metadata }
+        );
+      }
     }
   } catch (error) {
     console.error('Update stats error:', error);
