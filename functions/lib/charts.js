@@ -17,7 +17,7 @@ export function fmtNum(n) {
 export function dailyTrendSvg(daily, showDays = 30) {
   const days = (daily || []).slice(-showDays);
   if (days.length === 0 || days.every(d => d.clicks === 0)) {
-    return '<p class="text-muted text-center" style="padding:2rem 0;">尚無點擊資料</p>';
+    return '<p class="text-muted text-center" style="padding:2rem 0;" data-i18n="chart.emptyClicks">尚無點擊資料</p>';
   }
 
   const W = 860, H = 220, padL = 44, padB = 26, padT = 10;
@@ -60,15 +60,16 @@ export function dailyTrendSvg(daily, showDays = 30) {
  * 水平長條列表（國家 / 通報分類等排行共用）
  * @param {Array<[string, number]>} entries - 已排序（大到小）
  * @param {Function} labelFn - key → 顯示名稱
+ * @param {{ keyed?: boolean }} [opts] - keyed: label 加上 data-key 屬性，供前端 i18n 換字
  */
-export function barList(entries, labelFn = k => k) {
+export function barList(entries, labelFn = k => k, opts = {}) {
   if (!entries || entries.length === 0) {
-    return '<p class="text-muted text-center" style="padding:1rem 0;">尚無資料</p>';
+    return '<p class="text-muted text-center" style="padding:1rem 0;" data-i18n="chart.empty">尚無資料</p>';
   }
   const max = entries[0][1] || 1;
   return `<div class="bar-chart">` + entries.map(([key, count]) => `
     <div class="bar-item" title="${escapeHtml(labelFn(key))}：${fmtNum(count)}">
-      <span class="label">${escapeHtml(labelFn(key))}</span>
+      <span class="label"${opts.keyed ? ` data-key="${escapeHtml(key)}"` : ''}>${escapeHtml(labelFn(key))}</span>
       <div class="bar"><div class="bar-fill" style="width:${Math.max(1, count / max * 100)}%"></div></div>
       <span class="count">${fmtNum(count)}</span>
     </div>

@@ -17,6 +17,15 @@ export const REPORT_CATEGORIES = {
   other: '其他',
 };
 
+export const REPORT_CATEGORIES_EN = {
+  phishing: 'Phishing / Scam',
+  malware: 'Malware',
+  copyright: 'Copyright infringement',
+  inappropriate: 'Inappropriate content',
+  privacy: 'Privacy violation',
+  other: 'Other',
+};
+
 export const REPORT_STATUS = {
   pending: '待處理',
   disabled: '已下架',
