@@ -56,7 +56,7 @@ function renderPage(agg, reportAgg) {
 
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
       gap: 1rem;
       margin-bottom: 1.5rem;
     }
@@ -86,6 +86,12 @@ function renderPage(agg, reportAgg) {
       padding: 1.5rem;
       margin-bottom: 1.5rem;
       box-shadow: var(--shadow-sm);
+    }
+    .section-card h3 {
+      font-size: 1.05rem;
+      border-left: 3px solid var(--primary);
+      padding-left: 0.75rem;
+      line-height: 1.3;
     }
     .two-col {
       display: grid;
@@ -130,11 +136,10 @@ function renderPage(agg, reportAgg) {
   const content = `
     <div class="container">
       <div class="trans-header">
-        <h1>📖 平台透明度</h1>
-        <p>ntnu.cc 相信「透明」是網路治理的基礎。短網址服務可能被濫用於釣魚與詐騙，
-        因此我們主動公開平台的使用現況與內容治理數據，讓所有使用者了解這個平台如何被使用、
-        以及我們如何處理不當內容。</p>
-        <a href="/report" class="btn">🚨 通報不當連結</a>
+        <h1>平台透明度</h1>
+        <p>本頁公開 ntnu.cc 的使用統計與內容治理紀錄：點擊趨勢、使用者來源，
+        以及不當連結通報的處理結果。所有資料皆為匿名彙總，每 10 分鐘更新一次。</p>
+        <a href="/report" class="btn">通報不當連結</a>
         <a href="/" class="btn btn-secondary">返回首頁</a>
       </div>
 
@@ -148,19 +153,19 @@ function renderPage(agg, reportAgg) {
       </div>
 
       <div class="section-card">
-        <h3>📈 最近 30 天每日點擊</h3>
+        <h3>最近 30 天每日點擊</h3>
         ${dailyTrendSvg(agg.daily || [])}
       </div>
 
       <div class="two-col">
         <div class="section-card">
-          <h3>🌍 使用者來源（依國家 / 地區）</h3>
+          <h3>使用者來源（依國家 / 地區）</h3>
           <p class="text-muted" style="font-size:0.85rem;">依 Cloudflare 邊緣節點判定之來源國別統計，不涉及任何個人身分資訊。</p>
           ${barList(countries, c => COUNTRY_NAMES[c] || c)}
         </div>
 
         <div class="section-card">
-          <h3>🚩 通報原因分布</h3>
+          <h3>通報原因分布</h3>
           <div class="status-row">
             <span class="status-pill">待處理 <strong>${fmt(reportAgg.byStatus.pending)}</strong></span>
             <span class="status-pill">已下架 <strong>${fmt(reportAgg.byStatus.disabled)}</strong></span>
@@ -171,12 +176,12 @@ function renderPage(agg, reportAgg) {
       </div>
 
       <div class="section-card">
-        <h3>🛡️ 我們如何治理這個平台</h3>
+        <h3>平台治理方式</h3>
         <div class="gov-note">
-          <p><strong>建立限制：</strong>短網址僅限師大校園網路（140.122.0.0/16）建立，並須通過人機驗證，從源頭降低濫用。</p>
-          <p><strong>轉址預覽：</strong>所有短網址在跳轉前都會顯示目標網址預覽頁，使用者可先確認再前往，降低釣魚風險。</p>
-          <p><strong>通報下架：</strong>任何人都可以<a href="/report">通報不當連結</a>，管理團隊審核後會下架違規連結，處理結果統計公開於本頁。</p>
-          <p><strong>隱私最小化：</strong>統計僅記錄匿名的國別與點擊次數；通報系統不儲存通報者 IP。</p>
+          <p><strong>建立限制</strong>　短網址僅限師大校園網路（140.122.0.0/16）建立，並須通過人機驗證。</p>
+          <p><strong>轉址預覽</strong>　所有短網址在跳轉前先顯示目標網址預覽頁，使用者確認後才前往。</p>
+          <p><strong>通報下架</strong>　任何人都可<a href="/report">通報不當連結</a>，經審核成立即下架，處理結果統計公開於本頁。</p>
+          <p><strong>隱私最小化</strong>　統計僅記錄匿名的國別與點擊次數；通報系統不儲存通報者 IP。</p>
         </div>
       </div>
 

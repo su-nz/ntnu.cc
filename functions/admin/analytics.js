@@ -119,7 +119,7 @@ async function renderAnalyticsDashboard(context) {
 
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
       gap: 1rem;
       margin-bottom: 1.5rem;
     }
@@ -152,6 +152,13 @@ async function renderAnalyticsDashboard(context) {
       padding: 1.5rem;
       margin-bottom: 1.5rem;
       box-shadow: var(--shadow-sm);
+    }
+
+    .chart-card h3 {
+      font-size: 1.05rem;
+      border-left: 3px solid var(--primary);
+      padding-left: 0.75rem;
+      line-height: 1.3;
     }
 
     .charts-grid {
@@ -222,13 +229,13 @@ async function renderAnalyticsDashboard(context) {
     <div class="container">
       <div class="analytics-header">
         <div>
-          <h1>📊 分析儀表板</h1>
+          <h1>分析儀表板</h1>
           <p class="text-muted">短網址使用統計與分析・快照時間 ${escapeHtml(new Date(agg.generatedAt).toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' }))}</p>
         </div>
         <div>
           <a href="/admin" class="btn btn-secondary">← 返回管理後台</a>
-          <a href="/admin/reports" class="btn btn-secondary">🚩 通報管理${pendingBadge}</a>
-          <a href="/admin/analytics?format=json" class="btn btn-secondary" target="_blank">📥 JSON</a>
+          <a href="/admin/reports" class="btn btn-secondary">通報管理${pendingBadge}</a>
+          <a href="/admin/analytics?format=json" class="btn btn-secondary" target="_blank">匯出 JSON</a>
         </div>
       </div>
 
@@ -242,31 +249,31 @@ async function renderAnalyticsDashboard(context) {
       </div>
 
       <div class="chart-card">
-        <h3>📈 最近 30 天每日點擊</h3>
+        <h3>最近 30 天每日點擊</h3>
         ${dailyTrendSvg(agg.daily || [])}
       </div>
 
       <div class="charts-grid">
         <div class="chart-card">
-          <h3>🔥 熱門短碼排行</h3>
+          <h3>熱門短碼排行</h3>
           <ul class="ranking-list">
             ${topLinksHtml || '<li class="text-muted text-center">暫無資料</li>'}
           </ul>
         </div>
 
         <div class="chart-card">
-          <h3>🌍 來源國家統計</h3>
+          <h3>來源國家統計</h3>
           ${barList(countries)}
         </div>
 
         <div class="chart-card">
-          <h3>🚩 通報分類統計</h3>
+          <h3>通報分類統計</h3>
           ${barList(reportCategories, c => (REPORT_CATEGORIES[c] || c))}
           <p class="text-muted mt-2" style="font-size:0.85rem;">累計 ${fmtNum(reportAgg.total)} 件・已下架 ${fmtNum(reportAgg.byStatus.disabled)} 件・<a href="/admin/reports">前往通報管理 →</a></p>
         </div>
 
         <div class="chart-card">
-          <h3>🔍 單一短碼查詢</h3>
+          <h3>單一短碼查詢</h3>
           <div class="search-single">
             <input type="text" id="searchId" placeholder="輸入短碼 ID...">
             <button class="btn" onclick="searchSingleLink()">查詢</button>
@@ -276,10 +283,10 @@ async function renderAnalyticsDashboard(context) {
       </div>
 
       <div class="chart-card">
-        <h3>🛠️ 統計資料維運</h3>
+        <h3>統計資料維運</h3>
         <div class="maint-row">
-          <button class="btn btn-secondary" id="refreshBtn" onclick="refreshSnapshot()">🔄 立即重算快照</button>
-          <button class="btn btn-secondary" id="rebuildBtn" onclick="rebuildBaseline()">🏗️ 重建歷史基線</button>
+          <button class="btn btn-secondary" id="refreshBtn" onclick="refreshSnapshot()">立即重算快照</button>
+          <button class="btn btn-secondary" id="rebuildBtn" onclick="rebuildBaseline()">重建歷史基線</button>
           <span id="maintStatus" class="text-muted"></span>
         </div>
         <p class="maint-note mt-2">

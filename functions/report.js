@@ -57,7 +57,7 @@ export async function onRequestGet(context) {
   const content = `
     <div class="container report-wrap">
       <div class="card">
-        <h1>🚨 通報不當連結</h1>
+        <h1>通報不當連結</h1>
         <p>若您發現本平台的短網址指向釣魚、詐騙、惡意軟體或其他不當內容，請透過此表單通報。管理團隊審核後會下架違規連結，通報統計會公開於<a href="/transparency">平台透明度頁</a>。</p>
 
         <div id="resultBox" class="alert" style="display:none;"></div>

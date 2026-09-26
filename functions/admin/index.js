@@ -527,14 +527,14 @@ function generateAdminHtml(links, pagination) {
     <div class="container">
       <div class="admin-header">
         <div>
-          <h1>🔧 管理後台</h1>
+          <h1>管理後台</h1>
           <p class="text-muted">ntnu.cc 短網址服務管理</p>
         </div>
         <div class="admin-actions">
-          <a href="/admin/analytics" class="btn btn-secondary">📊 分析儀表板</a>
-          <a href="/admin/reports" class="btn btn-secondary">🚩 通報管理</a>
-          <a href="/admin/cleanup" class="btn btn-secondary">🧹 批量清理</a>
-          <button class="btn" onclick="exportData()">📥 匯出資料</button>
+          <a href="/admin/analytics" class="btn btn-secondary">分析儀表板</a>
+          <a href="/admin/reports" class="btn btn-secondary">通報管理</a>
+          <a href="/admin/cleanup" class="btn btn-secondary">批量清理</a>
+          <button class="btn" onclick="exportData()">匯出資料</button>
           <a href="/" class="btn logout-link" onclick="logout(); return false;">登出</a>
         </div>
       </div>

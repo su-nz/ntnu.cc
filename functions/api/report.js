@@ -77,7 +77,7 @@ export async function onRequestPost(context) {
 
   return createResponse({
     success: true,
-    message: '已收到您的通報，管理團隊將盡快審核。感謝您協助維護平台安全。',
+    message: '已收到通報，管理團隊將盡快審核並公開處理結果。',
   });
 }
 

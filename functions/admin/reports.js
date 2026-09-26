@@ -237,15 +237,15 @@ function renderReportsPage(reports, total) {
 
     const actions = [];
     if (r.status === 'pending') {
-      actions.push(`<button class="btn btn-danger" onclick="resolveReport('${escapeHtml(r.key)}', 'disabled')">⛔ 成立並下架</button>`);
-      actions.push(`<button class="btn btn-secondary" onclick="resolveReport('${escapeHtml(r.key)}', 'dismissed')">✅ 不成立</button>`);
+      actions.push(`<button class="btn btn-danger" onclick="resolveReport('${escapeHtml(r.key)}', 'disabled')">成立並下架</button>`);
+      actions.push(`<button class="btn btn-secondary" onclick="resolveReport('${escapeHtml(r.key)}', 'dismissed')">不成立</button>`);
     } else {
-      actions.push(`<button class="btn btn-secondary" onclick="reopenReport('${escapeHtml(r.key)}')">↩️ 重新開啟</button>`);
+      actions.push(`<button class="btn btn-secondary" onclick="reopenReport('${escapeHtml(r.key)}')">重新開啟</button>`);
     }
     if (r.linkExists) {
       actions.push(r.linkDisabled
-        ? `<button class="btn btn-secondary" onclick="toggleLink('${escapeHtml(r.id)}', false)">🔓 恢復連結</button>`
-        : `<button class="btn btn-secondary" onclick="toggleLink('${escapeHtml(r.id)}', true)">🔒 停用連結</button>`);
+        ? `<button class="btn btn-secondary" onclick="toggleLink('${escapeHtml(r.id)}', false)">恢復連結</button>`
+        : `<button class="btn btn-secondary" onclick="toggleLink('${escapeHtml(r.id)}', true)">停用連結</button>`);
     }
 
     return `
@@ -269,13 +269,13 @@ function renderReportsPage(reports, total) {
     <div class="container">
       <div class="reports-header">
         <div>
-          <h1>🚩 通報管理</h1>
+          <h1>通報管理</h1>
           <p class="text-muted">共 ${total} 件通報${total > reports.length ? `（顯示最新 ${reports.length} 件）` : ''}</p>
         </div>
         <div>
           <a href="/admin" class="btn btn-secondary">← 返回管理後台</a>
-          <a href="/admin/analytics" class="btn btn-secondary">📊 分析儀表板</a>
-          <a href="/transparency" class="btn btn-secondary" target="_blank">📖 透明度頁</a>
+          <a href="/admin/analytics" class="btn btn-secondary">分析儀表板</a>
+          <a href="/transparency" class="btn btn-secondary" target="_blank">透明度頁</a>
         </div>
       </div>
 
@@ -287,7 +287,7 @@ function renderReportsPage(reports, total) {
       </div>
 
       <div id="reportList">
-        ${cardsHtml || '<div class="card text-center text-muted" style="padding:3rem;">目前沒有任何通報 🎉</div>'}
+        ${cardsHtml || '<div class="card text-center text-muted" style="padding:3rem;">目前沒有任何通報</div>'}
       </div>
     </div>
   `;

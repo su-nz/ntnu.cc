@@ -74,6 +74,7 @@ export function baseTemplate({ title, content, styles = '', scripts = '', meta =
     }
     
     .container {
+      width: 100%;
       max-width: 1200px;
       margin: 0 auto;
       padding: 2rem;
@@ -391,7 +392,7 @@ export function redirectPreviewPage({ id, targetUrl }) {
         </div>
 
         <p style="margin-top: 1.25rem; font-size: 0.85rem;">
-          <a href="/report?id=${encodeURIComponent(id)}" style="color: var(--text-muted); text-decoration: underline;" data-i18n="report">這是釣魚或不當連結？通報它</a>
+          <a href="/report?id=${encodeURIComponent(id)}" style="color: var(--text-muted); text-decoration: underline;" data-i18n="report">回報此連結有問題</a>
         </p>
       </div>
     </div>
@@ -406,7 +407,7 @@ export function redirectPreviewPage({ id, targetUrl }) {
           seconds: '秒後自動跳轉',
           go: '立即前往',
           cancel: '取消',
-          report: '這是釣魚或不當連結？通報它'
+          report: '回報此連結有問題'
         },
         'en': {
           desc: 'Short URL',
@@ -414,7 +415,7 @@ export function redirectPreviewPage({ id, targetUrl }) {
           seconds: 'seconds until redirect',
           go: 'Go Now',
           cancel: 'Cancel',
-          report: 'Phishing or abusive link? Report it'
+          report: 'Report this link'
         }
       };
       
