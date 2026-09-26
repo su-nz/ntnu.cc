@@ -4,17 +4,18 @@
  */
 
 import { createResponse, createErrorResponse } from '../../lib/utils.js';
-import { validateId, validateApiKey } from '../../lib/validation.js';
+import { validateId } from '../../lib/validation.js';
 import { getStats } from '../../lib/security.js';
+import { verifyAdmin } from '../../lib/auth.js';
 
 export async function onRequestGet(context) {
-  const { request, env, params } = context;
+  const { env, params } = context;
   const id = params.id;
-  
-  // API Key 驗證
-  const apiKeyValidation = validateApiKey(request, env.ADMIN_API_KEY);
-  if (!apiKeyValidation.valid) {
-    return createErrorResponse('Unauthorized', apiKeyValidation.error, 401);
+
+  // 管理員驗證（API Key 或後台 Session；修正舊版後台以 Session 登入時無法查詢的問題）
+  const auth = await verifyAdmin(context);
+  if (!auth.ok) {
+    return createErrorResponse('Unauthorized', auth.error, 401);
   }
   
   // 驗證 ID 格式

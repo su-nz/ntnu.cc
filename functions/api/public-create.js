@@ -8,6 +8,7 @@ import { createResponse, createErrorResponse, generateRandomId, isIpAllowed, get
 import { validateUrl, validateId, isBlockedDomain, verifyTurnstile } from '../lib/validation.js';
 import { checkRateLimit } from '../lib/security.js';
 import { notifyLinkCreated, notifyBlockedDomain, notifyAccessDenied } from '../lib/discord.js';
+import { bumpDailyAggregate } from '../lib/aggregate.js';
 
 // 師大 IP 範圍 (CIDR 格式)
 const NTNU_IP_RANGES = [
@@ -106,6 +107,10 @@ export async function onRequestPost(context) {
       400
     );
   }
+
+  // 一律使用正規化後的 URL（new URL().href 會百分比編碼 <、>、" 等危險字元），
+  // 與 /api/create 行為一致；儲存原始輸入曾讓後台頁面暴露於 stored XSS 風險。
+  const normalizedUrl = urlValidation.url;
   
   // 黑名單檢查
   const blockedDomains = env.BLOCKED_DOMAINS 
@@ -187,18 +192,18 @@ export async function onRequestPost(context) {
   
   // 儲存短網址
   const linkData = {
-    url,
+    url: normalizedUrl,
     createdAt: new Date().toISOString(),
     createdBy: ip,
     expiresAt: expiresAt ? new Date(expiresAt).toISOString() : null,
   };
-  
+
   // 設定 KV 過期時間
-  const kvOptions = expirySeconds 
+  const kvOptions = expirySeconds
     ? { expirationTtl: expirySeconds, metadata: linkData }
     : { metadata: linkData };
-  
-  await env.LINKS_KV.put(`link:${id}`, url, kvOptions);
+
+  await env.LINKS_KV.put(`link:${id}`, normalizedUrl, kvOptions);
   
   // 建立統計資料
   const statsData = {
@@ -210,13 +215,18 @@ export async function onRequestPost(context) {
   };
   
   await env.LINKS_KV.put(`stats:${id}`, JSON.stringify(statsData), kvOptions);
-  
+
+  // 每日建立數聚合（背景執行，不阻塞回應）
+  context.waitUntil(bumpDailyAggregate(env.LINKS_KV, { created: 1 }));
+
   // Discord 通知
+  // 注意：notifyLinkCreated 的參數是 { id, targetUrl, country, ip }，
+  // 舊版誤傳 createdBy/expiresAt 導致 Discord 通知永遠顯示 Country/IP Unknown。
   await notifyLinkCreated(env.DISCORD_WEBHOOK_URL, {
     id,
-    targetUrl: url,
-    createdBy: `Public (${ip})`,
-    expiresAt: linkData.expiresAt,
+    targetUrl: normalizedUrl,
+    country,
+    ip,
   });
   
   // 回傳結果
@@ -226,7 +236,7 @@ export async function onRequestPost(context) {
     success: true,
     id,
     shortUrl,
-    targetUrl: url,
+    targetUrl: normalizedUrl,
     expiresAt: linkData.expiresAt,
     expiresIn: expiry,
   });

@@ -74,9 +74,10 @@ export function validateId(id) {
   
   // 保留字檢查（避免與系統路徑衝突）
   const reserved = [
-    'admin', 'api', 'static', 'assets', '_', 
+    'admin', 'api', 'static', 'assets', '_',
     'health', 'robots.txt', 'favicon.ico',
-    'functions', 'lib', '.well-known'
+    'functions', 'lib', '.well-known',
+    'report', 'transparency'
   ];
   
   if (reserved.includes(id.toLowerCase())) {

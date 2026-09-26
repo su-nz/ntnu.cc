@@ -21,11 +21,9 @@ export async function onRequest(context) {
   }
   
   // 清除 cookie 並重導向到首頁
-  return new Response(null, {
-    status: 302,
-    headers: {
-      'Location': '/',
-      'Set-Cookie': 'admin_session=; Path=/admin; HttpOnly; Secure; SameSite=Strict; Max-Age=0',
-    },
-  });
+  // 同時清除新舊兩種 Path 的 cookie（Path 曾由 /admin 改為 /，避免舊 cookie 殘留）
+  const headers = new Headers({ 'Location': '/' });
+  headers.append('Set-Cookie', 'admin_session=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0');
+  headers.append('Set-Cookie', 'admin_session=; Path=/admin; HttpOnly; Secure; SameSite=Strict; Max-Age=0');
+  return new Response(null, { status: 302, headers });
 }

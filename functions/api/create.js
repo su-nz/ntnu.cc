@@ -7,6 +7,7 @@ import { createResponse, createErrorResponse, generateRandomId, getClientInfo } 
 import { validateUrl, validateId, validateApiKey, isBlockedDomain } from '../lib/validation.js';
 import { checkRateLimit, checkIpLockout, recordFailedAttempt, clearFailedAttempts } from '../lib/security.js';
 import { notifyLinkCreated, notifyAccessDenied, notifyBlockedDomain } from '../lib/discord.js';
+import { bumpDailyAggregate } from '../lib/aggregate.js';
 
 export async function onRequestPost(context) {
   const { request, env } = context;
@@ -162,6 +163,7 @@ export async function onRequestPost(context) {
     // 寫入 link，並在 metadata 中存儲基本統計資訊
     await env.LINKS_KV.put(`link:${finalId}`, urlValidation.url, {
       metadata: {
+        createdAt: createdAt,
         stats: {
           clicks: 0,
           lastAccess: null,
@@ -189,6 +191,9 @@ export async function onRequestPost(context) {
     );
   }
   
+  // 每日建立數聚合（背景執行，不阻塞回應）
+  context.waitUntil(bumpDailyAggregate(env.LINKS_KV, { created: 1 }));
+
   // 發送 Discord 通知
   await notifyLinkCreated(env.DISCORD_WEBHOOK_URL, {
     id: finalId,

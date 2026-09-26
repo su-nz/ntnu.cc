@@ -389,6 +389,10 @@ export function redirectPreviewPage({ id, targetUrl }) {
           <a href="${escapeHtml(targetUrl)}" class="btn" id="goBtn" data-i18n="go">立即前往</a>
           <a href="/" class="btn btn-secondary" data-i18n="cancel">取消</a>
         </div>
+
+        <p style="margin-top: 1.25rem; font-size: 0.85rem;">
+          <a href="/report?id=${encodeURIComponent(id)}" style="color: var(--text-muted); text-decoration: underline;" data-i18n="report">這是釣魚或不當連結？通報它</a>
+        </p>
       </div>
     </div>
   `;
@@ -401,14 +405,16 @@ export function redirectPreviewPage({ id, targetUrl }) {
           redirectTo: '即將帶您前往：',
           seconds: '秒後自動跳轉',
           go: '立即前往',
-          cancel: '取消'
+          cancel: '取消',
+          report: '這是釣魚或不當連結？通報它'
         },
         'en': {
           desc: 'Short URL',
           redirectTo: 'is redirecting you to:',
           seconds: 'seconds until redirect',
           go: 'Go Now',
-          cancel: 'Cancel'
+          cancel: 'Cancel',
+          report: 'Phishing or abusive link? Report it'
         }
       };
       

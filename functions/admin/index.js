@@ -138,7 +138,7 @@ async function handlePost(context) {
   // 設定 Cookie 並重導向
   const response = await renderAdminDashboard(context);
   const newHeaders = new Headers(response.headers);
-  newHeaders.set('Set-Cookie', `admin_session=${sessionKey}; Path=/admin; HttpOnly; Secure; SameSite=Strict; Max-Age=3600`);
+  newHeaders.set('Set-Cookie', `admin_session=${sessionKey}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=3600`);
   
   return new Response(response.body, {
     status: response.status,
@@ -532,6 +532,7 @@ function generateAdminHtml(links, pagination) {
         </div>
         <div class="admin-actions">
           <a href="/admin/analytics" class="btn btn-secondary">📊 分析儀表板</a>
+          <a href="/admin/reports" class="btn btn-secondary">🚩 通報管理</a>
           <a href="/admin/cleanup" class="btn btn-secondary">🧹 批量清理</a>
           <button class="btn" onclick="exportData()">📥 匯出資料</button>
           <a href="/" class="btn logout-link" onclick="logout(); return false;">登出</a>

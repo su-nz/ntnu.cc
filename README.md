@@ -120,6 +120,46 @@ Content-Type: application/json
 GET /api/health
 ```
 
+### 公開統計（快照）
+
+```bash
+GET /api/public-stats
+```
+
+回傳聚合快照（10 分鐘更新一次，stale-while-revalidate），不論資料量大小讀取成本皆為 O(1)。
+
+### 濫用通報
+
+```bash
+POST /api/report
+Content-Type: application/json
+
+{ "id": "abc123", "category": "phishing", "detail": "補充說明（選填）" }
+```
+
+分類：`phishing` / `malware` / `copyright` / `inappropriate` / `privacy` / `other`。
+不需認證；每 IP 每 10 分鐘限 5 次；不儲存通報者 IP，僅記錄來源國別。
+
+## 公開頁面
+
+| 路徑 | 說明 |
+|------|------|
+| `/transparency` | 平台透明度頁：使用現況、每日點擊趨勢、使用者來源、通報處理統計 |
+| `/report` | 通報不當連結表單（轉址預覽頁亦有入口） |
+
+## 統計聚合架構
+
+為避免資料量成長後統計讀取 O(N) 掃描（list 全部 key 再逐筆 get），統計改為三層：
+
+1. **每日聚合** `agg:day:<date>`：每次點擊/建立時累加 `{clicks, created, byCountry}`（保留約 400 天）
+2. **快照** `agg:snapshot:v1`：由 link metadata（單次 list 即含點擊鏡射）+ 每日聚合彙總而成；
+   10 分鐘內直接回傳，過期後回舊資料並背景重算（stale-while-revalidate + lock）
+3. **歷史基線** `agg:baseline:v1`：管理員於分析儀表板手動觸發「重建歷史基線」，
+   分批全掃描既有 `stats:` 資料，補齊部署聚合功能**之前**的國家/日期分布，
+   並回填 link metadata 的點擊鏡射以校正總點擊數
+
+> 部署本功能後，建議到 `/admin/analytics` 執行一次「重建歷史基線」。
+
 ## 目錄結構
 
 ```
@@ -132,15 +172,24 @@ ntnu.cc/
 │   │   ├── health.js       # 健康檢查 API，確認服務狀態
 │   │   ├── links.js        # 批量操作 API，支持批量刪除或更新短碼
 │   │   ├── list.js         # 列出短網址 API，支持搜尋和分頁
+│   │   ├── public-stats.js # 公開統計 API（讀取聚合快照）
+│   │   ├── report.js       # 濫用通報 API（公開）
 │   │   └── stats/
 │   │       └── [id].js     # 統計查詢 API，返回短碼的點擊統計
 │   ├── admin/
 │   │   ├── index.js        # 管理後台，提供管理員介面
-│   │   └── analytics.js    # 分析儀表板，提供統計數據可視化
+│   │   ├── analytics.js    # 分析儀表板（快照統計 + 每日趨勢 + 維運操作）
+│   │   └── reports.js      # 通報管理（審核 / 下架 / 恢復連結）
+│   ├── transparency.js     # 平台透明度頁（公開）
+│   ├── report.js           # 通報表單頁（公開）
 │   └── lib/
 │       ├── utils.js        # 工具函數，包含通用邏輯如編碼處理
 │       ├── validation.js   # 驗證模組，處理輸入驗證邏輯
 │       ├── security.js     # 安全模組，提供防護措施如速率限制
+│       ├── aggregate.js    # 統計聚合（每日計數 / 快照 / 歷史基線）
+│       ├── reports.js      # 通報資料模組（建立 / 列表 / 狀態）
+│       ├── charts.js       # 伺服器端輕量圖表（SVG / CSS bars）
+│       ├── auth.js         # 管理員驗證共用（API Key / Session）
 │       ├── discord.js      # Discord 通知模組，整合 Webhook
 │       └── templates.js    # HTML 模板，生成動態頁面
 ├── public/                  # 靜態檔案

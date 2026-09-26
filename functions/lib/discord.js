@@ -14,6 +14,7 @@ const EVENT_COLORS = {
   LINK_DELETED: 0x9B59B6,    // 紫色
   LOGIN_FAILED: 0xE74C3C,    // 紅色
   LOGIN_SUCCESS: 0x2ECC71,   // 綠色
+  ABUSE_REPORT: 0xF1C40F,    // 黃色
 };
 
 /**
@@ -208,9 +209,31 @@ export async function notifyLinkDeleted(webhookUrl, { id, targetUrl, deletedBy }
 }
 
 /**
+ * 通知：收到濫用通報（檢舉）
+ * @param {string} webhookUrl
+ * @param {Object} data
+ */
+export async function notifyAbuseReport(webhookUrl, { id, category, detail, country }) {
+  const embed = {
+    title: '🚨 Abuse Report',
+    color: EVENT_COLORS.ABUSE_REPORT,
+    fields: [
+      { name: 'Link ID', value: id, inline: true },
+      { name: 'Category', value: category, inline: true },
+      { name: 'Country', value: country || 'Unknown', inline: true },
+      { name: 'Detail', value: truncate(detail || '(無補充說明)', 500) },
+      { name: 'Review', value: 'https://ntnu.cc/admin/reports' },
+      { name: 'Timestamp', value: new Date().toISOString(), inline: true },
+    ],
+  };
+
+  return sendWebhook(webhookUrl, embed);
+}
+
+/**
  * 截斷字串
- * @param {string} str 
- * @param {number} maxLen 
+ * @param {string} str
+ * @param {number} maxLen
  * @returns {string}
  */
 function truncate(str, maxLen) {

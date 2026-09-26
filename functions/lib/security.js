@@ -3,6 +3,7 @@
  */
 
 import { kvExpiration } from './utils.js';
+import { bumpDailyAggregate } from './aggregate.js';
 
 /**
  * 速率限制檢查（使用 Durable Objects 模式減少讀寫）
@@ -142,7 +143,11 @@ export async function clearFailedAttempts(kv, ip) {
 export async function updateStats(kv, id, country) {
   const key = `stats:${id}`;
   const today = new Date().toISOString().split('T')[0];
-  
+
+  // 每日聚合計數（供快照式儀表板使用，避免讀取端 O(N) 掃描）。
+  // 獨立 try/catch 於 bumpDailyAggregate 內，失敗不影響 per-link 統計。
+  await bumpDailyAggregate(kv, { clicks: 1, country });
+
   try {
     const data = await kv.get(key, { type: 'json' }) || {
       clicks: 0,
